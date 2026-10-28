@@ -1,0 +1,39 @@
+Glaux landing — asset credits
+
+Pixel Code — Qwerasd
+https://github.com/qwerasd205/PixelCode
+SIL Open Font License 1.1. See /fonts/LICENSE-PixelCode.txt.
+Original WOFF2 reused from the Glaux intro project.
+
+Hanken Grotesk — The Hanken Grotesk Project Authors
+https://github.com/marcologous/hanken-grotesk
+SIL Open Font License 1.1. See /fonts/LICENSE-HankenGrotesk.txt.
+Self-hosted via @fontsource-variable/hanken-grotesk.
+
+JetBrains Mono — The JetBrains Mono Project Authors
+https://github.com/JetBrains/JetBrainsMono
+SIL Open Font License 1.1. See /fonts/LICENSE-JetBrainsMono.txt.
+Self-hosted via @fontsource-variable/jetbrains-mono.
+
+Workspace icons — 1-bit Pixel Icons by Nikoichu
+https://nikoichu.itch.io/pixel-icons
+CC0, as recorded in Glaux's rom/ui/README.md. Original files reused unchanged.
+
+Signal Lost sprites — DungeonTileset II v1.7 by 0x72
+https://0x72.itch.io/dungeontileset-ii
+CC0, as recorded in Glaux's examples/signal-lost/README.md.
+The sprite sheet is reused from that cartridge unchanged.
+
+Micro Asset Pack (8x8, 4 Colors) — FisherG
+https://fisherg.itch.io/micro-asset-pack
+Public domain, as recorded in Glaux's examples/sprites/README.md.
+
+Palettes example sprite sheet — reused unchanged from Glaux's examples/palettes.
+Retains its original licensing; no additional asset license is asserted here.
+
+Zughy 32 palette — Zughy
+https://lospec.com/palette-list/zughy-32
+Credit retained from the Glaux project; no additional license is asserted.
+
+Glaux code is MIT OR Apache-2.0. Branding and separately credited assets
+retain their own rights and are not relicensed by this website.

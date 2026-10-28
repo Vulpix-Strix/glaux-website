@@ -107,3 +107,24 @@ For problems with the console, its scripting APIs, or the original documentation
 The website's source code is licensed under the [MIT License](LICENSE).
 
 Documentation imported from Glaux retains its original licensing and attribution. Glaux and Vulpix Strix branding, logos, and other separately identified visual assets are not automatically covered by the website's source-code license.
+
+
+## Landing page
+
+The landing is available at `/en` and `/es`; `/` redirects to English.
+Documentation remains at `/en/docs`. Spanish landing links explicitly identify
+English documentation. Landing styles are scoped separately from Fumadocs.
+
+Hanken Grotesk and JetBrains Mono are self-hosted using Fontsource packages;
+Pixel Code is reused from the Glaux intro project. Asset attribution and font
+licenses are included in `public/ASSET-CREDITS.txt` and `public/fonts/`.
+
+Four original PNGs are still required in `public/images/landing/`:
+`signal-lost-gameplay.png` (320×240), `glaux-shell.png` (320×240),
+`signal-lost-title.png` (320×240), and `master-palette.png` (16×16).
+See `public/images/landing/README.md` for their exact content. The reference
+HTML is visual guidance only; none of its embedded assets or scripts are used.
+Until supplied, failed images show a localized message in reserved space.
+
+News and binary downloads show their actual unavailable states. No release
+URLs are fabricated. The source repository and existing docs remain usable.

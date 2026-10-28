@@ -1,0 +1,186 @@
+{
+  "title": "Glaux — Crea pequeños mundos.",
+  "description": "Una consola de fantasía para crear y ejecutar juegos pequeños. Código, sprites y cuatro canales de sonido en una pantalla de 320×240.",
+  "skip": "Saltar al contenido",
+  "home": "Glaux, inicio",
+  "menu": "Menú",
+  "language": "Idioma",
+  "nav": {
+    "features": "Características",
+    "create": "Crea",
+    "games": "Juegos",
+    "learn": "Aprende",
+    "news": "Noticias"
+  },
+  "download": "Descargar",
+  "hero": {
+    "eyebrow": "Consola de fantasía",
+    "title": "Crea pequeños mundos.",
+    "lead": "Glaux es una consola de fantasía para crear y ejecutar juegos pequeños. Escribe el código, dibuja los sprites y pulsa ejecutar, todo en una pantalla de 320×240.",
+    "cta": "Descargar Glaux",
+    "docs": "Leer la documentación",
+    "note": "Así de simple es tu primer cartucho. Código abierto, con licencia dual MIT o Apache-2.0.",
+    "caption": "Signal Lost, uno de los cartuchos de ejemplo del repositorio, ejecutándose a 320×240."
+  },
+  "factsLabel": "La máquina en números",
+  "facts": {
+    "display": "Una pantalla indexada. Cada píxel es un índice de la paleta que tú eliges.",
+    "refreshRate": "Actualizaciones por segundo. tick() actualiza y draw() dibuja.",
+    "palette": "Colores en la paleta maestra, distribuidos mediante paletas de objetos.",
+    "audio": "Canales de sonido: onda cuadrada, triangular, diente de sierra y ruido."
+  },
+  "features": {
+    "eyebrow": "Qué incluye",
+    "title": "Todo lo que necesitas ya está en la consola.",
+    "lead": "No necesitas herramientas adicionales. Glaux trae su propio editor, documentación y chip de sonido: un juego es una carpeta y una idea.",
+    "editor": "Editor de código",
+    "editorTitle": "Un editor que conoce tu cartucho.",
+    "editorLead": "Edita tus scripts sin salir de Glaux. Pulsa F5 para ejecutar y Esc para pausar. Pulsa Enter en la pausa para volver al cursor y al historial de cambios.",
+    "items": [
+      "Autocompletado, documentación contextual y ayuda de firmas para la API de Glaux.",
+      "Buscar y reemplazar, ir a línea, ir a definición y lista de símbolos.",
+      "Si la ejecución falla, el editor abre la línea que causó el error.",
+      "Un panel de registros con F12 mientras tu juego sigue ejecutándose."
+    ],
+    "signature": "Dibuja un bloque de tiles de objetos de 8 por 8 desde la cuadrícula.",
+    "languages": "Lenguajes",
+    "languagesTitle": "Escribe en Luau o prueba Rhai.",
+    "languagesLead": "Ambos lenguajes comparten las mismas funciones con pequeñas diferencias de escritura. Luau es el principal. Elige al crear un cartucho: new my-game para Luau, o añade --lang rhai.",
+    "experimental": "El soporte de Rhai es experimental y su API puede cambiar.",
+    "default": "predeterminado",
+    "experimentalLabel": "experimental",
+    "cards": {
+      "sprites": {
+        "title": "Sprites y paletas",
+        "text": "Dibuja tiles de 8×8, combínalos en sprites mayores, voltéalos y cambia sus colores mediante paletas de objetos. Importa una hoja PNG y Glaux conserva sus colores."
+      },
+      "sound": {
+        "title": "Sonido desde cero",
+        "text": "Moldea tonos y envolventes en cuatro canales. Los efectos breves y los barridos de tono solo necesitan unas líneas de script."
+      },
+      "projects": {
+        "title": "Proyectos de verdad",
+        "text": "Divide tu juego en archivos y cárgalos con require. Lee la cruceta y dos botones, o el teclado, y registra lo que ocurre mientras se ejecuta."
+      }
+    },
+    "signatureDocs": "Referencia completa de spr"
+  },
+  "create": {
+    "eyebrow": "Una herramienta, un cartucho",
+    "title": "Código, sprites y sonido en el mismo lugar.",
+    "lead": "Un cartucho es solo una carpeta. Glaux lo abre en un espacio de trabajo con pestañas: cambiar un sprite o una línea de código no requiere salir de la consola.",
+    "tabs": {
+      "code": "Código",
+      "sprites": "Sprites",
+      "map": "Mapa",
+      "sfx": "SFX",
+      "music": "Música"
+    },
+    "hint": "Espacio de trabajo · vista estática",
+    "sound": "Sonido",
+    "channels": "4 canales",
+    "folder": "La carpeta",
+    "run": "Ejecutar",
+    "palette": "La hoja de sprites y la paleta maestra de 256 colores, del cartucho Signal Lost y la ROM del sistema.",
+    "files": {
+      "manifest": "nombre, versión, lenguaje",
+      "entry": "script principal",
+      "module": "módulos que cargas",
+      "sprites": "tiles de objetos",
+      "palette": "tu paleta maestra",
+      "objectPalettes": "paletas de objetos"
+    },
+    "unavailable": "No disponible"
+  },
+  "games": {
+    "eyebrow": "Juegos",
+    "title": "Cartuchos que ya puedes ejecutar.",
+    "lead": "Están en el repositorio de Glaux como ejemplos y material de lectura. Abre su código y descubre cómo funcionan.",
+    "featured": "Destacado",
+    "genre": "Supervivencia en arena",
+    "description": "Un caballero está atrapado en una mazmorra. Llegan goblins, luego orcos enmascarados y después ogros. Lanza hachas, esquiva entre los enemigos, recoge monedas y descubre cuánto aguantas.",
+    "controls": "Las flechas mueven, Z lanza y X esquiva. Arte de DungeonTileset II de 0x72, publicado bajo CC0.",
+    "rows": {
+      "rhai": "El mismo juego adaptado a Rhai, con las mismas reglas, tiempos y sonidos.",
+      "sprites": "Tiles individuales, bloques compuestos y copias reflejadas de un pack de cuatro colores.",
+      "palettes": "Una hoja importada con sus colores originales y dibujada con otras paletas."
+    },
+    "experimental": "Experimental",
+    "note": "Por ahora, solo ejemplos."
+  },
+  "learn": {
+    "eyebrow": "Aprende y consulta",
+    "title": "Aprende creando tu primer juego.",
+    "lead": "Las guías son breves y están pensadas para seguirlas con el teclado a mano. La misma documentación está dentro de la consola: escribe docs en el shell para abrirla, incluso sin conexión.",
+    "docsNote": "Documentación en inglés.",
+    "links": {
+      "gettingStarted": {
+        "title": "Primeros pasos",
+        "text": "Crea un cartucho, edita su script y ejecútalo."
+      },
+      "gameLoop": {
+        "title": "El bucle del juego",
+        "text": "boot, tick y draw, y dónde guardar el estado."
+      },
+      "api": {
+        "title": "Referencia de la API",
+        "text": "Cada función, con ejemplos en Luau y Rhai."
+      }
+    },
+    "categories": {
+      "lifecycle": "Ciclo de vida",
+      "graphics": "Dibujo",
+      "input": "Entrada",
+      "audio": "Sonido",
+      "time": "Tiempo",
+      "logging": "Registros",
+      "modules": "Módulos"
+    },
+    "stepsTitle": "Tu primer juego en cuatro pasos",
+    "steps": {
+      "create": "Escribe new my-game en el shell para crear un cartucho.",
+      "run": "Escribe run y mueve el búho con las flechas.",
+      "edit": "Pausa con Esc y pulsa Enter para volver al shell. Pulsa Esc otra vez para abrir el editor y sustituye el script.",
+      "play": "Pulsa F5. Ahora el cuadrado es tuyo."
+    }
+  },
+  "news": {
+    "eyebrow": "Noticias",
+    "title": "Últimas noticias",
+    "empty": "Aún no hay publicaciones.",
+    "text": "Glaux está en desarrollo activo. Puedes seguir su progreso en el repositorio.",
+    "link": "Sigue el desarrollo en GitHub"
+  },
+  "get": {
+    "eyebrow": "Descargar",
+    "title": "Consigue Glaux.",
+    "lead": "Glaux está en desarrollo activo. Todavía no hay descargas precompiladas disponibles aquí. Puedes compilar la consola desde el código fuente.",
+    "unavailable": "No disponible",
+    "binary": "Sin descarga de binarios disponible.",
+    "source": "Compila desde el código fuente",
+    "sourceText": "Glaux es un proyecto en Rust. Con mise y los requisitos de compilación nativa instalados, estos comandos inician la consola.",
+    "prerequisites": "Consulta el proyecto y los requisitos de compilación",
+    "browser": "En el navegador",
+    "browserText": "La versión para navegador no está disponible. Por ahora, Glaux se ejecuta en escritorio.",
+    "browserButton": "Jugar en el navegador"
+  },
+  "footer": {
+    "tagline": "Una consola de fantasía para crear y ejecutar juegos pequeños.",
+    "learn": "Aprende",
+    "project": "Proyecto",
+    "site": "Sitio",
+    "credits": "Créditos",
+    "license": "Glaux tiene licencia dual MIT o Apache-2.0.",
+    "attribution": "Pixel Code de Qwerasd · Zughy 32 de Zughy · Iconos de Nikoichu · Arte de 0x72 y FisherG."
+  },
+  "missing": "Imagen original pendiente",
+  "alt": {
+    "gameplay": "Signal Lost: un caballero lucha contra goblins, orcos y un ogro en una mazmorra, con corazones y puntuación arriba.",
+    "shell": "El shell de Glaux con new my-game y run en el prompt.",
+    "title": "Pantalla de título de Signal Lost, con el caballero y enemigos bajo Press Z to start.",
+    "sprites": "Hoja de sprites de Signal Lost: personajes, hachas, corazones, monedas, paredes y suelos.",
+    "palette": "Paleta maestra de 256 colores en una cuadrícula de 16 por 16.",
+    "micro": "Hoja de sprites pequeños de Micro Asset Pack.",
+    "palettes": "Hoja de colores originales del ejemplo Palettes."
+  }
+}

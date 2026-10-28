@@ -1,30 +1,18 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { SiteLayout } from '@/components/layouts/site';
-import { absoluteUrl } from '@/lib/site';
+import { createFileRoute } from '@tanstack/react-router';
+import { LandingPage } from '@/components/landing/page';
+import { isLandingLanguage } from '@/lib/i18n';
+import { landingHead } from '@/lib/landing/metadata';
+import landingCss from '@/styles/landing.css?url';
 
 export const Route = createFileRoute('/$lang/')({
   component: Home,
-  head: ({ params }) => ({
-    meta: [{ title: 'Glaux' }, { name: 'description', content: 'Glaux fantasy console documentation.' }],
-    links: [{ rel: 'canonical', href: absoluteUrl(`/${params.lang}`) }],
-  }),
+  head: ({ params }) => {
+    const head = landingHead(isLandingLanguage(params.lang) ? params.lang : 'en');
+    return { ...head, links: [...head.links, { rel: 'stylesheet', href: landingCss }] };
+  },
 });
 
 function Home() {
   const { lang } = Route.useParams();
-
-  return (
-    <SiteLayout>
-      <div className="flex flex-col flex-1 justify-center px-4 py-8 text-center">
-        <h1 className="font-medium text-xl mb-4">Glaux documentation (proof of concept)</h1>
-        <Link
-          to="/$lang/docs/$"
-          params={{ lang, _splat: 'guide' }}
-          className="px-3 py-2 rounded-lg bg-fd-primary text-fd-primary-foreground font-medium text-sm mx-auto"
-        >
-          Open Docs
-        </Link>
-      </div>
-    </SiteLayout>
-  );
+  return <LandingPage lang={isLandingLanguage(lang) ? lang : 'en'} />;
 }

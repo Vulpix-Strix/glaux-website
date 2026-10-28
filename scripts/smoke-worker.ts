@@ -41,10 +41,23 @@ try {
   }
   const redirect = await request('/', 307);
   assert.equal(new URL(redirect.headers.get('location')!, origin).pathname, '/en');
-  assert.equal(existsSync('dist/client/en/index.html'), false, '/en must exercise SSR, not a prerendered asset');
+  // Landings can be prerendered; verify their generated HTML and the live Worker endpoints.
   const home = await (await request('/en')).text();
   assert.match(home, /<html[^>]*lang="en"/);
-  assert.match(home, /Glaux documentation \(proof of concept\)/);
+  assert.match(home, /Build small worlds/);
+  const spanish = await (await request('/es')).text();
+  assert.match(spanish, /<html[^>]*lang="es"/);
+  assert.match(spanish, /Crea pequeños mundos/);
+  for (const [lang, html] of [['en', home], ['es', spanish]]) {
+    assert.match(html, new RegExp(`https://glauxconsole.dev/${lang}`));
+    assert.match(html, /href="\/en\/docs\/guide\/getting-started"/);
+    assert.match(html, /href="\/en\/docs\/guide\/game-loop"/);
+    assert.match(html, /href="\/en\/docs\/api"/);
+    assert.match(html, /signal-lost-gameplay.png/);
+    assert.doesNotMatch(html, /href="#"/);
+    assert.doesNotMatch(html, /\[FILE TYPE|\[POST|proof of concept/);
+  }
+  for (const path of ['/fonts/pixel-code-regular.woff2', '/images/landing/signal-lost-sprites.png', '/images/landing/icons/code.png', '/ASSET-CREDITS.txt']) await request(path);
   const docsResponse = await request('/en/docs/guide');
   assert.match(docsResponse.headers.get('vary')!, /Accept/i);
   const head = await request('/en/docs/guide', 200, { method: 'HEAD' });
@@ -72,10 +85,10 @@ try {
   assert.equal(new TextDecoder().decode(bytes.slice(0, 4)), 'RIFF');
   assert.ok(bytes.length > 1000);
   for (const path of ['/en/docs/missing', '/en/docs/missing.md', '/en/og/missing/image.webp',
-    '/es', '/es/docs/guide', '/es/docs/guide.md', '/es/og/guide/image.webp', '/unknown']) {
+    '/es/docs/guide', '/es/docs/guide.md', '/es/og/guide/image.webp', '/unknown']) {
     await request(path, 404);
   }
-  console.log('Worker smoke passed: SSR, docs, assets, search, Markdown negotiation, LLM, WebP OG and 404s.');
+  console.log('Worker smoke passed: EN/ES landings, docs, assets, search, Markdown negotiation, LLM, WebP OG and 404s.');
 } catch (error) {
   console.error(output.slice(-10000));
   throw error;
