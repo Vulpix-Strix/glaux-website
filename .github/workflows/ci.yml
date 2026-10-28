@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    env:
+      # Build the Glaux revision pinned in glaux-docs.lock, never a branch and never a sibling checkout.
+      GLAUX_DOCS_LOCKED: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@6.1.0
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Fetches the pinned commit, reads its docs/ and fails on a missing page or a broken
+      # link or heading fragment. `pnpm build` does it again through `prebuild`, from the cache.
+      - name: Sync the Glaux documentation
+        run: pnpm docs:sync
+
+      - run: pnpm test
+        env:
+          GLAUX_DOCS_DIR: ${{ github.workspace }}/.cache/glaux-source/docs
+
+      - run: pnpm types:check
+
+      - run: pnpm lint
+
+      - run: pnpm build
+
+      - run: pnpm test:worker

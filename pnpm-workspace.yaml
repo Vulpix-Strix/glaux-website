@@ -1,0 +1,7 @@
+# esbuild only checks its prebuilt binary on install; the build does not need the script.
+allowBuilds:
+  esbuild: false
+  # Wrangler requires the platform workerd binary for local Worker execution.
+  workerd: true
+minimumReleaseAgeExclude:
+  - '@cloudflare/vite-plugin@1.66.0'

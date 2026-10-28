@@ -1,0 +1,5 @@
+# The Glaux revision the website documentation is built from.
+# Production and CI build exactly this commit, never a branch.
+# Move it with `pnpm docs:pin`; see "Updating the pinned revision" in the README.
+repository = https://github.com/cuervolu/glaux.git
+commit = 809ed595f192a73664d4356e6874427e427497e1

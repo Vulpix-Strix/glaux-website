@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "glaux-website",
+  "main": "src/server.ts",
+  "compatibility_date": "2026-10-28",
+  "assets": {
+    "binding": "ASSETS",
+    "html_handling": "drop-trailing-slash",
+    "run_worker_first": [
+      "/",
+      "/en/docs",
+      "/en/docs/*"
+    ]
+  }
+}

@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { source } from '@/lib/source';
+import { source } from '@/lib/docs/source';
 import { createFromSource } from 'fumadocs-core/search/server';
 
 const server = createFromSource(source, {
   // https://docs.orama.com/docs/orama-js/supported-languages
-  language: 'english',
+  localeMap: { en: { language: 'english' } },
 });
 
 export const Route = createFileRoute('/api/search')({

@@ -1,0 +1,57 @@
+name: Glaux docs check
+
+# Glaux's own documentation validator, run on the revision the website pins. It only needs
+# to run when the pin moves; the Glaux repository is where the Rust test suite belongs.
+on:
+  push:
+    branches: [main]
+    paths: [glaux-docs.lock]
+  pull_request:
+    paths: [glaux-docs.lock]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  docs-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Read the pinned revision
+        id: pin
+        run: |
+          echo "repository=$(sed -n 's/^repository *= *//p' glaux-docs.lock)" >> "$GITHUB_OUTPUT"
+          echo "commit=$(sed -n 's/^commit *= *//p' glaux-docs.lock)" >> "$GITHUB_OUTPUT"
+
+      - name: Download the pinned public Glaux revision
+        env:
+          REPOSITORY: ${{ steps.pin.outputs.repository }}
+          COMMIT: ${{ steps.pin.outputs.commit }}
+          GIT_CONFIG_GLOBAL: /dev/null
+          GIT_CONFIG_NOSYSTEM: '1'
+          GIT_CONFIG_COUNT: '0'
+          GIT_CONFIG_PARAMETERS: ''
+          GIT_TERMINAL_PROMPT: '0'
+          GIT_ASKPASS: ''
+        run: |
+          [[ "$REPOSITORY" == https://github.com/* ]] && [[ "$COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          git init --quiet glaux
+          if ! git -C glaux -c credential.helper= -c core.askPass= -c http.extraHeader= fetch --quiet --depth 1 "$REPOSITORY" "$COMMIT"; then
+            echo "::error::Cannot anonymously fetch Glaux commit $COMMIT from $REPOSITORY. The repository must be public and the commit pushed"
+            exit 1
+          fi
+          git -C glaux checkout --quiet --detach FETCH_HEAD
+          test "$(git -C glaux rev-parse HEAD)" = "$COMMIT"
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: glaux
+      - name: Validate the documentation
+        working-directory: glaux
+        run: cargo run --quiet -p glaux-docs --bin glaux-docs -- check

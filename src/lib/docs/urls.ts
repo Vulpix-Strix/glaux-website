@@ -1,17 +1,9 @@
 import { createGetUrl } from 'fumadocs-core/source';
+import { i18n } from './i18n.ts';
 
-export const appName = 'Tanstack Start';
-export const docsRoute = '/docs';
-export const docsImageRoute = '/og/docs';
+export const docsImageRoute = '/og';
 
-// fill this with your actual GitHub info, for example:
-export const gitConfig = {
-  user: 'fuma-nama',
-  repo: 'fumadocs',
-  branch: 'main',
-};
-
-const getDocsUrl = createGetUrl(docsRoute);
+const getDocsUrl = createGetUrl('/docs', i18n);
 
 export function getPageMarkdownUrl(page: { slugs: string[]; locale?: string }) {
   const segments = [...page.slugs];
@@ -34,7 +26,7 @@ export function decodeMarkdownUrl(segments: string[]) {
   return out;
 }
 
-const getImageUrl = createGetUrl(docsImageRoute);
+const getImageUrl = createGetUrl(docsImageRoute, i18n);
 
 export function getPageImageUrl(page: { slugs: string[]; locale?: string }) {
   const segments = [...page.slugs, 'image.webp'];
