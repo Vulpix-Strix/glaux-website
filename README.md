@@ -41,7 +41,7 @@ Start the development server:
 pnpm dev
 ```
 
-The documentation is fetched from a pinned revision of the public Glaux repository, so you don't need to clone Glaux separately.
+The documentation is fetched anonymously from a pinned revision of the public Glaux repository. No token, authentication, or separate clone is required.
 
 ## Documentation
 
@@ -72,6 +72,10 @@ To pin a different revision:
 ```bash
 pnpm docs:pin <ref>
 ```
+
+Run `pnpm docs:pin` without a ref to pin the latest commit on Glaux's default branch, then run `pnpm docs:sync --locked`.
+
+Run `pnpm docs:check` to fetch the full pinned source anonymously and run Glaux's own documentation checks through `mise`. For local development, `GLAUX_DIR=/path/to/glaux pnpm docs:check` validates an explicit checkout instead.
 
 The generated documentation is not maintained manually in this repository. Changes to the original documentation should be made in [Vulpix-Strix/glaux](https://github.com/Vulpix-Strix/glaux).
 

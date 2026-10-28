@@ -12,7 +12,7 @@ export const COMMIT = /^[0-9a-f]{40}$/;
 
 const HEADER = `# The Glaux revision the website documentation is built from.
 # Production and CI build exactly this commit, never a branch.
-# Move it with \`pnpm docs:pin\`; see "Updating the pinned revision" in the README.
+# Move it with \`pnpm docs:pin\`; see "Updating the documentation" in the README.
 `;
 
 export function parseLock(text: string, where = 'glaux-docs.lock'): DocsLock {

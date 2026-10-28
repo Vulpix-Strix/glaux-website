@@ -14,7 +14,7 @@ const HASH = 'a'.repeat(40);
 test('the lock file of this repository is valid and pins a full commit', () => {
   const lock = readLock(path.join(root, LOCK_FILE));
   assert.match(lock.commit, /^[0-9a-f]{40}$/);
-  assert.match(lock.repository, /glaux/);
+  assert.equal(lock.repository, 'https://github.com/Vulpix-Strix/glaux.git');
 });
 
 test('lock files are read and written without losing anything', () => {
@@ -87,6 +87,14 @@ test('a locked sync is reproducible: the same files from a fresh fetch', () => {
   syncDocs(two.docsDir, b, { source: two.manifest });
   assert.equal(digest(a), digest(b));
   assert.equal(JSON.parse(readFileSync(path.join(a, 'manifest.json'), 'utf8')).source.commit, first);
+});
+
+test('the Rust documentation validator can fetch the full pinned source', () => {
+  const { repo, first } = glauxRepository();
+  const cache = path.join(tempDir(), 'validator');
+  const docs = fetchLockedDocs({ repository: repo, commit: first }, cache, false);
+  assert.match(readFileSync(path.join(docs, 'en/guide/index.md'), 'utf8'), /First revision/);
+  assert.equal(readFileSync(path.join(cache, 'rom/big-file.bin'), 'utf8'), 'not documentation');
 });
 
 test('moving the lock moves the result', () => {

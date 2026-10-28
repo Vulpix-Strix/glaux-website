@@ -52,16 +52,17 @@ export function docsCommit(docsDir: string): string | undefined {
  * the path of `docs/`. A checkout that already is at that commit is reused. Nothing is
  * resolved from a branch: the commit is fetched by its hash, so the result is the same
  * whatever `main` is now.
+ * Pass `docsOnly = false` with a separate cache for validators that need the full source.
  */
-export function fetchLockedDocs(lock: DocsLock, cacheDir: string): string {
+export function fetchLockedDocs(lock: DocsLock, cacheDir: string, docsOnly = true): string {
   const docs = path.join(cacheDir, 'docs');
   const atCommit = () => existsSync(path.join(cacheDir, '.git')) && localCommit(cacheDir) === lock.commit;
-  if (!(atCommit() && statSync(docs, { throwIfNoEntry: false })?.isDirectory() && git(cacheDir, 'status', '--porcelain', '--', 'docs') === '')) {
+  if (!(atCommit() && statSync(docs, { throwIfNoEntry: false })?.isDirectory() && git(cacheDir, 'status', '--porcelain', '--', ...(docsOnly ? ['docs'] : [])) === '')) {
     rmSync(cacheDir, { recursive: true, force: true });
     mkdirSync(cacheDir, { recursive: true });
     git(cacheDir, 'init', '--quiet');
     git(cacheDir, 'remote', 'add', 'origin', lock.repository);
-    git(cacheDir, 'sparse-checkout', 'set', 'docs');
+    if (docsOnly) git(cacheDir, 'sparse-checkout', 'set', 'docs');
     try {
       git(cacheDir, 'fetch', '--quiet', '--depth', '1', '--filter=blob:none', 'origin', lock.commit);
       git(cacheDir, 'checkout', '--quiet', '--detach', 'FETCH_HEAD');
@@ -69,7 +70,7 @@ export function fetchLockedDocs(lock: DocsLock, cacheDir: string): string {
       rmSync(cacheDir, { recursive: true, force: true });
       throw new Error(
         `cannot fetch Glaux commit ${lock.commit} from ${lock.repository}. ` +
-          `Anonymous download requires a public repository and a pushed commit. While Glaux is private this operation is expected to fail; no local fallback is used.\n${(error as Error).message}`,
+          `Anonymous download requires a public repository and a pushed commit; no local fallback is used.\n${(error as Error).message}`,
       );
     }
     if (localCommit(cacheDir) !== lock.commit) {
