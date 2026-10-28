@@ -16,3 +16,9 @@ node_modules
 .tanstack
 
 .source
+# generated from the Glaux repository by `pnpm docs:sync`
+/content/glaux/
+
+# Cloudflare local state and Vite build output
+.wrangler/
+/dist/
