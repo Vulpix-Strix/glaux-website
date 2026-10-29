@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { test } from 'node:test';
-import { familyCounts, filterEntries, licenseFamilies, licenseFamily } from '@/lib/credits/browse.ts';
-import { creditsCopy } from '@/lib/credits/copy.ts';
-import { pageHead } from '@/lib/landing/metadata.ts';
+import { familyCounts, filterEntries, licenseFamilies, licenseFamily } from '../src/lib/credits/browse.ts';
+import { creditsCopy } from '../src/lib/credits/copy.ts';
+import { pageHead } from '../src/lib/landing/metadata.ts';
 import { root } from './helpers.ts';
 
 const read = (name: string) => JSON.parse(readFileSync(path.join(root, 'public/credits', name), 'utf8'));
