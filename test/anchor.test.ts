@@ -1,8 +1,8 @@
 import { existsSync } from 'node:fs';
 import { expect, test } from 'vitest';
 import GithubSlugger from 'github-slugger';
-import { assignAnchors, glauxAnchor } from '../src/lib/glaux/anchor.ts';
-import { syncDocs } from '../src/lib/glaux/sync.ts';
+import { assignAnchors, glauxAnchor } from '@/lib/glaux/anchor';
+import { syncDocs } from '@/lib/glaux/sync';
 import { fixtures, glauxDocs, render, tempDir } from './helpers.ts';
 
 const real = { skip: !existsSync(glauxDocs) };

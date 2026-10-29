@@ -8,8 +8,8 @@ import {
   parseOverrides,
   readComponents,
   readLockfile,
-} from '../src/lib/credits/npm.ts';
-import type { Component, Lockfile } from '../src/lib/credits/npm.ts';
+} from '@/lib/credits/npm';
+import type { Component, Lockfile } from '@/lib/credits/npm';
 import { tempDir, writeTree } from './helpers.ts';
 
 const component = (name: string, version: string, license: string, extra: Partial<Component> = {}): Component => ({

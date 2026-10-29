@@ -2,10 +2,10 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { expect, test } from 'vitest';
-import { fetchLockedDocs, resolveRemoteRef } from '../src/lib/glaux/checkout.ts';
-import { CACHE_DIR, LOCK_FILE, resolveDocsSource } from '../src/lib/glaux/docs-source.ts';
-import { formatLock, parseLock, readLock } from '../src/lib/glaux/lock.ts';
-import { syncDocs } from '../src/lib/glaux/sync.ts';
+import { fetchLockedDocs, resolveRemoteRef } from '@/lib/glaux/checkout';
+import { CACHE_DIR, LOCK_FILE, resolveDocsSource } from '@/lib/glaux/docs-source';
+import { formatLock, parseLock, readLock } from '@/lib/glaux/lock';
+import { syncDocs } from '@/lib/glaux/sync';
 import { digest, fixtures, root, tempDir, writeTree } from './helpers.ts';
 
 const HASH = 'a'.repeat(40);

@@ -7,7 +7,7 @@ import { applyMdxPreset } from 'fumadocs-mdx/config';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import * as runtime from 'react/jsx-runtime';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { glauxMdxOptions } from '../src/lib/glaux/mdx-options.ts';
+import { glauxMdxOptions } from '@/lib/glaux/mdx-options';
 
 export const root = path.resolve(import.meta.dirname, '..');
 export const fixtures = path.join(root, 'test/fixtures/docs');

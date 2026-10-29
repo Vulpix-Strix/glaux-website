@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { expect, test } from 'vitest';
-import { familyCounts, filterEntries, licenseFamilies, licenseFamily } from '../src/lib/credits/browse.ts';
-import { m } from '../src/paraglide/messages.js';
-import { pageHead } from '../src/lib/landing/metadata.ts';
+import { familyCounts, filterEntries, licenseFamilies, licenseFamily } from '@/lib/credits/browse';
+import { m } from '@/paraglide/messages';
+import { pageHead } from '@/lib/landing/metadata';
 import { root } from './helpers.ts';
 
 const read = (name: string) => JSON.parse(readFileSync(path.join(root, 'public/credits', name), 'utf8'));

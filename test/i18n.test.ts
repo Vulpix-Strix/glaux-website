@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { expect, test } from 'vitest';
-import { m } from '../src/paraglide/messages.js';
-import { baseLocale, locales } from '../src/paraglide/runtime.js';
+import { m } from '@/paraglide/messages';
+import { baseLocale, locales } from '@/paraglide/runtime';
 
 const catalog = (locale: string): Record<string, string> => {
   const { $schema: _schema, ...messages } = JSON.parse(readFileSync(`messages/${locale}.json`, 'utf8'));

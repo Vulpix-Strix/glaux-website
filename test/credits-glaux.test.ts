@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { buildGlauxFiles, mergeInventories, parseInventory } from '../src/lib/credits/glaux.ts';
+import { buildGlauxFiles, mergeInventories, parseInventory } from '@/lib/credits/glaux';
 
 const inventory = (texts: object[], entries: object[]) => JSON.stringify({ texts, entries });
 const text = (title: string) => ({ kind: 'license', title, spdx: 'MIT', content: `${title} text` });

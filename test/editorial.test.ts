@@ -2,7 +2,7 @@ import { expect, test } from 'vitest';
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { tempDir, writeTree } from './helpers.ts';
-import { loadContent, parseContent, resolveContentAssets } from '../src/lib/editorial/content.ts';
+import { loadContent, parseContent, resolveContentAssets } from '@/lib/editorial/content';
 import {
   articleNeighbors,
   articleTranslations,
@@ -12,10 +12,10 @@ import {
   relatedArticles,
   rssFeed,
   seriesArticles,
-} from '../src/lib/editorial/catalog.ts';
-import { articleHead } from '../src/lib/editorial/metadata.ts';
-import { calendarFile } from '../src/lib/editorial/calendar.ts';
-import type { Article } from '../src/lib/editorial/model.ts';
+} from '@/lib/editorial/catalog';
+import { articleHead } from '@/lib/editorial/metadata';
+import { calendarFile } from '@/lib/editorial/calendar';
+import type { Article } from '@/lib/editorial/model';
 const frontmatter = (extra = '') =>
   `---\nid: example\ntitle: Test article\ndescription: Test fixture only\nstatus: published\ndate: 2026-10-01\ncategories: [devlog]\n${extra}---\n\n## A heading\n\nA paragraph for testing.\n`;
 function article(overrides: Partial<Article> = {}): Article {
@@ -180,7 +180,7 @@ test('both development templates include every editorial block and no publicatio
 });
 
 test('reduced motion pauses initially and on changes, never resumes and removes listeners', async () => {
-  const { pauseOnReducedMotion } = await import('../src/lib/editorial/media.ts');
+  const { pauseOnReducedMotion } = await import('@/lib/editorial/media');
   class Preference extends EventTarget {
     matches = true;
   }
@@ -202,7 +202,7 @@ test('reduced motion pauses initially and on changes, never resumes and removes 
 });
 
 test('development media supports bounded, open and suffix byte ranges for native seeking', async () => {
-  const { assetRange } = await import('../src/lib/editorial/asset-range.ts');
+  const { assetRange } = await import('@/lib/editorial/asset-range');
   expect(assetRange('bytes=0-9', 100)).toStrictEqual({ start: 0, end: 9 });
   expect(assetRange('bytes=50-', 100)).toStrictEqual({ start: 50, end: 99 });
   expect(assetRange('bytes=-10', 100)).toStrictEqual({ start: 90, end: 99 });
@@ -213,7 +213,7 @@ test('development media supports bounded, open and suffix byte ranges for native
 });
 
 test('search defaults do not introduce redirects on canonical list URLs', async () => {
-  const { validateArticleSearch } = await import('../src/lib/editorial/catalog.ts');
+  const { validateArticleSearch } = await import('@/lib/editorial/catalog');
   expect(validateArticleSearch({})).toStrictEqual({});
   expect(validateArticleSearch({ q: '', category: '', page: '1', unknown: 'discard' })).toStrictEqual({});
   expect(validateArticleSearch({ q: 'shell', category: 'devlog', page: '2' })).toStrictEqual({

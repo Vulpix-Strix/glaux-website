@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { expect, test } from 'vitest';
-import { OUT_DIR, OVERRIDES_FILE, OVERRIDES_TEXTS } from '../src/lib/credits/generate.ts';
+import { OUT_DIR, OVERRIDES_FILE, OVERRIDES_TEXTS } from '@/lib/credits/generate';
 import { root } from './helpers.ts';
 
 // What is committed in public/credits. That it matches the sources is `pnpm credits:check`.

@@ -2,7 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { expect, test } from 'vitest';
-import { syncDocs } from '../src/lib/glaux/sync.ts';
+import { syncDocs } from '@/lib/glaux/sync';
 import { digest, fixtures, glauxDocs, root, tempDir, walk, writeTree } from './helpers.ts';
 
 const haveGlaux = existsSync(glauxDocs);

@@ -1,10 +1,10 @@
 import { expect, test } from 'vitest';
-import { defaultLanguage, languages, isPublishedLanguage } from '../src/lib/i18n.ts';
-import { isLocale, locales } from '../src/paraglide/runtime.js';
-import { m } from '../src/paraglide/messages.js';
-import { absoluteUrl } from '../src/lib/site.ts';
-import { FALLBACK_LANGUAGE } from '../src/lib/glaux/manifest.ts';
-import { decodeMarkdownUrl, getPageMarkdownUrl, getPageImageUrl } from '../src/lib/docs/urls.ts';
+import { defaultLanguage, languages, isPublishedLanguage } from '@/lib/i18n';
+import { isLocale, locales } from '@/paraglide/runtime';
+import { m } from '@/paraglide/messages';
+import { absoluteUrl } from '@/lib/site';
+import { FALLBACK_LANGUAGE } from '@/lib/glaux/manifest';
+import { decodeMarkdownUrl, getPageMarkdownUrl, getPageImageUrl } from '@/lib/docs/urls';
 
 test('only English docs are published; the HTML shell also supports Spanish', () => {
   expect(languages).toStrictEqual(['en']);
@@ -26,8 +26,8 @@ test('documentation URLs preserve localized Markdown and image endpoints', () =>
 
 
 test('landing copy, SEO and documentation destinations support both languages', async () => {
-  const { landingHead } = await import('../src/lib/landing/metadata.ts');
-  const { documentationLinks, apiLinks } = await import('../src/lib/landing/navigation.ts');
+  const { landingHead } = await import('@/lib/landing/metadata');
+  const { documentationLinks, apiLinks } = await import('@/lib/landing/navigation');
   expect(locales).toStrictEqual(['en', 'es']);
   expect(isLocale('es')).toBe(true);
   expect(isLocale('unknown')).toBe(false);
@@ -46,7 +46,7 @@ test('landing copy, SEO and documentation destinations support both languages', 
 
 test('the starter Luau example matches the published getting-started guide', async () => {
   const { readFileSync } = await import('node:fs');
-  const { firstGame } = await import('../src/lib/landing/examples.ts');
+  const { firstGame } = await import('@/lib/landing/examples');
   const guide = readFileSync('content/glaux/en/guide/getting-started.md', 'utf8');
   expect(guide.includes('```luau\n' + firstGame + '\n```')).toBeTruthy();
 });

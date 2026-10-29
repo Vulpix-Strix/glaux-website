@@ -1,7 +1,7 @@
 import { assert, expect, test } from 'vitest';
 import path from 'node:path';
 import { build } from 'vite';
-import { editorialPlugin } from '../src/lib/editorial/vite.ts';
+import { editorialPlugin } from '@/lib/editorial/vite';
 import { tempDir, writeTree, root } from './helpers.ts';
 
 test('the production MDX pipeline compiles published articles and emits only their assets', async () => {

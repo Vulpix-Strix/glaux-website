@@ -1,10 +1,10 @@
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { expect, test } from 'vitest';
-import { collectOgEntries } from '../src/lib/og/entries.ts';
-import { ogHeight, ogImagePath, ogWidth } from '../src/lib/og/model.ts';
-import { pngSize } from '../src/lib/og/png.ts';
-import { absoluteUrl } from '../src/lib/site.ts';
+import { collectOgEntries } from '@/lib/og/entries';
+import { ogHeight, ogImagePath, ogWidth } from '@/lib/og/model';
+import { pngSize } from '@/lib/og/png';
+import { absoluteUrl } from '@/lib/site';
 import { root, walk } from './helpers.ts';
 
 // Reads the output of `pnpm build`, so it fails until the site is built. CI builds before testing.

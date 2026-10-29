@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 import path from 'node:path';
-import { syncDocs } from '../src/lib/glaux/sync.ts';
+import { syncDocs } from '@/lib/glaux/sync';
 import { fixtures, render, tempDir, writeTree } from './helpers.ts';
 
 const out = tempDir();

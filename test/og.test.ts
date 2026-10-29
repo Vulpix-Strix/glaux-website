@@ -2,13 +2,13 @@ import { expect, test } from 'vitest';
 import { copyFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { root, tempDir, writeTree } from './helpers.ts';
-import { collectOgEntries } from '../src/lib/og/entries.ts';
-import { ogHeight, ogImagePath, ogWidth, type OgEntry } from '../src/lib/og/model.ts';
-import { pngSize } from '../src/lib/og/png.ts';
-import { createOgRenderer } from '../src/lib/og/render.ts';
-import { loadContent } from '../src/lib/editorial/content.ts';
-import { articleHead } from '../src/lib/editorial/metadata.ts';
-import { landingHead, pageHead } from '../src/lib/landing/metadata.ts';
+import { collectOgEntries } from '@/lib/og/entries';
+import { ogHeight, ogImagePath, ogWidth, type OgEntry } from '@/lib/og/model';
+import { pngSize } from '@/lib/og/png';
+import { createOgRenderer } from '@/lib/og/render';
+import { loadContent } from '@/lib/editorial/content';
+import { articleHead } from '@/lib/editorial/metadata';
+import { landingHead, pageHead } from '@/lib/landing/metadata';
 
 const screenshot = path.join(root, 'public/images/landing/signal-lost-gameplay.png');
 const article = (title: string, extra = '') =>

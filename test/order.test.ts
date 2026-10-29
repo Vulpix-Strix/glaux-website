@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { expect, test } from 'vitest';
-import { folderOrders, orderPages } from '../src/lib/glaux/order.ts';
-import { syncDocs } from '../src/lib/glaux/sync.ts';
+import { folderOrders, orderPages } from '@/lib/glaux/order';
+import { syncDocs } from '@/lib/glaux/sync';
 import { glauxDocs, tempDir } from './helpers.ts';
 
 // The cases mirror the tests of `order` in apps/glaux/src/system/workspace/docs/nav/tests.rs: the

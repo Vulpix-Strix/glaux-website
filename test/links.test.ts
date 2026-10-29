@@ -1,6 +1,6 @@
 import { assert, expect, test } from 'vitest';
-import { docUrl, GlauxLinkError, resolveLink } from '../src/lib/glaux/links.ts';
-import type { Manifest } from '../src/lib/glaux/manifest.ts';
+import { docUrl, GlauxLinkError, resolveLink } from '@/lib/glaux/links';
+import type { Manifest } from '@/lib/glaux/manifest';
 
 const manifest: Manifest = {
   source: { kind: 'local' },
