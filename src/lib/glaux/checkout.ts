@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, realpathSync, rmSync, statSync } from 'node:fs';
 import path from 'node:path';
 import type { DocsLock } from './lock.ts';
 
-function git(cwd: string, ...args: string[]): string {
+export function git(cwd: string, ...args: string[]): string {
   try {
     // Ignore user/system credentials and injected Git configuration. Local paths used by
     // development and fixtures still work; remote operations remain anonymous.
