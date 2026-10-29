@@ -14,7 +14,7 @@ node_modules
 /blob-report/
 /playwright/.cache/
 .tanstack
-
+.idea/
 .source
 # generated from the Glaux repository by `pnpm docs:sync`
 /content/glaux/
