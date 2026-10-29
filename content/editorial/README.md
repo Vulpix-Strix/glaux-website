@@ -65,9 +65,9 @@ are intentionally rejected. This prevents imports from bypassing the asset
 boundary. Relative media paths are not resolved: use `asset:published/...` for
 editorial media or existing public resources when they are already public.
 
-`pnpm build` audits all deployment files, including Worker chunks and any source
-maps, for draft routes and exclusive resource URLs. `pnpm test:worker` requests
-those same URLs from the built Worker and requires 404 responses. `noindex`
+The editorial build test checks that drafts and their exclusive resources are
+not compiled or emitted. `pnpm test:worker` requests draft routes and resource
+URLs from the built Worker and requires 404 responses. `noindex`
 is only an additional development hint, not the publication boundary.
 
 ## MDX components

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { copyFileSync, mkdirSync } from 'node:fs';
+import { copyFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { root, tempDir, writeTree } from './helpers.ts';
+import { root, tempDir, walk, writeTree } from './helpers.ts';
 import { collectOgEntries } from '../src/lib/og/entries.ts';
 import { ogHeight, ogImagePath, ogWidth, type OgEntry } from '../src/lib/og/model.ts';
 import { pngSize } from '../src/lib/og/png.ts';
@@ -10,6 +10,7 @@ import { createOgRenderer } from '../src/lib/og/render.ts';
 import { loadContent } from '../src/lib/editorial/content.ts';
 import { articleHead } from '../src/lib/editorial/metadata.ts';
 import { landingHead, pageHead } from '../src/lib/landing/metadata.ts';
+import { absoluteUrl } from '../src/lib/site.ts';
 
 const screenshot = path.join(root, 'public/images/landing/signal-lost-gameplay.png');
 const article = (title: string, extra = '') =>
@@ -165,4 +166,46 @@ test('article heads use the generated card and keep canonical and alternates', (
   assert.equal(tags(head, 'name')['twitter:card'], 'summary_large_image');
   assert.ok(head.links.some((link) => link.rel === 'canonical'));
   assert.match(head.scripts[0].children, /\/og\/en\/news\/with-cover\.png/);
+});
+
+// Reads the output of `pnpm build`, so it only runs once the site is built. CI builds first and
+// never skips it.
+const client = path.join(root, 'dist/client');
+test('the build emits a card for every published page and each prerendered page points to its own', {
+  skip: !existsSync(client) && !process.env.CI,
+}, () => {
+  const entries = collectOgEntries({
+    editorial: path.join(root, 'content/editorial'),
+    docs: path.join(root, 'content/glaux'),
+    publicDir: path.join(root, 'public'),
+  });
+  const expected = new Set(entries.map((entry) => path.join(client, ogImagePath(entry.lang, entry.page))));
+  for (const file of expected) {
+    assert.ok(existsSync(file), `Missing Open Graph card: ${path.relative(client, file)}`);
+    assert.deepEqual(pngSize(readFileSync(file)), { width: ogWidth, height: ogHeight }, file);
+  }
+  // Anything else would be the card of a page that is not published, such as a draft.
+  for (const file of walk(path.join(client, 'og')))
+    assert.ok(expected.has(file), `Unexpected Open Graph card: ${path.relative(client, file)}`);
+
+  const pages = walk(client).filter((file) => file.endsWith(`${path.sep}index.html`));
+  let checked = 0;
+  for (const file of pages) {
+    const [lang, ...rest] = path.relative(client, path.dirname(file)).split(path.sep);
+    if (lang !== 'en' && lang !== 'es') continue;
+    const html = readFileSync(file, 'utf8');
+    const want = absoluteUrl(ogImagePath(lang, rest.length ? `/${rest.join('/')}` : ''));
+    const metaTags = (property: string) =>
+      [...html.matchAll(new RegExp(`<meta (?:property|name)="${property}" content="([^"]*)"`, 'g'))].map((match) => match[1]);
+    const where = path.relative(client, file);
+    assert.deepEqual(metaTags('og:image'), [want], `${where}: og:image`);
+    assert.deepEqual(metaTags('twitter:image'), [want], `${where}: twitter:image`);
+    assert.deepEqual(metaTags('twitter:card'), ['summary_large_image'], `${where}: twitter:card`);
+    assert.deepEqual(metaTags('og:image:width'), [String(ogWidth)], `${where}: og:image:width`);
+    assert.deepEqual(metaTags('og:image:height'), [String(ogHeight)], `${where}: og:image:height`);
+    assert.equal(metaTags('og:image:alt').length, 1, `${where}: og:image:alt`);
+    assert.ok(expected.has(path.join(client, new URL(want).pathname)), `${where}: ${want} is not in the build`);
+    checked++;
+  }
+  assert.ok(checked > 0, 'No prerendered page was found in the build');
 });

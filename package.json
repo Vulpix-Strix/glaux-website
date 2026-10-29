@@ -9,8 +9,7 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && node scripts/check-editorial-output.ts && node scripts/check-og-output.ts",
-    "start": "vite preview",
+    "build": "vite build",
     "preview": "vite preview",
     "i18n:compile": "node scripts/compile-i18n.ts",
     "pretypes:check": "pnpm i18n:compile",
@@ -18,7 +17,7 @@
     "lint": "oxlint",
     "docs:sync": "node scripts/sync-glaux-docs.ts",
     "docs:pin": "node scripts/pin-glaux-docs.ts",
-    "docs:check": "sh scripts/check-glaux-docs.sh",
+    "docs:check": "node scripts/check-glaux-docs.ts",
     "credits:sync": "node scripts/sync-credits.ts",
     "credits:check": "node scripts/sync-credits.ts --check",
     "predev": "pnpm docs:sync",
@@ -26,9 +25,7 @@
     "test": "node --test test/*.test.ts",
     "pretest": "pnpm i18n:compile",
     "deploy": "pnpm build && wrangler deploy",
-    "test:worker": "node scripts/smoke-worker.ts",
-    "editorial:check": "node scripts/check-editorial-output.ts",
-    "og:check": "node scripts/check-og-output.ts"
+    "test:worker": "node scripts/smoke-worker.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",

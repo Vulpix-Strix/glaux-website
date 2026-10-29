@@ -43,6 +43,8 @@ jobs:
       - name: Check the credits data
         run: pnpm credits:check
 
+      - run: pnpm build
+
       - run: pnpm test
         env:
           GLAUX_DOCS_DIR: ${{ github.workspace }}/.cache/glaux-source/docs
@@ -50,7 +52,5 @@ jobs:
       - run: pnpm types:check
 
       - run: pnpm lint
-
-      - run: pnpm build
 
       - run: pnpm test:worker
