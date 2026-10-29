@@ -21,6 +21,9 @@
       ]
     }
   },
+  "rules": {
+    "import/namespace": ["warn", { "allowComputed": true }]
+  },
   "ignorePatterns": [
     "node_modules/",
     "dist/"

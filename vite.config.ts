@@ -6,6 +6,8 @@ import { defineConfig, type Plugin } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 import { fumadocsMdx } from 'fumadocs-mdx/vite';
 import { cloudflare } from '@cloudflare/vite-plugin';
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
+import { paraglideOptions } from './paraglide.config.ts';
 import { editorialPlugin } from './src/lib/editorial/vite.ts';
 import { loadContent } from './src/lib/editorial/content.ts';
 import { articleUrl } from './src/lib/editorial/model.ts';
@@ -32,6 +34,7 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [
+    paraglideVitePlugin(paraglideOptions),
     creditsEditorial(),
     editorialPlugin(),
     fumadocsMdx(),
