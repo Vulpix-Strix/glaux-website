@@ -3,6 +3,8 @@
   "name": "glaux-website",
   "main": "src/server.ts",
   "compatibility_date": "2026-10-28",
+  // Paraglide isolates the locale of concurrent requests with AsyncLocalStorage.
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "binding": "ASSETS",
     "html_handling": "drop-trailing-slash",
