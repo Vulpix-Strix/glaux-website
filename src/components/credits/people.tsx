@@ -1,27 +1,27 @@
 import { Container } from '@/components/site/primitives';
 import { Action } from '@/components/landing/primitives';
 import { repositoryUrl } from '@/lib/landing/navigation';
-import type { CreditsCopy } from '@/lib/credits/copy';
+import { m } from '@/paraglide/messages';
 import type { EditorialFile } from '@/lib/credits/data';
 import { ExternalLink } from 'lucide-react';
 
-export function People({
-  sections,
-  copy,
-}: {
-  sections: EditorialFile['sections'];
-  copy: CreditsCopy['people'];
-}) {
+// The editorial inventory names its sections in English; unknown titles render as written.
+const sectionTitles: Record<string, () => string> = {
+  'Created by': m.credits_people_sections_created_by,
+  'Special Thanks': m.credits_people_sections_special_thanks,
+};
+
+export function People({ sections }: { sections: EditorialFile['sections'] }) {
   return (
     <section className="gx-section" id="people" aria-labelledby="people-title">
       <Container className="gx-wrap gx-credits-stack flex flex-col gap-14">
         <h2 id="people-title" className="gx-sr">
-          {copy.title}
+          {m.credits_people_title()}
         </h2>
         {sections.map((section) => (
           <div key={section.title}>
             <p className="gx-eyebrow">
-              {(copy.sections as Record<string, string>)[section.title] ?? section.title}
+              {sectionTitles[section.title]?.() ?? section.title}
             </p>
             <ul className="gx-credits-people m-0 grid list-none grid-cols-[repeat(auto-fill,minmax(min(280px,100%),1fr))] gap-4 p-0">
               {section.items.map((item) =>
@@ -34,7 +34,7 @@ export function People({
                     <div>
                       <h3>{item.text}</h3>
                       <Action href={repositoryUrl}>
-                        {copy.repository}
+                        {m.credits_people_repository()}
                         <ExternalLink size={16} />
                       </Action>
                     </div>

@@ -2,9 +2,8 @@ import { useSurfaceTheme } from '@/components/site/use-surface-theme';
 import { Container } from '@/components/site/primitives';
 import { useEffect, useState } from 'react';
 import { SiteThemeSwitch } from '@/components/site/theme-switch';
-import type { LandingLanguage } from '@/lib/i18n';
-import { landingCopy } from '@/lib/landing/copy';
-import { creditsCopy } from '@/lib/credits/copy';
+import type { Locale } from '@/paraglide/runtime';
+import { m } from '@/paraglide/messages';
 import type { EditorialFile } from '@/lib/credits/data';
 import { SiteFooter, SiteHeader } from '@/components/landing/navigation';
 import { Libraries } from './libraries';
@@ -18,53 +17,51 @@ export function CreditsPage({
   lang,
   editorial,
 }: {
-  lang: LandingLanguage;
+  lang: Locale;
   editorial: EditorialFile;
 }) {
   useSurfaceTheme();
-  const site = landingCopy[lang];
-  const copy = creditsCopy[lang];
   const current = useCurrentSection();
   return (
     <div className="glaux-theme gx-credits" id="top">
       <a className="gx-skip" href="#main">
-        {site.skip}
+        {m.landing_skip()}
       </a>
-      <SiteHeader copy={site} lang={lang} page={PAGE}>
+      <SiteHeader lang={lang} page={PAGE}>
         <SiteThemeSwitch />
       </SiteHeader>
       <main id="main" tabIndex={-1}>
         <section className="gx-hero" aria-labelledby="credits-title">
           <Container className="gx-wrap gx-hero-grid relative grid grid-cols-[minmax(0,5fr)_minmax(0,6fr)] items-center gap-16 max-[1100px]:gap-8 max-[900px]:grid-cols-1 max-[900px]:gap-16 max-[600px]:gap-12">
             <div>
-              <nav className="gx-credits-crumbs" aria-label={copy.breadcrumb}>
+              <nav className="gx-credits-crumbs" aria-label={m.credits_breadcrumb()}>
                 <ol>
                   <li>
                     <a href={`/${lang}`}>Glaux</a>
                   </li>
-                  <li aria-current="page">{copy.hero.title}</li>
+                  <li aria-current="page">{m.credits_hero_title()}</li>
                 </ol>
               </nav>
-              <h1 id="credits-title">{copy.hero.title}</h1>
-              <p className="gx-lead">{copy.hero.lead}</p>
+              <h1 id="credits-title">{m.credits_hero_title()}</h1>
+              <p className="gx-lead">{m.credits_hero_lead()}</p>
             </div>
-            <CreditsRoll sections={editorial.sections} caption={copy.hero.figure} />
+            <CreditsRoll sections={editorial.sections} caption={m.credits_hero_figure()} />
           </Container>
         </section>
-        <nav className="gx-credits-anchors" aria-label={copy.nav.label}>
+        <nav className="gx-credits-anchors" aria-label={m.credits_nav_label()}>
           <Container className="gx-wrap">
             {sections.map((id) => (
               <a key={id} href={`#${id}`} aria-current={current === id ? 'location' : undefined}>
-                {copy.nav[id]}
+                {m[`credits_nav_${id}`]()}
               </a>
             ))}
           </Container>
         </nav>
-        <People sections={editorial.sections} copy={copy.people} />
-        <Resources art={editorial.art} copy={copy.resources} libraries={copy.libraries} />
-        <Libraries copy={copy.libraries} />
+        <People sections={editorial.sections} />
+        <Resources art={editorial.art} />
+        <Libraries />
       </main>
-      <SiteFooter copy={site} lang={lang} page={PAGE} />
+      <SiteFooter lang={lang} page={PAGE} />
     </div>
   );
 }

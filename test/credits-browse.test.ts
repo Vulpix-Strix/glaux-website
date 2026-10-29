@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { test } from 'node:test';
 import { familyCounts, filterEntries, licenseFamilies, licenseFamily } from '../src/lib/credits/browse.ts';
-import { creditsCopy } from '../src/lib/credits/copy.ts';
+import { m } from '../src/paraglide/messages.js';
 import { pageHead } from '../src/lib/landing/metadata.ts';
 import { root } from './helpers.ts';
 
@@ -39,11 +39,11 @@ test('search matches names and npm authors, ignoring case', () => {
   assert.equal(filterEntries(glaux.libraries, 'no such crate', 'all').length, 0);
 });
 
-test('credits copy has the same keys in both languages and heads point at /credits', () => {
-  const keys = (value: unknown, prefix = ''): string[] =>
-    typeof value === 'object' && value !== null ? Object.entries(value).flatMap(([key, item]) => keys(item, `${prefix}.${key}`)) : [prefix];
-  assert.deepEqual(keys(creditsCopy.en).sort(), keys(creditsCopy.es).sort());
-  const head = pageHead('es', '/credits', creditsCopy.es);
+test('credits heads point at /credits in both languages', () => {
+  const head = pageHead('es', '/credits', {
+    title: m.credits_title({}, { locale: 'es' }),
+    description: m.credits_description({}, { locale: 'es' }),
+  });
   assert.ok(head.links.some((link) => link.rel === 'canonical' && link.href === 'https://glauxconsole.dev/es/credits'));
   assert.ok(head.links.some((link) => link.hrefLang === 'x-default' && link.href === 'https://glauxconsole.dev/en/credits'));
 });

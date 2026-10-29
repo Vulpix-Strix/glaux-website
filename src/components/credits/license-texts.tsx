@@ -1,16 +1,14 @@
 import { useEffect, useState } from 'react';
 import type { LicenseText } from '@/lib/credits/glaux';
 import { loadTexts, type TextsSource } from '@/lib/credits/data';
-import type { CreditsCopy } from '@/lib/credits/copy';
+import { m } from '@/paraglide/messages';
 
 export function LicenseTexts({
   source,
   ids,
-  copy,
 }: {
   source: TextsSource;
   ids: number[];
-  copy: CreditsCopy['libraries'];
 }) {
   const [texts, setTexts] = useState<LicenseText[] | 'failed' | null>(null);
   const [attempt, setAttempt] = useState(0);
@@ -29,7 +27,7 @@ export function LicenseTexts({
   if (texts === 'failed') {
     return (
       <p className="gx-credits-status px-4 py-8 text-center" role="status">
-        {copy.textsFailed}{' '}
+        {m.credits_libraries_texts_failed()}{' '}
         <button
           type="button"
           className="gx-credits-link"
@@ -38,7 +36,7 @@ export function LicenseTexts({
             setAttempt(attempt + 1);
           }}
         >
-          {copy.retry}
+          {m.credits_libraries_retry()}
         </button>
       </p>
     );
@@ -46,7 +44,7 @@ export function LicenseTexts({
   if (!texts)
     return (
       <p className="gx-credits-status px-4 py-8 text-center" role="status">
-        {copy.textsLoading}
+        {m.credits_libraries_texts_loading()}
       </p>
     );
   return (
