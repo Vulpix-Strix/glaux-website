@@ -5,7 +5,7 @@ import { CartridgeGallery } from './cartridge-gallery';
 import { ConsoleOverview, MachineFacts } from './console-overview';
 import { DownloadOptions } from './download-options';
 import { LearningResources } from './learning-resources';
-import { LandingFooter, LandingHeader } from './navigation';
+import { SiteFooter, SiteHeader } from './navigation';
 import { Action, CodeBlock, PixelImage, SectionHeading } from './primitives';
 import { WorkspacePreview } from './workspace-preview';
 
@@ -14,7 +14,7 @@ export function LandingPage({ lang }: { lang: LandingLanguage }) {
   return (
     <div className="glaux-landing" id="top">
       <a className="gx-skip" href="#main">{copy.skip}</a>
-      <LandingHeader copy={copy} lang={lang} />
+      <SiteHeader copy={copy} lang={lang} />
       <main id="main" tabIndex={-1}>
         <section className="gx-hero" aria-labelledby="hero-title">
           <div className="gx-wrap gx-hero-grid">
@@ -60,7 +60,7 @@ export function LandingPage({ lang }: { lang: LandingLanguage }) {
         </section>
         <DownloadOptions copy={copy.get} />
       </main>
-      <LandingFooter copy={copy} lang={lang} />
+      <SiteFooter copy={copy} lang={lang} />
     </div>
   );
 }

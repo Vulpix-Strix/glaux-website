@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import type { LandingLanguage } from '@/lib/i18n';
 import type { LandingCopy } from '@/lib/landing/copy';
@@ -6,19 +6,21 @@ import { documentationLinks, landingNavigation, repositoryUrl } from '@/lib/land
 import { Wordmark } from '@/components/brand/wordmark';
 import { Action } from './primitives';
 
-export function LanguageLink({ language, current, label }: {
+export function LanguageLink({ language, current, label, page = '' }: {
   language: LandingLanguage;
   current: LandingLanguage;
   label: string;
+  /** Path below the language of the page being left, such as `/credits`. */
+  page?: string;
 }) {
   return (
     <a
-      href={`/${language}`}
+      href={`/${language}${page}`}
       lang={language}
       hrefLang={language}
       aria-current={current === language ? 'page' : undefined}
       onClick={(event) => {
-        event.currentTarget.href = `/${language}${window.location.hash}`;
+        event.currentTarget.href = `/${language}${page}${window.location.hash}`;
       }}
     >
       {label}
@@ -26,7 +28,17 @@ export function LanguageLink({ language, current, label }: {
   );
 }
 
-export function LandingHeader({ copy, lang }: { copy: LandingCopy; lang: LandingLanguage }) {
+/**
+ * The site bar. On the landing its links are anchors of the page; any other page passes its
+ * own path so they lead back to the landing, and may add controls of its own as `children`.
+ */
+export function SiteHeader({ copy, lang, page = '', children }: {
+  copy: LandingCopy;
+  lang: LandingLanguage;
+  page?: string;
+  children?: ReactNode;
+}) {
+  const home = page ? `/${lang}` : '';
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
 
@@ -60,29 +72,31 @@ export function LandingHeader({ copy, lang }: { copy: LandingCopy; lang: Landing
           className={`gx-nav-links${menuOpen ? ' is-open' : ''}`}
         >
           {landingNavigation.map(({ id, href }) => (
-            <a href={href} key={id} onClick={() => setMenuOpen(false)}>{copy.nav[id]}</a>
+            <a href={`${home}${href}`} key={id} onClick={() => setMenuOpen(false)}>{copy.nav[id]}</a>
           ))}
         </nav>
         <div className="gx-nav-end">
           <div className="gx-language" role="group" aria-label={copy.language}>
-            <LanguageLink language="en" current={lang} label="EN" />
-            <LanguageLink language="es" current={lang} label="ES" />
+            <LanguageLink language="en" current={lang} label="EN" page={page} />
+            <LanguageLink language="es" current={lang} label="ES" page={page} />
           </div>
-          <Action href="#download" primary>{copy.download}</Action>
+          {children}
+          <Action href={`${home}#download`} primary>{copy.download}</Action>
         </div>
       </div>
     </header>
   );
 }
 
-export function LandingFooter({ copy, lang }: { copy: LandingCopy; lang: LandingLanguage }) {
+export function SiteFooter({ copy, lang, page = '' }: { copy: LandingCopy; lang: LandingLanguage; page?: string }) {
+  const home = page ? `/${lang}` : '';
   const otherLanguage = lang === 'en' ? 'es' : 'en';
   return (
     <footer className="gx-footer">
       <div className="gx-wrap">
         <div className="gx-footer-grid">
           <div>
-            <a href="#top" aria-label="glaux"><Wordmark /></a>
+            <a href={`${home}#top`} aria-label="glaux"><Wordmark /></a>
             <p>{copy.footer.tagline}</p>
           </div>
           <nav aria-label={copy.footer.learn}>
@@ -106,23 +120,23 @@ export function LandingFooter({ copy, lang }: { copy: LandingCopy; lang: Landing
                 {' / '}
                 <a href={`${repositoryUrl}/blob/main/LICENSE-APACHE`}>Apache-2.0</a>
               </li>
-              <li><a href="#credits">{copy.footer.credits}</a></li>
+              <li><a href={`/${lang}/credits`} aria-current={page === '/credits' ? 'page' : undefined}>{copy.footer.credits}</a></li>
             </ul>
           </nav>
           <nav aria-label={copy.footer.site}>
             <h2>{copy.footer.site}</h2>
             <ul>
-              <li><a href="#download">{copy.download}</a></li>
-              <li><a href="#news">{copy.news.eyebrow}</a></li>
+              <li><a href={`${home}#download`}>{copy.download}</a></li>
+              <li><a href={`${home}#news`}>{copy.news.eyebrow}</a></li>
               <li>
-                <LanguageLink language={otherLanguage} current={lang} label={otherLanguage === 'es' ? 'Español' : 'English'} />
+                <LanguageLink language={otherLanguage} current={lang} label={otherLanguage === 'es' ? 'Español' : 'English'} page={page} />
               </li>
             </ul>
           </nav>
         </div>
-        <div className="gx-footer-base" id="credits">
+        <div className="gx-footer-base">
           <span>glauxconsole.dev · {copy.footer.license}</span>
-          <span>{copy.footer.attribution} <a href="/ASSET-CREDITS.txt">{copy.footer.credits}</a></span>
+          <span>{copy.footer.attribution} <a href={`/${lang}/credits`}>{copy.footer.credits}</a></span>
         </div>
       </div>
     </footer>
