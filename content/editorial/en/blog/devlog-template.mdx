@@ -1,0 +1,110 @@
+---
+id: devlog-template
+title: Devlog template
+description: Editable development template. Replace the instructions with your own account before publishing.
+status: draft
+categories: [devlog, development]
+# Set a real date before changing status to published: YYYY-MM-DD.
+# author: Your name
+# number: 1
+# featured: true
+# series:
+#   id: your-series
+#   title: Your series title
+#   part: 1
+---
+
+<Callout title="Development only">
+This is an editing template and a component test page. All example values, dates and labels below are test fixtures, not Glaux announcements or measurements.
+</Callout>
+
+## What I wanted
+
+Describe the problem and the outcome you wanted.
+
+## What changed
+
+Explain the changes you actually made. Add links to evidence.
+
+## What I tried
+
+Describe alternatives you explored and why you chose one.
+
+## Results and evidence
+
+Replace this section with verified observations. Remove it if you have no measurements.
+
+## Difficulties and lessons
+
+Describe difficulties without inventing results.
+
+## Next steps
+
+List your real next steps.
+
+## Component examples
+
+Remove or replace these examples before publishing. The images reuse existing Glaux screenshots; the video is a test fade, not new gameplay footage.
+
+<InlineTOC items={toc}>Example index</InlineTOC>
+
+### Figures and gallery
+
+<ArticleFigure src="asset:drafts/demo-gameplay.png" alt="Existing Signal Lost screenshot, used for component testing" width={320} height={240} caption="Development test image" />
+
+<ArticleGallery title="Development test gallery" images={[
+  {src: 'asset:drafts/demo-gameplay.png', alt: 'Signal Lost', width: 320, height: 240, caption: 'Signal Lost'},
+  {src: 'asset:drafts/demo-shell.png', alt: 'Glaux shell', width: 320, height: 240, caption: 'Glaux shell'}
+]} />
+
+### Comparison
+
+<ImageComparison label="Test comparison of two different screenshots" before={{src: 'asset:drafts/demo-gameplay.png', alt: 'Signal Lost', width: 320, height: 240}} after={{src: 'asset:drafts/demo-shell.png', alt: 'Glaux shell', width: 320, height: 240}} />
+
+### Video and animation
+
+<ArticleVideo title="Test video, two second fade" sources={[{src: 'asset:drafts/demo.mp4', type: 'video/mp4'}]} poster="asset:drafts/demo-gameplay.png" tracks={[{src: 'asset:drafts/demo.vtt', srcLang: 'en', label: 'English', default: true}]} chapters={[{time: 0, title: 'Start'}, {time: 1, title: 'Fade'}]} transcript="Development media test. A screenshot fades to dark. No speech or product announcement." />
+
+<AnimatedClip title="Pausable test animation" sources={[{src: 'asset:drafts/demo.mp4', type: 'video/mp4'}]} poster="asset:drafts/demo-gameplay.png" />
+
+### Event and metrics
+
+<EventCard title="Calendar test, not a real event" start="2000-01-01T12:00:00Z" end="2000-01-01T13:00:00Z" timeZone="UTC" location="Development fixture" description="Test data only. Do not publish." />
+
+<Metric label="Test value, not a measurement" value={12} unit="ms" context="Example only" />
+
+<Milestone label="Test milestone" value={3} goal={10} context="Example values, not project progress" />
+
+### Tabs, types and code
+
+<Tabs items={['English', 'Español']}>
+  <Tab>Development example.</Tab>
+  <Tab>Ejemplo de desarrollo.</Tab>
+</Tabs>
+
+<TypeTable type={{label: {type: 'string', description: 'Accessible component label', required: true}}} />
+
+```ts title="example.ts"
+// Development example only.
+const message = 'Glaux';
+console.log(message);
+```
+
+### Notices and links
+
+<EditorialNotice>An optional note written by this article, not a default warning.</EditorialNotice>
+
+<ResourceCard href="/en/docs/guide" title="Documentation">Existing English documentation.</ResourceCard>
+
+<GameCard href="https://github.com/Vulpix-Strix/glaux/tree/main/examples/signal-lost" title="Signal Lost">Existing example cartridge in the repository.</GameCard>
+
+
+```luau title="example.luau"
+-- Development example only.
+print("Glaux")
+```
+
+```rhai title="example.rhai"
+// Development example only.
+print("Glaux");
+```

@@ -1,0 +1,110 @@
+---
+id: devlog-template
+title: Plantilla de devlog
+description: Plantilla editable de desarrollo. Sustituye las instrucciones por tu propio relato antes de publicar.
+status: draft
+categories: [devlog, development]
+# Set a real date before changing status to published: YYYY-MM-DD.
+# author: Your name
+# number: 1
+# featured: true
+# series:
+#   id: your-series
+#   title: Your series title
+#   part: 1
+---
+
+<Callout title="Solo desarrollo">
+Esta es una plantilla de edición y una página de pruebas. Los valores, fechas y etiquetas siguientes son datos de prueba, no anuncios ni mediciones de Glaux.
+</Callout>
+
+## Objetivo
+
+Describe el problema y el resultado que buscabas.
+
+## Qué cambió
+
+Explica los cambios que realizaste y enlaza la evidencia.
+
+## Qué intenté
+
+Describe las alternativas exploradas y por qué elegiste una.
+
+## Resultados y evidencia
+
+Añade observaciones verificadas. Elimina esta sección si no hay mediciones.
+
+## Dificultades y aprendizajes
+
+Describe las dificultades sin inventar resultados.
+
+## Próximos pasos
+
+Enumera tus próximos pasos reales.
+
+## Ejemplos de componentes
+
+Elimina o sustituye estos ejemplos antes de publicar. Las imágenes reutilizan capturas existentes de Glaux; el vídeo es un fundido de prueba, no una nueva grabación del juego.
+
+<InlineTOC items={toc}>Índice de ejemplo</InlineTOC>
+
+### Figuras y galería
+
+<ArticleFigure src="asset:drafts/demo-gameplay.png" alt="Captura existente de Signal Lost para probar el componente" width={320} height={240} caption="Imagen de prueba de desarrollo" />
+
+<ArticleGallery title="Galería de prueba de desarrollo" images={[
+  {src: 'asset:drafts/demo-gameplay.png', alt: 'Signal Lost', width: 320, height: 240, caption: 'Signal Lost'},
+  {src: 'asset:drafts/demo-shell.png', alt: 'Glaux shell', width: 320, height: 240, caption: 'Glaux shell'}
+]} />
+
+### Comparador
+
+<ImageComparison label="Comparación de prueba de dos capturas distintas" before={{src: 'asset:drafts/demo-gameplay.png', alt: 'Signal Lost', width: 320, height: 240}} after={{src: 'asset:drafts/demo-shell.png', alt: 'Glaux shell', width: 320, height: 240}} />
+
+### Vídeo y animación
+
+<ArticleVideo title="Vídeo de prueba, fundido de dos segundos" sources={[{src: 'asset:drafts/demo.mp4', type: 'video/mp4'}]} poster="asset:drafts/demo-gameplay.png" tracks={[{src: 'asset:drafts/demo.vtt', srcLang: 'es', label: 'Español', default: true}]} chapters={[{time: 0, title: 'Inicio'}, {time: 1, title: 'Fundido'}]} transcript="Prueba multimedia de desarrollo. Una captura se oscurece. No hay voz ni anuncios del producto." />
+
+<AnimatedClip title="Animación de prueba con pausa" sources={[{src: 'asset:drafts/demo.mp4', type: 'video/mp4'}]} poster="asset:drafts/demo-gameplay.png" />
+
+### Evento y métricas
+
+<EventCard title="Prueba de calendario, no es un evento real" start="2000-01-01T12:00:00Z" end="2000-01-01T13:00:00Z" timeZone="UTC" location="Datos de prueba" description="Solo datos de prueba. No publicar." />
+
+<Metric label="Valor de prueba, no es una medición" value={12} unit="ms" context="Solo un ejemplo" />
+
+<Milestone label="Hito de prueba" value={3} goal={10} context="Valores de ejemplo, no es el progreso del proyecto" />
+
+### Pestañas, tipos y código
+
+<Tabs items={['English', 'Español']}>
+  <Tab>Development example.</Tab>
+  <Tab>Ejemplo de desarrollo.</Tab>
+</Tabs>
+
+<TypeTable type={{label: {type: 'string', description: 'Etiqueta accesible del componente', required: true}}} />
+
+```ts title="example.ts"
+// Development example only.
+const message = 'Glaux';
+console.log(message);
+```
+
+### Avisos y enlaces
+
+<EditorialNotice>Nota opcional de este artículo, no es un aviso predeterminado.</EditorialNotice>
+
+<ResourceCard href="/en/docs/guide" title="Documentación">Documentación existente en inglés.</ResourceCard>
+
+<GameCard href="https://github.com/Vulpix-Strix/glaux/tree/main/examples/signal-lost" title="Signal Lost">Cartucho de ejemplo existente en el repositorio.</GameCard>
+
+
+```luau title="example.luau"
+-- Development example only.
+print("Glaux")
+```
+
+```rhai title="example.rhai"
+// Development example only.
+print("Glaux");
+```

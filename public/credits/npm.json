@@ -212,7 +212,7 @@
       "author": "MUI Team",
       "repository": "https://github.com/mui/base-ui",
       "scope": "runtime",
-      "direct": false,
+      "direct": true,
       "text_ids": [
         3
       ]
@@ -3222,6 +3222,18 @@
       ]
     },
     {
+      "name": "reading-time",
+      "version": "1.5.0",
+      "license": "MIT",
+      "author": "Nicolas Gryman <ngryman@gmail.com> (http://ngryman.sh)",
+      "repository": "https://github.com/ngryman/reading-time",
+      "scope": "runtime",
+      "direct": true,
+      "text_ids": [
+        117
+      ]
+    },
+    {
       "name": "recma-build-jsx",
       "version": "1.0.0",
       "license": "MIT",
@@ -3230,7 +3242,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        117
+        118
       ]
     },
     {
@@ -3242,7 +3254,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        117
+        118
       ]
     },
     {
@@ -3254,7 +3266,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        117
+        118
       ]
     },
     {
@@ -3266,7 +3278,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        117
+        118
       ]
     },
     {
@@ -3278,7 +3290,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        118
+        119
       ]
     },
     {
@@ -3290,7 +3302,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        119
+        120
       ]
     },
     {
@@ -3302,7 +3314,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        118
+        119
       ]
     },
     {
@@ -3314,7 +3326,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        117
+        118
       ]
     },
     {
@@ -3338,7 +3350,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        120
+        121
       ]
     },
     {
@@ -3350,7 +3362,7 @@
       "scope": "runtime",
       "direct": true,
       "text_ids": [
-        121
+        122
       ]
     },
     {
@@ -3374,7 +3386,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        121
+        122
       ]
     },
     {
@@ -3386,7 +3398,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        121
+        122
       ]
     },
     {
@@ -3397,7 +3409,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        122
+        123
       ]
     },
     {
@@ -3411,7 +3423,7 @@
         "@rolldown/binding-<platform>"
       ],
       "text_ids": [
-        123
+        124
       ]
     },
     {
@@ -3434,7 +3446,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        124
+        125
       ]
     },
     {
@@ -3470,7 +3482,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        125
+        126
       ]
     },
     {
@@ -3482,7 +3494,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        125
+        126
       ]
     },
     {
@@ -3497,7 +3509,7 @@
         "@img/sharp-<platform>"
       ],
       "text_ids": [
-        126
+        127
       ]
     },
     {
@@ -3521,7 +3533,7 @@
       "scope": "dev",
       "direct": false,
       "text_ids": [
-        127
+        128
       ]
     },
     {
@@ -3533,7 +3545,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        127
+        128
       ]
     },
     {
@@ -3580,7 +3592,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        128
+        129
       ]
     },
     {
@@ -3592,7 +3604,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        129
+        130
       ]
     },
     {
@@ -3640,7 +3652,7 @@
       "scope": "dev",
       "direct": false,
       "text_ids": [
-        130
+        131
       ]
     },
     {
@@ -3652,7 +3664,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        131
+        132
       ]
     },
     {
@@ -3664,7 +3676,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        132
+        133
       ]
     },
     {
@@ -3688,7 +3700,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        133
+        134
       ]
     },
     {
@@ -3700,7 +3712,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        134
+        135
       ]
     },
     {
@@ -3715,8 +3727,8 @@
         "@typescript/typescript-<platform>"
       ],
       "text_ids": [
-        135,
-        136
+        136,
+        137
       ]
     },
     {
@@ -3738,7 +3750,7 @@
       "scope": "dev",
       "direct": false,
       "text_ids": [
-        137
+        138
       ]
     },
     {
@@ -3749,7 +3761,7 @@
       "scope": "dev",
       "direct": false,
       "text_ids": [
-        137
+        138
       ]
     },
     {
@@ -3772,7 +3784,7 @@
       "scope": "runtime",
       "direct": true,
       "text_ids": [
-        138
+        139
       ]
     },
     {
@@ -3784,7 +3796,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        139
+        140
       ]
     },
     {
@@ -3867,7 +3879,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        140
+        141
       ]
     },
     {
@@ -3879,7 +3891,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        141
+        142
       ]
     },
     {
@@ -3938,7 +3950,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        138
+        139
       ]
     },
     {
@@ -3950,7 +3962,7 @@
       "scope": "dev",
       "direct": true,
       "text_ids": [
-        142
+        143
       ]
     },
     {
@@ -3961,7 +3973,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        143
+        144
       ]
     },
     {
@@ -3985,7 +3997,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        144
+        145
       ]
     },
     {
@@ -4024,7 +4036,7 @@
       "scope": "dev",
       "direct": false,
       "text_ids": [
-        145
+        146
       ]
     },
     {
@@ -4036,7 +4048,7 @@
       "scope": "dev",
       "direct": false,
       "text_ids": [
-        145
+        146
       ]
     },
     {
@@ -4072,7 +4084,7 @@
       "scope": "runtime",
       "direct": true,
       "text_ids": [
-        146
+        147
       ]
     },
     {
@@ -4084,7 +4096,7 @@
       "scope": "dev",
       "direct": false,
       "text_ids": [
-        147
+        148
       ]
     },
     {
@@ -4144,7 +4156,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        148
+        149
       ]
     },
     {
@@ -4156,7 +4168,7 @@
       "scope": "runtime",
       "direct": false,
       "text_ids": [
-        149
+        150
       ]
     },
     {
