@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/site/primitives';
-import { useEditorialCopy } from '../context';
 import type { VideoSource } from './video';
 import { pauseOnReducedMotion } from '@/lib/editorial/media';
+import { m } from '@/paraglide/messages';
 export function AnimatedClip({
   sources,
   poster,
@@ -15,7 +15,6 @@ export function AnimatedClip({
   const video = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
-  const copy = useEditorialCopy();
   useEffect(() => {
     return pauseOnReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)'), () =>
       video.current?.pause(),
@@ -52,11 +51,11 @@ export function AnimatedClip({
       </video>
       <figcaption className="my-3 font-semibold">{title}</figcaption>
       <Button onClick={toggle} aria-pressed={playing}>
-        {playing ? copy.pause : copy.play}
+        {playing ? m.editorial_pause() : m.editorial_play()}
       </Button>
       {failed && (
         <p role="status" className="mt-3">
-          {copy.mediaError}
+          {m.editorial_media_error()}
         </p>
       )}
     </figure>

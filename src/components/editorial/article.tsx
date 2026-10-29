@@ -11,7 +11,6 @@ import {
   relatedArticles,
   seriesArticles,
 } from '@/lib/editorial/catalog';
-import { editorialCopy } from '@/lib/editorial/copy';
 import { absoluteUrl } from '@/lib/site';
 import { Container } from '@/components/site/primitives';
 import { ArticleMeta, ArticleTags, ArticleCard } from './cards';
@@ -19,6 +18,7 @@ import { EditorialShell } from './shell';
 import { editorialComponents } from './mdx';
 import { EditorialNotice, ArticleFigure } from './blocks/content';
 import { ReadingProgress, ShareArticle } from './reading';
+import { m } from '@/paraglide/messages';
 
 export function EditorialArticle({
   article,
@@ -29,7 +29,6 @@ export function EditorialArticle({
   body: ComponentType<MDXProps>;
   toc: TOCItemType[];
 }) {
-  const copy = editorialCopy[article.lang];
   const translations = Object.fromEntries(
     articleTranslations(articles, article).map((item) => [
       item.lang,
@@ -45,17 +44,17 @@ export function EditorialArticle({
       page={`/${article.section}/${article.slug}`}
       languagePaths={translations}
     >
-      {article.status === 'draft' && <EditorialNotice>{copy.draft}</EditorialNotice>}
+      {article.status === 'draft' && <EditorialNotice>{m.editorial_draft()}</EditorialNotice>}
       {article.notice && <EditorialNotice>{article.notice}</EditorialNotice>}
       {article.section === 'blog' && <ReadingProgress title={article.title} />}
       <main id="main" tabIndex={-1}>
         <Container className="pt-10 pb-16 sm:pt-12 sm:pb-24">
           <header className="mb-10 flex flex-col items-start gap-6">
-            <nav aria-label={copy.breadcrumb} className="text-sm text-gx-muted">
+            <nav aria-label={m.editorial_breadcrumb()} className="text-sm text-gx-muted">
               <ol className="flex flex-wrap gap-2">
                 <li>
                   <a href={`/${article.lang}/${article.section}`} className="text-gx-accent">
-                    {copy[article.section]}
+                    {m[`editorial_${article.section}`]()}
                   </a>
                 </li>
                 <li aria-hidden="true">/</li>
@@ -89,9 +88,9 @@ export function EditorialArticle({
               </div>
             </div>
             <aside className="min-w-0 space-y-8 lg:sticky lg:top-16 max-lg:order-first">
-              {toc.length > 0 && <InlineTOC items={toc}>{copy.toc}</InlineTOC>}
+              {toc.length > 0 && <InlineTOC items={toc}>{m.editorial_toc()}</InlineTOC>}
               {series.length > 0 && (
-                <nav aria-label={copy.series}>
+                <nav aria-label={m.editorial_series()}>
                   <h2 className="mb-3 font-semibold">{article.series?.title}</h2>
                   <ol className="space-y-3">
                     {series.map((item) => (
@@ -112,7 +111,7 @@ export function EditorialArticle({
           </div>
           {related.length > 0 && (
             <section className="mt-16">
-              <h2 className="mb-6 text-2xl font-bold">{copy.related}</h2>
+              <h2 className="mb-6 text-2xl font-bold">{m.editorial_related()}</h2>
               <div className="grid gap-4 md:grid-cols-3">
                 {related.map((item) => (
                   <ArticleCard key={item.id} article={item} />
@@ -122,17 +121,17 @@ export function EditorialArticle({
           )}
           {(neighbors.newer || neighbors.older) && (
             <nav
-              aria-label={copy.archive}
+              aria-label={m.editorial_archive()}
               className="mt-10 flex flex-wrap justify-between gap-5 border-t border-gx-border pt-6"
             >
               {neighbors.newer && (
                 <a href={articleUrl(neighbors.newer)} className="text-gx-accent">
-                  ← {copy.newer}: {neighbors.newer.title}
+                  ← {m.editorial_newer()}: {neighbors.newer.title}
                 </a>
               )}
               {neighbors.older && (
                 <a href={articleUrl(neighbors.older)} className="text-gx-accent">
-                  {copy.older}: {neighbors.older.title} →
+                  {m.editorial_older()}: {neighbors.older.title} →
                 </a>
               )}
             </nav>

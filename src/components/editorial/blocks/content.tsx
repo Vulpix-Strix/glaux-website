@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { Banner } from 'fumadocs-ui/components/banner';
 import type { EditorialImage } from '@/lib/editorial/model';
 import { SurfaceCard } from '@/components/site/primitives';
-import { useEditorialCopy } from '../context';
+import { m } from '@/paraglide/messages';
 export function ArticleFigure({ caption, ...image }: EditorialImage) {
   return (
     <figure className="my-8">
@@ -12,7 +12,6 @@ export function ArticleFigure({ caption, ...image }: EditorialImage) {
   );
 }
 export function EditorialNotice({ children }: { children?: ReactNode }) {
-  const copy = useEditorialCopy();
   if (!children) return null;
   return (
     <Banner
@@ -21,7 +20,7 @@ export function EditorialNotice({ children }: { children?: ReactNode }) {
       className="relative! h-auto! min-h-11 flex-wrap gap-2 border-y border-gx-warning bg-gx-warning-subtle! py-3 text-gx-warning-text!"
       role="note"
     >
-      <strong>{copy.notice}</strong>
+      <strong>{m.editorial_notice()}</strong>
       <span>{children}</span>
     </Banner>
   );

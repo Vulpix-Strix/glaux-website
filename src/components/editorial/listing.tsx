@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { articles } from 'virtual:editorial';
-import type { LandingLanguage } from '@/lib/i18n';
+import type { Locale } from '@/paraglide/runtime';
 import {
   articleUrl,
   categories,
@@ -13,22 +13,21 @@ import {
   validateArticleSearch,
   type ArticleSearch,
 } from '@/lib/editorial/catalog';
-import { editorialCopy } from '@/lib/editorial/copy';
 import { Container, Eyebrow, SurfaceCard, buttonClasses } from '@/components/site/primitives';
 import { ArticleCard } from './cards';
 import { ListingSidebar, NewsExtras } from './listing-extras';
 import { EditorialShell } from './shell';
+import { m } from '@/paraglide/messages';
 
 export function EditorialListing({
   lang,
   section,
   search,
 }: {
-  lang: LandingLanguage;
+  lang: Locale;
   section: EditorialSection;
   search: ArticleSearch;
 }) {
-  const copy = editorialCopy[lang];
   const published = articlesFor(articles, lang, section);
   const result = queryArticles(published, search);
   const filtered = Boolean(search.q || search.category || search.page > 1);
@@ -58,17 +57,17 @@ export function EditorialListing({
         <Container className="pt-12 pb-16 sm:pt-16 sm:pb-24">
           <div className="mb-10 flex flex-wrap items-end justify-between gap-8">
             <div className="max-w-reading">
-              {section === 'blog' && <Eyebrow>{copy.eyebrow}</Eyebrow>}
+              {section === 'blog' && <Eyebrow>{m.editorial_eyebrow()}</Eyebrow>}
               <h1 className="mb-4 text-5xl font-bold tracking-tight sm:text-6xl">
-                {copy[section]}
+                {m[`editorial_${section}`]()}
               </h1>
               <p className="max-w-[55ch] text-lg leading-8 text-gx-muted">
-                {section === 'news' ? copy.newsLead : copy.blogLead}
+                {section === 'news' ? m.editorial_news_lead() : m.editorial_blog_lead()}
               </p>
             </div>
             <form className="w-full max-w-sm" role="search">
               <label className="mb-2 block text-sm font-semibold" htmlFor="article-search">
-                {copy.search}
+                {m.editorial_search()}
               </label>
               <div className="flex gap-2">
                 <input
@@ -80,13 +79,13 @@ export function EditorialListing({
                 />
                 {search.category && <input type="hidden" name="category" value={search.category} />}
                 <button className={buttonClasses} type="submit">
-                  {copy.search}
+                  {m.editorial_search()}
                 </button>
               </div>
             </form>
           </div>
           {topics.length > 0 && (
-            <nav aria-label={copy.categories} className="mb-10 flex flex-wrap gap-2">
+            <nav aria-label={m.editorial_categories()} className="mb-10 flex flex-wrap gap-2">
               {filters.map((category) => (
                 <Link
                   key={category}
@@ -96,7 +95,7 @@ export function EditorialListing({
                   aria-current={search.category === category ? 'page' : undefined}
                   className="inline-flex min-h-10 items-center gap-2 rounded-full border border-gx-border-strong px-4 text-sm font-semibold hover:bg-gx-hover aria-current:border-gx-accent aria-current:bg-gx-accent-subtle"
                 >
-                  {category ? copy.topics[category] : copy.all}
+                  {category ? m[`editorial_topics_${category}`]() : m.editorial_all()}
                   <span className="text-gx-muted">
                     {category
                       ? published.filter((article) =>
@@ -116,7 +115,7 @@ export function EditorialListing({
           {recent.length > 0 && (
             <section className="mb-16" aria-labelledby="recent-title">
               <h2 id="recent-title" className="mb-6 text-2xl font-bold">
-                {copy.recent}
+                {m.editorial_recent()}
               </h2>
               <div className="grid gap-4 md:grid-cols-3">
                 {recent.map((article) => (
@@ -127,12 +126,12 @@ export function EditorialListing({
           )}
           {!published.length ? (
             <SurfaceCard className="border-dashed p-8 sm:p-12">
-              <h2 className="text-2xl font-semibold">{copy.empty}</h2>
-              <p className="mt-3 text-gx-muted">{copy.emptyText}</p>
+              <h2 className="text-2xl font-semibold">{m.editorial_empty()}</h2>
+              <p className="mt-3 text-gx-muted">{m.editorial_empty_text()}</p>
             </SurfaceCard>
           ) : !result.total ? (
             <p role="status" className="py-12 text-gx-muted">
-              {copy.noResults}
+              {m.editorial_no_results()}
             </p>
           ) : (
             <div
@@ -140,7 +139,7 @@ export function EditorialListing({
             >
               <section aria-labelledby="archive-title">
                 <h2 id="archive-title" className="mb-6 text-2xl font-bold">
-                  {section === 'blog' || filtered ? copy.archive : copy.latest}
+                  {section === 'blog' || filtered ? m.editorial_archive() : m.editorial_latest()}
                 </h2>
                 <div className={section === 'news' ? 'grid gap-4 md:grid-cols-12' : 'grid gap-5'}>
                   {visible.map((article, index) => (
@@ -153,12 +152,12 @@ export function EditorialListing({
                   ))}
                 </div>
               </section>
-              {section === 'blog' && <ListingSidebar articles={published} lang={lang} />}
+              {section === 'blog' && <ListingSidebar articles={published} />}
             </div>
           )}
           {result.pages > 1 && (
             <nav
-              aria-label={copy.archive}
+              aria-label={m.editorial_archive()}
               className="mt-10 flex flex-wrap items-center justify-center gap-3"
             >
               {Array.from({ length: result.pages }, (_, i) => i + 1).map((page) => (
@@ -175,11 +174,11 @@ export function EditorialListing({
               ))}
             </nav>
           )}
-          {section === 'news' && !filtered && <NewsExtras articles={published} lang={lang} />}
+          {section === 'news' && !filtered && <NewsExtras articles={published} />}
           <div className="mt-12 flex flex-wrap gap-5 text-sm font-semibold text-gx-accent">
-            <a href={`/${lang}/${section}/rss.xml`}>{copy.feed}</a>
+            <a href={`/${lang}/${section}/rss.xml`}>{m.editorial_feed()}</a>
             <a href={`/${lang}/${section === 'blog' ? 'news' : 'blog'}`}>
-              {section === 'blog' ? copy.news : copy.blog}
+              {section === 'blog' ? m.editorial_news() : m.editorial_blog()}
             </a>
             <a href="/en/docs/guide" hrefLang="en">
               Docs
@@ -187,7 +186,7 @@ export function EditorialListing({
           </div>
           {drafts.length > 0 && (
             <aside className="mt-10 rounded-lg border border-dashed border-gx-warning p-5">
-              <p className="text-sm text-gx-muted">{copy.draft}</p>
+              <p className="text-sm text-gx-muted">{m.editorial_draft()}</p>
               <ul className="mt-3 space-y-2">
                 {drafts.map((article) => (
                   <li key={article.id}>

@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/site/primitives';
-import { useEditorialCopy } from './context';
+import { m } from '@/paraglide/messages';
 
 export function ReadingProgress({ title }: { title: string }) {
   const [progress, setProgress] = useState(0);
-  const copy = useEditorialCopy();
   useEffect(() => {
     let frame = 0;
     function measure() {
@@ -44,7 +43,7 @@ export function ReadingProgress({ title }: { title: string }) {
         {title}
       </span>
       <progress
-        aria-label={copy.progress}
+        aria-label={m.editorial_progress()}
         max={100}
         value={progress}
         className="gx-reading-progress h-2 min-w-0 flex-1"
@@ -54,7 +53,6 @@ export function ReadingProgress({ title }: { title: string }) {
   );
 }
 export function ShareArticle({ url, title }: { url: string; title: string }) {
-  const copy = useEditorialCopy();
   const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
   useEffect(() => {
     if (state !== 'copied') return;
@@ -71,19 +69,19 @@ export function ShareArticle({ url, title }: { url: string; title: string }) {
   }
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button onClick={copyLink}>{copy.copy}</Button>
+      <Button onClick={copyLink}>{m.editorial_copy()}</Button>
       <a
         className="inline-flex min-h-11 items-center text-sm text-gx-accent underline"
         href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`}
       >
-        {copy.email}
+        {m.editorial_email()}
       </a>
       <span role="status" className="text-sm text-gx-muted">
-        {state === 'copied' ? copy.copied : ''}
+        {state === 'copied' ? m.editorial_copied() : ''}
       </span>
       {state === 'failed' && (
         <label className="w-full text-sm">
-          {copy.copyFailed}
+          {m.editorial_copy_failed()}
           <input
             readOnly
             value={url}

@@ -1,7 +1,7 @@
 import { articleUrl, type Article, type EditorialSection } from './model.ts';
-import type { LandingLanguage } from '../i18n.ts';
+import type { Locale } from '../../paraglide/runtime.js';
 
-export function articlesFor(articles: Article[], lang: LandingLanguage, section: EditorialSection) {
+export function articlesFor(articles: Article[], lang: Locale, section: EditorialSection) {
   return articles
     .filter(
       (article) =>
@@ -92,7 +92,7 @@ const escapeXml = (text: string) =>
   );
 export function rssFeed(
   articles: Article[],
-  lang: LandingLanguage,
+  lang: Locale,
   section: EditorialSection,
   origin: string,
 ) {

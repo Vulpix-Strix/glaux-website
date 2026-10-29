@@ -1,4 +1,4 @@
-import type { LandingLanguage } from '../i18n.ts';
+import type { Locale } from '../../paraglide/runtime.js';
 
 export const sections = ['news', 'blog'] as const;
 export type EditorialSection = (typeof sections)[number];
@@ -22,7 +22,7 @@ export interface EditorialImage {
 }
 export interface Article {
   id: string;
-  lang: LandingLanguage;
+  lang: Locale;
   section: EditorialSection;
   slug: string;
   title: string;

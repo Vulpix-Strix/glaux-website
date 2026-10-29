@@ -240,11 +240,3 @@ test('search defaults do not introduce redirects on canonical list URLs', async 
   });
 });
 
-test('editorial interface copy has matching English and Spanish keys', async () => {
-  const { editorialCopy } = await import('../src/lib/editorial/copy.ts');
-  const keys = (value: unknown, prefix = ''): string[] =>
-    typeof value !== 'object' || value === null
-      ? [prefix]
-      : Object.entries(value).flatMap(([key, item]) => keys(item, `${prefix}.${key}`));
-  assert.deepEqual(keys(editorialCopy.en).sort(), keys(editorialCopy.es).sort());
-});

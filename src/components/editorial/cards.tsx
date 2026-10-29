@@ -1,7 +1,8 @@
 import type { Article } from '@/lib/editorial/model';
 import { articleUrl } from '@/lib/editorial/model';
-import { editorialCopy, formatArticleDate } from '@/lib/editorial/copy';
 import { EventCard } from './blocks/event';
+import { formatArticleDate } from '@/lib/editorial/format';
+import { m } from '@/paraglide/messages';
 
 const categoryColors = {
   announcements: 'bg-gx-accent-subtle text-gx-accent',
@@ -21,7 +22,6 @@ export function ArticleMeta({
   article: Article;
   showWords?: boolean;
 }) {
-  const copy = editorialCopy[article.lang];
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gx-muted">
       {article.author && <span>{article.author}</span>}
@@ -29,18 +29,17 @@ export function ArticleMeta({
         <time dateTime={article.date}>{formatArticleDate(article.date, article.lang)}</time>
       )}
       <span>
-        {article.minutes} {copy.minutes}
+        {article.minutes} {m.editorial_minutes()}
       </span>
       {showWords && (
         <span>
-          {article.words} {copy.words}
+          {article.words} {m.editorial_words()}
         </span>
       )}
     </div>
   );
 }
 export function ArticleTags({ article }: { article: Article }) {
-  const copy = editorialCopy[article.lang];
   return (
     <div className="flex flex-wrap gap-2">
       {article.categories.map((category) => (
@@ -49,7 +48,7 @@ export function ArticleTags({ article }: { article: Article }) {
           href={`/${article.lang}/${article.section}?category=${category}`}
           className={`inline-flex min-h-7 items-center rounded-gx border border-gx-border px-2 text-xs font-semibold hover:underline ${categoryColors[category]}`}
         >
-          {copy.topics[category]}
+          {m[`editorial_topics_${category}`]()}
         </a>
       ))}
     </div>
@@ -66,7 +65,6 @@ export function ArticleCard({
   compact?: boolean;
   className?: string;
 }) {
-  const copy = editorialCopy[article.lang];
   const layout = featured
     ? 'shadow-gx-pixel min-[900px]:grid min-[900px]:grid-cols-[1.35fr_1fr]'
     : compact
@@ -111,7 +109,7 @@ export function ArticleCard({
         <ArticleMeta article={article} />
         {featured && (
           <a href={articleUrl(article)} className="font-semibold text-gx-accent hover:underline">
-            {copy.read} →
+            {m.editorial_read()} →
           </a>
         )}
         {article.presentation === 'event' && article.event && (

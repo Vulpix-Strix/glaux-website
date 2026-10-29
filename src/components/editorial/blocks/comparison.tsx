@@ -1,6 +1,6 @@
 import { useId, useState } from 'react';
 import type { EditorialImage } from '@/lib/editorial/model';
-import { useEditorialCopy } from '../context';
+import { m } from '@/paraglide/messages';
 export function ImageComparison({
   before,
   after,
@@ -12,7 +12,6 @@ export function ImageComparison({
   initial?: number;
   label?: string;
 }) {
-  const copy = useEditorialCopy();
   const id = useId();
   const [position, setPosition] = useState(Math.min(100, Math.max(0, initial)));
   return (
@@ -42,12 +41,12 @@ export function ImageComparison({
           style={{ left: `${position}%` }}
         />
         <div aria-hidden="true" className="absolute inset-x-3 bottom-3 flex justify-between">
-          <span className="rounded-gx bg-gx-bg px-2 text-sm">{copy.after}</span>
-          <span className="rounded-gx bg-gx-bg px-2 text-sm">{copy.before}</span>
+          <span className="rounded-gx bg-gx-bg px-2 text-sm">{m.editorial_after()}</span>
+          <span className="rounded-gx bg-gx-bg px-2 text-sm">{m.editorial_before()}</span>
         </div>
       </div>
       <label htmlFor={id} className="mt-3 block text-sm font-semibold">
-        {label ?? copy.compare}
+        {label ?? m.editorial_compare()}
       </label>
       <input
         id={id}
@@ -56,7 +55,7 @@ export function ImageComparison({
         max="100"
         value={position}
         onChange={(event) => setPosition(Number(event.target.value))}
-        aria-valuetext={`${copy.after}: ${position}%, ${copy.before}: ${100 - position}%`}
+        aria-valuetext={`${m.editorial_after()}: ${position}%, ${m.editorial_before()}: ${100 - position}%`}
         className="min-h-11 w-full cursor-ew-resize accent-gx-accent"
       />
     </figure>

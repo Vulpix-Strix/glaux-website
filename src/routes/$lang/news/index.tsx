@@ -1,18 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { EditorialListing } from '@/components/editorial/listing';
 import { parseArticleSearch, validateArticleSearch } from '@/lib/editorial/catalog';
-import { editorialCopy } from '@/lib/editorial/copy';
-import { isLandingLanguage } from '@/lib/i18n';
+import { isLocale } from '@/paraglide/runtime';
 import { pageHead } from '@/lib/landing/metadata';
+import { m } from '@/paraglide/messages';
 
 export const Route = createFileRoute('/$lang/news/')({
   validateSearch: validateArticleSearch,
   head: ({ params }) => {
-    const lang = isLandingLanguage(params.lang) ? params.lang : 'en';
-    const copy = editorialCopy[lang];
+    const lang = isLocale(params.lang) ? params.lang : 'en';
     const head = pageHead(lang, '/news', {
-      title: `${copy.news} — Glaux`,
-      description: copy.newsLead,
+      title: `${m.editorial_news({}, { locale: lang })} — Glaux`,
+      description: m.editorial_news_lead({}, { locale: lang }),
     });
     return {
       ...head,
@@ -21,7 +20,7 @@ export const Route = createFileRoute('/$lang/news/')({
         {
           rel: 'alternate',
           type: 'application/rss+xml',
-          title: `Glaux ${copy.news}`,
+          title: `Glaux ${m.editorial_news({}, { locale: lang })}`,
           href: `/${lang}/news/rss.xml`,
         },
       ],
@@ -33,7 +32,7 @@ function Page() {
   const { lang } = Route.useParams();
   return (
     <EditorialListing
-      lang={isLandingLanguage(lang) ? lang : 'en'}
+      lang={isLocale(lang) ? lang : 'en'}
       section="news"
       search={parseArticleSearch(Route.useSearch())}
     />

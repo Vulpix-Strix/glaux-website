@@ -3,10 +3,9 @@ import { Dialog } from '@base-ui/react/dialog';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import type { EditorialImage } from '@/lib/editorial/model';
 import { Button } from '@/components/site/primitives';
-import { useEditorialCopy } from '../context';
+import { m } from '@/paraglide/messages';
 
 export function ArticleGallery({ images, title }: { images: EditorialImage[]; title?: string }) {
-  const copy = useEditorialCopy();
   const [index, setIndex] = useState<number | null>(null);
   const origin = useRef<HTMLButtonElement | null>(null);
   const image = index === null ? undefined : images[index];
@@ -15,14 +14,14 @@ export function ArticleGallery({ images, title }: { images: EditorialImage[]; ti
   }
   if (!images.length) return null;
   return (
-    <section className="not-prose my-8" aria-label={title ?? copy.gallery}>
+    <section className="not-prose my-8" aria-label={title ?? m.editorial_gallery()}>
       {title && <h3 className="mb-4 text-xl font-semibold">{title}</h3>}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {images.map((item, position) => (
           <button
             key={`${item.src}/${position}`}
             type="button"
-            aria-label={`${copy.image} ${position + 1}: ${item.alt}`}
+            aria-label={`${m.editorial_image()} ${position + 1}: ${item.alt}`}
             aria-haspopup="dialog"
             className="cursor-zoom-in overflow-hidden rounded-gx border border-gx-border"
             onClick={(event) => {
@@ -60,8 +59,8 @@ export function ArticleGallery({ images, title }: { images: EditorialImage[]; ti
             }}
           >
             <div className="flex items-center justify-between gap-4">
-              <Dialog.Title className="text-lg font-semibold">{title ?? copy.gallery}</Dialog.Title>
-              <Dialog.Close render={<Button aria-label={copy.close} />}>
+              <Dialog.Title className="text-lg font-semibold">{title ?? m.editorial_gallery()}</Dialog.Title>
+              <Dialog.Close render={<Button aria-label={m.editorial_close()} />}>
                 <X size={20} />
               </Dialog.Close>
             </div>
@@ -85,7 +84,7 @@ export function ArticleGallery({ images, title }: { images: EditorialImage[]; ti
             <div className="flex items-center justify-center gap-5">
               <Button
                 disabled={index === 0}
-                aria-label={copy.previousImage}
+                aria-label={m.editorial_previous_image()}
                 onClick={() => move(-1)}
               >
                 <ChevronLeft />
@@ -100,7 +99,7 @@ export function ArticleGallery({ images, title }: { images: EditorialImage[]; ti
               </span>
               <Button
                 disabled={index === images.length - 1}
-                aria-label={copy.nextImage}
+                aria-label={m.editorial_next_image()}
                 onClick={() => move(1)}
               >
                 <ChevronRight />

@@ -1,6 +1,6 @@
 import { useId, useRef, useState } from 'react';
 import { Button } from '@/components/site/primitives';
-import { useEditorialCopy } from '../context';
+import { m } from '@/paraglide/messages';
 export interface VideoSource {
   src: string;
   type: string;
@@ -33,7 +33,6 @@ export function ArticleVideo({
   const video = useRef<HTMLVideoElement>(null);
   const [failed, setFailed] = useState(false);
   const [ready, setReady] = useState(false);
-  const copy = useEditorialCopy();
   const id = useId();
   return (
     <figure className="not-prose my-8 overflow-hidden rounded-lg border border-gx-border bg-gx-sunken">
@@ -64,11 +63,11 @@ export function ArticleVideo({
       </figcaption>
       {failed && (
         <p role="status" className="px-4 pb-4">
-          {copy.mediaError}
+          {m.editorial_media_error()}
         </p>
       )}
       {chapters.length > 0 && (
-        <nav aria-label={copy.chapters} className="flex flex-wrap gap-2 px-4 pb-4">
+        <nav aria-label={m.editorial_chapters()} className="flex flex-wrap gap-2 px-4 pb-4">
           {chapters.map((chapter) => (
             <Button
               key={chapter.time}
@@ -85,7 +84,7 @@ export function ArticleVideo({
       )}
       {transcript && (
         <details className="border-t border-gx-border p-4">
-          <summary className="cursor-pointer font-semibold">{copy.transcript}</summary>
+          <summary className="cursor-pointer font-semibold">{m.editorial_transcript()}</summary>
           <p className="mt-3 whitespace-pre-line text-gx-muted">{transcript}</p>
         </details>
       )}
