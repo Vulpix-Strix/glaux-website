@@ -1,0 +1,222 @@
+{
+  "$comment": "Texts for npm packages that ship none. Each one is copied unchanged from the official repository of the package, at a commit pinned in `source`. See credits/README.md.",
+  "npm": {
+    "takumi-js@2.17.1": [
+      {
+        "kind": "license",
+        "title": "LICENSE-MIT",
+        "spdx": "MIT",
+        "file": "takumi-LICENSE-MIT.txt",
+        "source": "https://github.com/kane50613/takumi/blob/7ddc5c2b7467020144750945ed85625b3137557d/LICENSE-MIT",
+        "retrieved": "2026-10-28"
+      },
+      {
+        "kind": "license",
+        "title": "LICENSE-APACHE",
+        "spdx": "Apache-2.0",
+        "file": "takumi-LICENSE-APACHE.txt",
+        "source": "https://github.com/kane50613/takumi/blob/7ddc5c2b7467020144750945ed85625b3137557d/LICENSE-APACHE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "@takumi-rs/core@2.17.1": [
+      {
+        "kind": "license",
+        "title": "LICENSE-MIT",
+        "spdx": "MIT",
+        "file": "takumi-LICENSE-MIT.txt",
+        "source": "https://github.com/kane50613/takumi/blob/7ddc5c2b7467020144750945ed85625b3137557d/LICENSE-MIT",
+        "retrieved": "2026-10-28"
+      },
+      {
+        "kind": "license",
+        "title": "LICENSE-APACHE",
+        "spdx": "Apache-2.0",
+        "file": "takumi-LICENSE-APACHE.txt",
+        "source": "https://github.com/kane50613/takumi/blob/7ddc5c2b7467020144750945ed85625b3137557d/LICENSE-APACHE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "@takumi-rs/helpers@2.17.1": [
+      {
+        "kind": "license",
+        "title": "LICENSE-MIT",
+        "spdx": "MIT",
+        "file": "takumi-LICENSE-MIT.txt",
+        "source": "https://github.com/kane50613/takumi/blob/7ddc5c2b7467020144750945ed85625b3137557d/LICENSE-MIT",
+        "retrieved": "2026-10-28"
+      },
+      {
+        "kind": "license",
+        "title": "LICENSE-APACHE",
+        "spdx": "Apache-2.0",
+        "file": "takumi-LICENSE-APACHE.txt",
+        "source": "https://github.com/kane50613/takumi/blob/7ddc5c2b7467020144750945ed85625b3137557d/LICENSE-APACHE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "@takumi-rs/wasm@2.17.1": [
+      {
+        "kind": "license",
+        "title": "LICENSE-MIT",
+        "spdx": "MIT",
+        "file": "takumi-LICENSE-MIT.txt",
+        "source": "https://github.com/kane50613/takumi/blob/7ddc5c2b7467020144750945ed85625b3137557d/LICENSE-MIT",
+        "retrieved": "2026-10-28"
+      },
+      {
+        "kind": "license",
+        "title": "LICENSE-APACHE",
+        "spdx": "Apache-2.0",
+        "file": "takumi-LICENSE-APACHE.txt",
+        "source": "https://github.com/kane50613/takumi/blob/7ddc5c2b7467020144750945ed85625b3137557d/LICENSE-APACHE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "yuku-core@0.19.0": [
+      {
+        "kind": "license",
+        "title": "LICENSE",
+        "spdx": "MIT",
+        "file": "yuku-LICENSE.txt",
+        "source": "https://github.com/yuku-toolchain/yuku/blob/f8496bd8dfd52ae528ade3bfe4c1ea57d1bde635/LICENSE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "yuku-ast@0.19.0": [
+      {
+        "kind": "license",
+        "title": "LICENSE",
+        "spdx": "MIT",
+        "file": "yuku-LICENSE.txt",
+        "source": "https://github.com/yuku-toolchain/yuku/blob/f8496bd8dfd52ae528ade3bfe4c1ea57d1bde635/LICENSE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "yuku-analyzer@0.19.0": [
+      {
+        "kind": "license",
+        "title": "LICENSE",
+        "spdx": "MIT",
+        "file": "yuku-LICENSE.txt",
+        "source": "https://github.com/yuku-toolchain/yuku/blob/f8496bd8dfd52ae528ade3bfe4c1ea57d1bde635/LICENSE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "@yuku-toolchain/types@0.19.0": [
+      {
+        "kind": "license",
+        "title": "LICENSE",
+        "spdx": "MIT",
+        "file": "yuku-LICENSE.txt",
+        "source": "https://github.com/yuku-toolchain/yuku/blob/f8496bd8dfd52ae528ade3bfe4c1ea57d1bde635/LICENSE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "react-remove-scroll-bar@2.3.8": [
+      {
+        "kind": "license",
+        "title": "LICENSE",
+        "spdx": "MIT",
+        "file": "react-remove-scroll-bar-LICENSE.txt",
+        "source": "https://github.com/theKashey/react-remove-scroll-bar/blob/7301c160fda44cb8cf2b9fdfde61efad35736196/LICENSE",
+        "retrieved": "2026-10-28",
+        "note": "npm lists 2.3.8 with gitHead b3b1287aad81def2e2ae707274b74531b61ddbaf, which GitHub does not have, and the repository has no 2.3.8 tag. The text is the repository license as last changed, in 7301c16."
+      }
+    ],
+    "wrangler@4.154.0": [
+      {
+        "kind": "license",
+        "title": "LICENSE-MIT",
+        "spdx": "MIT",
+        "file": "workers-sdk-LICENSE-MIT.txt",
+        "source": "https://github.com/cloudflare/workers-sdk/blob/71d0903bb7ac0cbd1b7713116f4d647edd661e86/LICENSE-MIT",
+        "retrieved": "2026-10-28"
+      },
+      {
+        "kind": "license",
+        "title": "LICENSE-APACHE",
+        "spdx": "Apache-2.0",
+        "file": "workers-sdk-LICENSE-APACHE.txt",
+        "source": "https://github.com/cloudflare/workers-sdk/blob/71d0903bb7ac0cbd1b7713116f4d647edd661e86/LICENSE-APACHE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "miniflare@5.20261023.1-beta": [
+      {
+        "kind": "license",
+        "title": "LICENSE-MIT",
+        "spdx": "MIT",
+        "file": "workers-sdk-LICENSE-MIT.txt",
+        "source": "https://github.com/cloudflare/workers-sdk/blob/71d0903bb7ac0cbd1b7713116f4d647edd661e86/LICENSE-MIT",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "@cloudflare/kv-asset-handler@0.5.0": [
+      {
+        "kind": "license",
+        "title": "LICENSE-MIT",
+        "spdx": "MIT",
+        "file": "workers-sdk-LICENSE-MIT.txt",
+        "source": "https://github.com/cloudflare/workers-sdk/blob/47cf644ab0e22ee2e429f19dd7ca4e84955be59b/LICENSE-MIT",
+        "retrieved": "2026-10-28"
+      },
+      {
+        "kind": "license",
+        "title": "LICENSE-APACHE",
+        "spdx": "Apache-2.0",
+        "file": "workers-sdk-LICENSE-APACHE.txt",
+        "source": "https://github.com/cloudflare/workers-sdk/blob/47cf644ab0e22ee2e429f19dd7ca4e84955be59b/LICENSE-APACHE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "@cloudflare/vite-plugin@1.66.0": [
+      {
+        "kind": "license",
+        "title": "LICENSE-MIT",
+        "spdx": "MIT",
+        "file": "workers-sdk-LICENSE-MIT.txt",
+        "source": "https://github.com/cloudflare/workers-sdk/blob/ae809569f949e8f2d283c8de5320dfaab47d11d0/LICENSE-MIT",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "@cloudflare/unenv-preset@2.16.2": [
+      {
+        "kind": "license",
+        "title": "LICENSE-MIT",
+        "spdx": "MIT",
+        "file": "unenv-preset-LICENSE-MIT.txt",
+        "source": "https://github.com/cloudflare/workers-sdk/blob/6e7712725698df46db9ec25ac738dd155ff8d39e/packages/unenv-preset/LICENSE-MIT",
+        "retrieved": "2026-10-28"
+      },
+      {
+        "kind": "license",
+        "title": "LICENSE-APACHE",
+        "spdx": "Apache-2.0",
+        "file": "workers-sdk-LICENSE-APACHE.txt",
+        "source": "https://github.com/cloudflare/workers-sdk/blob/6e7712725698df46db9ec25ac738dd155ff8d39e/packages/unenv-preset/LICENSE-APACHE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "workerd@1.20261023.1": [
+      {
+        "kind": "license",
+        "title": "LICENSE",
+        "spdx": "Apache-2.0",
+        "file": "workerd-LICENSE.txt",
+        "source": "https://github.com/cloudflare/workerd/blob/7caf6dee5bfe9af1b7710ddf66222900007af080/LICENSE",
+        "retrieved": "2026-10-28"
+      }
+    ],
+    "@img/sharp-libvips-<platform>@1.3.4": [
+      {
+        "kind": "notice",
+        "title": "THIRD-PARTY-NOTICES.md",
+        "file": "sharp-libvips-THIRD-PARTY-NOTICES.txt",
+        "source": "https://github.com/lovell/sharp-libvips/blob/ebb95f8add54eee8bed840e3fb587e4cbec857d7/THIRD-PARTY-NOTICES.md",
+        "retrieved": "2026-10-28",
+        "note": "The package is a bundle of libraries under many licenses, and its own README repeats this notice. The full text of each license is not part of the package or of this notice."
+      }
+    ]
+  }
+}

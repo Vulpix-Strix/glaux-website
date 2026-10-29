@@ -17,6 +17,8 @@
     "docs:sync": "node scripts/sync-glaux-docs.ts",
     "docs:pin": "node scripts/pin-glaux-docs.ts",
     "docs:check": "sh scripts/check-glaux-docs.sh",
+    "credits:sync": "node scripts/sync-credits.ts",
+    "credits:check": "node scripts/sync-credits.ts --check",
     "predev": "pnpm docs:sync",
     "prebuild": "pnpm docs:sync",
     "test": "node --test test/*.test.ts",
