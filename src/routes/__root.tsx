@@ -4,6 +4,7 @@ import appCss from '@/styles/app.css?url';
 import { RootProvider } from 'fumadocs-ui/provider/tanstack';
 import { siteI18nProvider } from '@/lib/fumadocs-i18n';
 import { baseLocale, isLocale } from '@/paraglide/runtime';
+import { initializePostHog } from '@/lib/posthog';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -25,6 +26,8 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  React.useEffect(initializePostHog, []);
+
   // Reading the route param subscribes the root to navigation, so `<html lang>` follows client-side
   // transitions as well as direct loads.
   const params = useParams({ strict: false });

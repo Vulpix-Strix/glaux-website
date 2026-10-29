@@ -1,4 +1,5 @@
 import { useSyncExternalStore, type ComponentProps, type ReactNode } from 'react';
+import { track } from '@/lib/posthog';
 
 export type ScriptLanguage = 'luau' | 'rhai';
 
@@ -44,12 +45,17 @@ const options: { id: ScriptLanguage; label: string }[] = [
 /** Segmented control for the sidebar. Code samples in the other language fold away. */
 export function ScriptLanguageToggle() {
   const [language, setLanguage] = useScriptLanguage();
+  function selectLanguage(nextLanguage: ScriptLanguage) {
+    if (nextLanguage === language) return;
+    setLanguage(nextLanguage);
+    track('feature_interacted', { feature: 'script_language', action: `select_${nextLanguage}` });
+  }
   return (
     <div className="gx-docs-script">
       <p className="gx-docs-label" id="gx-script-label">Script language</p>
       <div className="gx-docs-seg" role="group" aria-labelledby="gx-script-label">
         {options.map(({ id, label }) => (
-          <button type="button" key={id} aria-pressed={language === id} onClick={() => setLanguage(id)}>
+          <button type="button" key={id} aria-pressed={language === id} onClick={() => selectLanguage(id)}>
             {label}
           </button>
         ))}

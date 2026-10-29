@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/site/primitives';
 import { m } from '@/paraglide/messages';
+import { track } from '@/lib/posthog';
+import type { EditorialSection } from '@/lib/editorial/model';
 
 export function ReadingProgress({ title }: { title: string }) {
   const [progress, setProgress] = useState(0);
@@ -52,7 +54,17 @@ export function ReadingProgress({ title }: { title: string }) {
     </div>
   );
 }
-export function ShareArticle({ url, title }: { url: string; title: string }) {
+export function ShareArticle({
+  url,
+  title,
+  section,
+  slug,
+}: {
+  url: string;
+  title: string;
+  section: EditorialSection;
+  slug: string;
+}) {
   const [state, setState] = useState<'idle' | 'copied' | 'failed'>('idle');
   useEffect(() => {
     if (state !== 'copied') return;
@@ -62,6 +74,7 @@ export function ShareArticle({ url, title }: { url: string; title: string }) {
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(url);
+      track('article_shared', { article_type: section, slug, method: 'copy_link' });
       setState('copied');
     } catch {
       setState('failed');
@@ -73,6 +86,7 @@ export function ShareArticle({ url, title }: { url: string; title: string }) {
       <a
         className="inline-flex min-h-11 items-center text-sm text-gx-accent underline"
         href={`mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(url)}`}
+        onClick={() => track('article_shared', { article_type: section, slug, method: 'email' })}
       >
         {m.editorial_email()}
       </a>

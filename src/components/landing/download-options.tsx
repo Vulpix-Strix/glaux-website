@@ -5,6 +5,7 @@ import { m } from '@/paraglide/messages';
 import { buildCommands } from '@/lib/landing/examples';
 import { repositoryUrl } from '@/lib/landing/navigation';
 import { CodeBlock, SectionHeading } from './primitives';
+import { track } from '@/lib/posthog';
 
 export function DownloadOptions() {
   return (
@@ -28,7 +29,7 @@ export function DownloadOptions() {
             <h3>{m.landing_get_source()}</h3>
             <p>{m.landing_get_source_text()}</p>
             <CodeBlock code={buildCommands} label={m.landing_get_source()} terminal />
-            <a className="gx-text-link" href={repositoryUrl}>
+            <a className="gx-text-link" href={repositoryUrl} onClick={() => track('github_clicked', { source: 'download_source' })}>
               {m.landing_get_prerequisites()} <ArrowRight size={16} aria-hidden="true" />
             </a>
           </div>

@@ -2,6 +2,7 @@ import { Container } from '@/components/site/primitives';
 import type { Locale } from '@/paraglide/runtime';
 import { m } from '@/paraglide/messages';
 import { repositoryUrl } from '@/lib/landing/navigation';
+import { track } from '@/lib/posthog';
 import { CartridgeGallery } from './cartridge-gallery';
 import { ConsoleOverview, MachineFacts } from './console-overview';
 import { DownloadOptions } from './download-options';
@@ -29,10 +30,15 @@ export function LandingPage({ lang }: { lang: Locale }) {
               <h1 id="hero-title">{m.landing_hero_title()}</h1>
               <p className="gx-lead">{m.landing_hero_lead()}</p>
               <div className="gx-actions mt-8 flex flex-wrap items-center gap-3">
-                <Action href="#download" primary large>
+                <Action href="#download" primary large onClick={() => track('download_clicked', { source: 'hero' })}>
                   {m.landing_hero_cta()}
                 </Action>
-                <Action href="/en/docs/guide" large hrefLang="en">
+                <Action
+                  href="/en/docs/guide"
+                  large
+                  hrefLang="en"
+                  onClick={() => track('docs_opened', { source: 'hero' })}
+                >
                   {m.landing_hero_docs()}
                 </Action>
               </div>
@@ -86,7 +92,9 @@ export function LandingPage({ lang }: { lang: Locale }) {
                 <h3>{m.landing_news_empty()}</h3>
                 <p>{m.landing_news_text()}</p>
                 <div className="mt-6">
-                  <Action href={repositoryUrl}>{m.landing_news_link()}</Action>
+                  <Action href={repositoryUrl} onClick={() => track('github_clicked', { source: 'news_empty' })}>
+                    {m.landing_news_link()}
+                  </Action>
                 </div>
               </div>
             )}

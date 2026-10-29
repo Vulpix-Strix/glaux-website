@@ -13,3 +13,8 @@ declare module 'virtual:editorial' {
   export const articles: Article[];
   export const articleModules: Record<string, () => Promise<{ default: ComponentType<MDXProps>; toc: TOCItemType[] }>>;
 }
+
+interface ImportMetaEnv {
+  readonly VITE_PUBLIC_POSTHOG_PROJECT_TOKEN?: string;
+  readonly VITE_PUBLIC_POSTHOG_HOST?: string;
+}

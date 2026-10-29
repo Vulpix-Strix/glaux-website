@@ -84,7 +84,12 @@ export function EditorialArticle({
                 <Body components={editorialComponents} />
               </article>
               <div className="mt-10 border-t border-gx-border pt-6">
-                <ShareArticle title={article.title} url={absoluteUrl(articleUrl(article))} />
+                <ShareArticle
+                  title={article.title}
+                  url={absoluteUrl(articleUrl(article))}
+                  section={article.section}
+                  slug={article.slug}
+                />
               </div>
             </div>
             <aside className="min-w-0 space-y-8 lg:sticky lg:top-16 max-lg:order-first">

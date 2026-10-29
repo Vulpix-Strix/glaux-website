@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { m } from '@/paraglide/messages';
 import { repositoryUrl } from '@/lib/landing/navigation';
 import { PixelImage, SectionHeading } from './primitives';
+import { track } from '@/lib/posthog';
 
 // Existing cartridges in Glaux's examples/ directory, with their original assets.
 const examples = [
@@ -63,7 +64,11 @@ export function CartridgeGallery() {
               <h3>Signal Lost</h3>
               <p>{m.landing_games_description()}</p>
               <p className="gx-small">{m.landing_games_controls()}</p>
-              <a className="gx-text-link" href={`${repositoryUrl}/tree/main/examples/signal-lost`}>
+              <a
+                className="gx-text-link"
+                href={`${repositoryUrl}/tree/main/examples/signal-lost`}
+                onClick={() => track('github_clicked', { source: 'examples_gallery' })}
+              >
                 Signal Lost <ArrowRight size={16} aria-hidden="true" />
               </a>
             </div>
@@ -82,7 +87,10 @@ export function CartridgeGallery() {
                 </div>
                 <div>
                   <h3>
-                    <a href={`${repositoryUrl}/tree/main/examples/${example.directory}`}>
+                    <a
+                      href={`${repositoryUrl}/tree/main/examples/${example.directory}`}
+                      onClick={() => track('github_clicked', { source: 'examples_gallery' })}
+                    >
                       {example.name}
                     </a>
                     {example.experimental && (

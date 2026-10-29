@@ -5,6 +5,7 @@ import { m } from '@/paraglide/messages';
 import { documentationLinks, landingNavigation, repositoryUrl } from '@/lib/landing/navigation';
 import { Wordmark } from '@/components/brand/wordmark';
 import { Button, Container } from '@/components/site/primitives';
+import { track } from '@/lib/posthog';
 import { Action } from './primitives';
 
 export function LanguageLink({
@@ -28,6 +29,7 @@ export function LanguageLink({
       aria-current={current === language ? 'page' : undefined}
       className="inline-grid min-h-11 min-w-11 place-items-center text-[13px] font-semibold text-gx-muted aria-current:bg-gx-accent-subtle aria-current:text-gx-text"
       onClick={(event) => {
+        if (language !== current) track('language_changed', { from_language: current, to_language: language });
         event.currentTarget.href = `/${language}${page}${preserveHash ? window.location.hash : ''}`;
       }}
     >
@@ -118,7 +120,7 @@ export function SiteHeader({
             )}
           </div>
           {children}
-          <Action href={`${home}#download`} primary>
+          <Action href={`${home}#download`} primary onClick={() => track('download_clicked', { source: 'header' })}>
             {m.landing_download()}
           </Action>
         </div>
@@ -154,7 +156,12 @@ export function SiteFooter({
             <ul>
               {documentationLinks.map(({ id, slug }) => (
                 <li key={id}>
-                  <Link to="/$lang/docs/$" params={{ lang: 'en', _splat: slug }} hrefLang="en">
+                  <Link
+                    to="/$lang/docs/$"
+                    params={{ lang: 'en', _splat: slug }}
+                    hrefLang="en"
+                    onClick={() => track('docs_opened', { source: 'footer' })}
+                  >
                     {m[`landing_learn_links_${id}_title`]()}
                   </Link>
                 </li>
@@ -165,7 +172,9 @@ export function SiteFooter({
             <h2>{m.landing_footer_project()}</h2>
             <ul>
               <li>
-                <a href={repositoryUrl}>GitHub</a>
+                <a href={repositoryUrl} onClick={() => track('github_clicked', { source: 'footer' })}>
+                  GitHub
+                </a>
               </li>
               <li>
                 <a href={`${repositoryUrl}/blob/main/LICENSE-MIT`}>MIT</a>
@@ -186,7 +195,9 @@ export function SiteFooter({
             <h2>{m.landing_footer_site()}</h2>
             <ul>
               <li>
-                <a href={`${home}#download`}>{m.landing_download()}</a>
+                <a href={`${home}#download`} onClick={() => track('download_clicked', { source: 'footer' })}>
+                  {m.landing_download()}
+                </a>
               </li>
               <li>
                 <a
