@@ -18,6 +18,7 @@ import { ArticleCard } from './cards';
 import { ListingSidebar, NewsExtras } from './listing-extras';
 import { EditorialShell } from './shell';
 import { m } from '@/paraglide/messages';
+import { track } from '@/lib/posthog';
 
 export function EditorialListing({
   lang,
@@ -180,7 +181,7 @@ export function EditorialListing({
             <a href={`/${lang}/${section === 'blog' ? 'news' : 'blog'}`}>
               {section === 'blog' ? m.editorial_news() : m.editorial_blog()}
             </a>
-            <a href="/en/docs/guide" hrefLang="en">
+            <a href="/en/docs/guide" hrefLang="en" onClick={() => track('docs_opened', { source: 'editorial_listing' })}>
               Docs
             </a>
           </div>

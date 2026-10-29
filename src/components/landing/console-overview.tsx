@@ -2,6 +2,7 @@ import { Container } from '@/components/site/primitives';
 import { m } from '@/paraglide/messages';
 import { consoleFacts } from '@/lib/landing/console';
 import { editorCode, languageExamples } from '@/lib/landing/examples';
+import { track } from '@/lib/posthog';
 import { CodeBlock, Icon, SectionHeading } from './primitives';
 
 export function MachineFacts() {
@@ -51,7 +52,12 @@ export function ConsoleOverview() {
               <code>spr(tile, x, y, [w], [h], [flip_x], [flip_y], [palette])</code>
               <p>{m.landing_features_signature()}</p>
               <small>
-                <a className="gx-text-link" href="/en/docs/api/graphics/spr" hrefLang="en">
+                <a
+                  className="gx-text-link"
+                  href="/en/docs/api/graphics/spr"
+                  hrefLang="en"
+                  onClick={() => track('docs_opened', { source: 'features' })}
+                >
                   {m.landing_features_signature_docs()}
                 </a>
               </small>

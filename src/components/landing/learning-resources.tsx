@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { m } from '@/paraglide/messages';
 import { firstGame } from '@/lib/landing/examples';
 import { apiLinks, documentationLinks } from '@/lib/landing/navigation';
+import { track } from '@/lib/posthog';
 import { CodeBlock, SectionHeading } from './primitives';
 
 const gettingStartedSteps = ['create', 'run', 'edit', 'play'] as const;
@@ -18,7 +19,12 @@ export function LearningResources() {
           <ul className="gx-guide-links">
             {documentationLinks.map(({ id, slug }) => (
               <li key={id}>
-                <Link to="/$lang/docs/$" params={{ lang: 'en', _splat: slug }} hrefLang="en">
+                <Link
+                  to="/$lang/docs/$"
+                  params={{ lang: 'en', _splat: slug }}
+                  hrefLang="en"
+                  onClick={() => track('docs_opened', { source: 'learn_guides' })}
+                >
                   <span>
                     <b>{m[`landing_learn_links_${id}_title`]()}</b>
                     <span>{m[`landing_learn_links_${id}_text`]()}</span>
@@ -34,6 +40,7 @@ export function LearningResources() {
                 to="/$lang/docs/$"
                 params={{ lang: 'en', _splat: slug }}
                 hrefLang="en"
+                onClick={() => track('docs_opened', { source: 'learn_api' })}
                 className={`gx-tag gx-tag-${tone}`}
                 key={id}
               >
