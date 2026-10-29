@@ -1,6 +1,6 @@
 import { Container } from '@/components/site/primitives';
-import type { LandingLanguage } from '@/lib/i18n';
-import { landingCopy } from '@/lib/landing/copy';
+import type { Locale } from '@/paraglide/runtime';
+import { m } from '@/paraglide/messages';
 import { repositoryUrl } from '@/lib/landing/navigation';
 import { CartridgeGallery } from './cartridge-gallery';
 import { ConsoleOverview, MachineFacts } from './console-overview';
@@ -13,69 +13,68 @@ import { articles } from 'virtual:editorial';
 import { articlesFor } from '@/lib/editorial/catalog';
 import { ArticleCard } from '@/components/editorial/cards';
 
-export function LandingPage({ lang }: { lang: LandingLanguage }) {
-  const copy = landingCopy[lang];
+export function LandingPage({ lang }: { lang: Locale }) {
   const latestNews = articlesFor(articles, lang, 'news').slice(0, 3);
   return (
     <div className="glaux-landing" id="top">
       <a className="gx-skip" href="#main">
-        {copy.skip}
+        {m.landing_skip()}
       </a>
-      <SiteHeader copy={copy} lang={lang} />
+      <SiteHeader lang={lang} />
       <main id="main" tabIndex={-1}>
         <section className="gx-hero" aria-labelledby="hero-title">
           <Container className="gx-wrap gx-hero-grid relative grid grid-cols-[minmax(0,5fr)_minmax(0,6fr)] items-center gap-16 max-[1100px]:gap-8 max-[900px]:grid-cols-1 max-[900px]:gap-16 max-[600px]:gap-12">
             <div>
-              <p className="gx-eyebrow">{copy.hero.eyebrow}</p>
-              <h1 id="hero-title">{copy.hero.title}</h1>
-              <p className="gx-lead">{copy.hero.lead}</p>
+              <p className="gx-eyebrow">{m.landing_hero_eyebrow()}</p>
+              <h1 id="hero-title">{m.landing_hero_title()}</h1>
+              <p className="gx-lead">{m.landing_hero_lead()}</p>
               <div className="gx-actions mt-8 flex flex-wrap items-center gap-3">
                 <Action href="#download" primary large>
-                  {copy.hero.cta}
+                  {m.landing_hero_cta()}
                 </Action>
                 <Action href="/en/docs/guide" large hrefLang="en">
-                  {copy.hero.docs}
+                  {m.landing_hero_docs()}
                 </Action>
               </div>
-              {lang === 'es' && <p className="gx-small gx-docs-note">{copy.learn.docsNote}</p>}
+              {lang === 'es' && <p className="gx-small gx-docs-note">{m.landing_learn_docs_note()}</p>}
               <div className="gx-hero-terminal mt-8 mb-3 max-w-90">
                 <CodeBlock code={'> new my-game\n> run'} label="new my-game / run" terminal />
               </div>
-              <p className="gx-small">{copy.hero.note}</p>
+              <p className="gx-small">{m.landing_hero_note()}</p>
             </div>
             <figure className="gx-hero-shot relative min-w-0">
               <div className="gx-frame">
                 <PixelImage
                   file="signal-lost-gameplay.png"
-                  alt={copy.alt.gameplay}
+                  alt={m.landing_alt_gameplay()}
                   width={320}
                   height={240}
-                  pending={copy.missing}
+                  pending={m.landing_missing()}
                   priority
                 />
               </div>
               <div className="gx-hero-shell">
                 <PixelImage
                   file="glaux-shell.png"
-                  alt={copy.alt.shell}
+                  alt={m.landing_alt_shell()}
                   width={320}
                   height={240}
-                  pending={copy.missing}
+                  pending={m.landing_missing()}
                   priority
                 />
               </div>
-              <figcaption>{copy.hero.caption}</figcaption>
+              <figcaption>{m.landing_hero_caption()}</figcaption>
             </figure>
           </Container>
         </section>
-        <MachineFacts descriptions={copy.facts} label={copy.factsLabel} />
-        <ConsoleOverview copy={copy.features} />
-        <WorkspacePreview copy={copy.create} alt={copy.alt} pending={copy.missing} />
-        <CartridgeGallery copy={copy.games} alt={copy.alt} pending={copy.missing} />
-        <LearningResources copy={copy.learn} />
+        <MachineFacts />
+        <ConsoleOverview />
+        <WorkspacePreview />
+        <CartridgeGallery />
+        <LearningResources />
         <section className="gx-section" id="news">
           <Container className="gx-wrap">
-            <SectionHeading eyebrow={copy.news.eyebrow} title={copy.news.title} />
+            <SectionHeading eyebrow={m.landing_news_eyebrow()} title={m.landing_news_title()} />
             {latestNews.length ? (
               <div className="mt-8 grid gap-4 md:grid-cols-3">
                 {latestNews.map((article) => (
@@ -84,23 +83,23 @@ export function LandingPage({ lang }: { lang: LandingLanguage }) {
               </div>
             ) : (
               <div className="gx-news-empty mt-8 rounded-lg border border-dashed border-gx-border-strong bg-gx-surface p-10 max-[600px]:p-6">
-                <h3>{copy.news.empty}</h3>
-                <p>{copy.news.text}</p>
+                <h3>{m.landing_news_empty()}</h3>
+                <p>{m.landing_news_text()}</p>
                 <div className="mt-6">
-                  <Action href={repositoryUrl}>{copy.news.link}</Action>
+                  <Action href={repositoryUrl}>{m.landing_news_link()}</Action>
                 </div>
               </div>
             )}
             <div className="mt-6">
               <Action href={`/${lang}/news`}>
-                {lang === 'es' ? 'Ver noticias' : 'Browse news'}
+                {m.landing_news_browse()}
               </Action>
             </div>
           </Container>
         </section>
-        <DownloadOptions copy={copy.get} />
+        <DownloadOptions />
       </main>
-      <SiteFooter copy={copy} lang={lang} />
+      <SiteFooter lang={lang} />
     </div>
   );
 }

@@ -11,8 +11,8 @@ export const landingNavigation = [
 // Only English documentation is published. Destinations are actual pages,
 // including a representative page for categories without an index page.
 export const documentationLinks = [
-  { id: 'gettingStarted', slug: 'guide/getting-started' },
-  { id: 'gameLoop', slug: 'guide/game-loop' },
+  { id: 'getting_started', slug: 'guide/getting-started' },
+  { id: 'game_loop', slug: 'guide/game-loop' },
   { id: 'api', slug: 'api' },
 ] as const;
 

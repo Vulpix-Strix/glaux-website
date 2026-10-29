@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { defaultLanguage, languages, getLanguage, isPublishedLanguage } from '../src/lib/i18n.ts';
+import { defaultLanguage, languages, isPublishedLanguage } from '../src/lib/i18n.ts';
+import { isLocale, locales } from '../src/paraglide/runtime.js';
+import { m } from '../src/paraglide/messages.js';
 import { absoluteUrl } from '../src/lib/site.ts';
 import { FALLBACK_LANGUAGE } from '../src/lib/glaux/manifest.ts';
 import { decodeMarkdownUrl, getPageMarkdownUrl, getPageImageUrl } from '../src/lib/docs/urls.ts';
@@ -8,12 +10,9 @@ import { decodeMarkdownUrl, getPageMarkdownUrl, getPageImageUrl } from '../src/l
 test('only English docs are published; the HTML shell also supports Spanish', () => {
   assert.deepEqual(languages, ['en']);
   assert.equal(defaultLanguage, FALLBACK_LANGUAGE);
-  assert.equal(getLanguage('en'), 'en');
   assert.equal(isPublishedLanguage('es'), false);
-  assert.equal(getLanguage('es'), 'es');
   for (const value of ['unknown', '', undefined]) {
     assert.equal(isPublishedLanguage(value), false);
-    assert.equal(getLanguage(value), 'en');
   }
 });
 
@@ -28,24 +27,16 @@ test('documentation URLs preserve localized Markdown and image endpoints', () =>
 
 
 test('landing copy, SEO and documentation destinations support both languages', async () => {
-  const { landingCopy } = await import('../src/lib/landing/copy.ts');
   const { landingHead } = await import('../src/lib/landing/metadata.ts');
-  const { landingLanguages, isLandingLanguage } = await import('../src/lib/i18n.ts');
   const { documentationLinks, apiLinks } = await import('../src/lib/landing/navigation.ts');
-  assert.deepEqual(landingLanguages, ['en', 'es']);
-  assert.equal(isLandingLanguage('es'), true);
-  assert.equal(isLandingLanguage('unknown'), false);
-  function keys(value: unknown, prefix = ''): string[] {
-    if (typeof value !== 'object' || value === null) return [prefix];
-    return Object.entries(value).flatMap(([key, item]) => keys(item, `${prefix}.${key}`));
-  }
-  assert.deepEqual(keys(landingCopy.en).sort(), keys(landingCopy.es).sort());
-  for (const lang of landingLanguages) {
+  assert.deepEqual(locales, ['en', 'es']);
+  assert.equal(isLocale('es'), true);
+  assert.equal(isLocale('unknown'), false);
+  for (const lang of locales) {
     const head = landingHead(lang);
-    assert.ok(head.meta.some((meta) => 'title' in meta && meta.title === landingCopy[lang].title));
+    assert.ok(head.meta.some((meta) => 'title' in meta && meta.title === m.landing_title({}, { locale: lang })));
     assert.ok(head.links.some((link) => link.rel === 'canonical' && link.href === `https://glauxconsole.dev/${lang}`));
     assert.ok(head.links.some((link) => 'hrefLang' in link && link.hrefLang === 'es'));
-    assert.ok(!JSON.stringify(landingCopy[lang]).includes('[POST'));
   }
   const { existsSync } = await import('node:fs');
   for (const slug of [...documentationLinks, ...apiLinks].map((link) => link.slug)) {

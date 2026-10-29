@@ -1,6 +1,6 @@
 import { Container } from '@/components/site/primitives';
 import { ArrowRight } from 'lucide-react';
-import type { LandingCopy } from '@/lib/landing/copy';
+import { m } from '@/paraglide/messages';
 import { repositoryUrl } from '@/lib/landing/navigation';
 import { PixelImage, SectionHeading } from './primitives';
 
@@ -38,39 +38,31 @@ const examples = [
   },
 ] as const;
 
-export function CartridgeGallery({
-  copy,
-  alt,
-  pending,
-}: {
-  copy: LandingCopy['games'];
-  alt: LandingCopy['alt'];
-  pending: string;
-}) {
+export function CartridgeGallery() {
   return (
     <section className="gx-section" id="games">
       <Container className="gx-wrap">
-        <SectionHeading eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
+        <SectionHeading eyebrow={m.landing_games_eyebrow()} title={m.landing_games_title()} lead={m.landing_games_lead()} />
         <div className="gx-games">
           <article className="gx-game-feature">
             <div className="gx-stage">
               <PixelImage
                 file="signal-lost-title.png"
-                alt={alt.title}
+                alt={m.landing_alt_title()}
                 width={320}
                 height={240}
-                pending={pending}
+                pending={m.landing_missing()}
               />
             </div>
             <div className="gx-game-body">
               <div className="gx-tags flex flex-wrap items-center gap-2">
-                <span className="gx-tag gx-tag-gold">{copy.featured}</span>
+                <span className="gx-tag gx-tag-gold">{m.landing_games_featured()}</span>
                 <span className="gx-tag">Luau</span>
-                <span className="gx-tag gx-tag-pink">{copy.genre}</span>
+                <span className="gx-tag gx-tag-pink">{m.landing_games_genre()}</span>
               </div>
               <h3>Signal Lost</h3>
-              <p>{copy.description}</p>
-              <p className="gx-small">{copy.controls}</p>
+              <p>{m.landing_games_description()}</p>
+              <p className="gx-small">{m.landing_games_controls()}</p>
               <a className="gx-text-link" href={`${repositoryUrl}/tree/main/examples/signal-lost`}>
                 Signal Lost <ArrowRight size={16} aria-hidden="true" />
               </a>
@@ -82,10 +74,10 @@ export function CartridgeGallery({
                 <div className="gx-stage">
                   <PixelImage
                     file={example.image}
-                    alt={alt[example.alt]}
+                    alt={m[`landing_alt_${example.alt}`]()}
                     width={example.width}
                     height={example.height}
-                    pending={pending}
+                    pending={m.landing_missing()}
                   />
                 </div>
                 <div>
@@ -94,14 +86,14 @@ export function CartridgeGallery({
                       {example.name}
                     </a>
                     {example.experimental && (
-                      <span className="gx-tag gx-tag-gold">{copy.experimental}</span>
+                      <span className="gx-tag gx-tag-gold">{m.landing_games_experimental()}</span>
                     )}
                   </h3>
-                  <p>{copy.rows[example.id]}</p>
+                  <p>{m[`landing_games_rows_${example.id}`]()}</p>
                 </div>
               </article>
             ))}
-            <p className="gx-small">{copy.note}</p>
+            <p className="gx-small">{m.landing_games_note()}</p>
           </div>
         </div>
       </Container>

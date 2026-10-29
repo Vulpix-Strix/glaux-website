@@ -1,27 +1,27 @@
 import { Container } from '@/components/site/primitives';
 import { Link } from '@tanstack/react-router';
 import { ArrowRight } from 'lucide-react';
-import type { LandingCopy } from '@/lib/landing/copy';
+import { m } from '@/paraglide/messages';
 import { firstGame } from '@/lib/landing/examples';
 import { apiLinks, documentationLinks } from '@/lib/landing/navigation';
 import { CodeBlock, SectionHeading } from './primitives';
 
 const gettingStartedSteps = ['create', 'run', 'edit', 'play'] as const;
 
-export function LearningResources({ copy }: { copy: LandingCopy['learn'] }) {
+export function LearningResources() {
   return (
     <section className="gx-section gx-paper gx-dither" id="learn">
       <Container className="gx-wrap gx-learn">
         <div>
-          <SectionHeading eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
-          <p className="gx-small gx-docs-note">{copy.docsNote}</p>
+          <SectionHeading eyebrow={m.landing_learn_eyebrow()} title={m.landing_learn_title()} lead={m.landing_learn_lead()} />
+          <p className="gx-small gx-docs-note">{m.landing_learn_docs_note()}</p>
           <ul className="gx-guide-links">
             {documentationLinks.map(({ id, slug }) => (
               <li key={id}>
                 <Link to="/$lang/docs/$" params={{ lang: 'en', _splat: slug }} hrefLang="en">
                   <span>
-                    <b>{copy.links[id].title}</b>
-                    <span>{copy.links[id].text}</span>
+                    <b>{m[`landing_learn_links_${id}_title`]()}</b>
+                    <span>{m[`landing_learn_links_${id}_text`]()}</span>
                   </span>
                   <ArrowRight aria-hidden="true" />
                 </Link>
@@ -37,19 +37,19 @@ export function LearningResources({ copy }: { copy: LandingCopy['learn'] }) {
                 className={`gx-tag gx-tag-${tone}`}
                 key={id}
               >
-                {copy.categories[id]}
+                {m[`landing_learn_categories_${id}`]()}
               </Link>
             ))}
           </div>
         </div>
         <div>
-          <h3>{copy.stepsTitle}</h3>
+          <h3>{m.landing_learn_steps_title()}</h3>
           <ol className="gx-steps">
             {gettingStartedSteps.map((id) => (
-              <li key={id}>{copy.steps[id]}</li>
+              <li key={id}>{m[`landing_learn_steps_${id}`]()}</li>
             ))}
           </ol>
-          <CodeBlock code={firstGame} label={copy.stepsTitle} numbered />
+          <CodeBlock code={firstGame} label={m.landing_learn_steps_title()} numbered />
         </div>
       </Container>
     </section>

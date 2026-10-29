@@ -1,5 +1,5 @@
 import { Container } from '@/components/site/primitives';
-import type { LandingCopy } from '@/lib/landing/copy';
+import { m } from '@/paraglide/messages';
 import { cartridgeFiles } from '@/lib/landing/console';
 import { drawCode, soundCode } from '@/lib/landing/examples';
 import { CodeBlock, Icon, Panel, PixelImage, SectionHeading } from './primitives';
@@ -24,39 +24,31 @@ const waveforms = [
   },
 ];
 
-export function WorkspacePreview({
-  copy,
-  alt,
-  pending,
-}: {
-  copy: LandingCopy['create'];
-  alt: LandingCopy['alt'];
-  pending: string;
-}) {
+export function WorkspacePreview() {
   return (
     <section className="gx-section gx-surface gx-dither" id="create">
       <Container className="gx-wrap">
-        <SectionHeading eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
-        <div className="gx-workspace-labels" aria-label={copy.hint}>
+        <SectionHeading eyebrow={m.landing_create_eyebrow()} title={m.landing_create_title()} lead={m.landing_create_lead()} />
+        <div className="gx-workspace-labels" aria-label={m.landing_create_hint()}>
           {workspaceTools.map(({ id, available }) => (
             <span
               className={`gx-workspace-label${available ? '' : ' gx-workspace-unavailable'}`}
               key={id}
             >
               <Icon name={id} />
-              {copy.tabs[id]}
-              {!available && <small>{copy.unavailable}</small>}
+              {m[`landing_create_tabs_${id}`]()}
+              {!available && <small>{m.landing_create_unavailable()}</small>}
             </span>
           ))}
-          <span className="gx-small">{copy.hint}</span>
+          <span className="gx-small">{m.landing_create_hint()}</span>
         </div>
         <div className="gx-bento">
           <div className="gx-stack">
-            <Panel icon="code" title={copy.tabs.code} detail="code/main.luau">
-              <CodeBlock code={drawCode} label={copy.tabs.code} />
+            <Panel icon="code" title={m.landing_create_tabs_code()} detail="code/main.luau">
+              <CodeBlock code={drawCode} label={m.landing_create_tabs_code()} />
             </Panel>
-            <Panel icon="sfx" title={copy.sound} detail={copy.channels}>
-              <CodeBlock code={soundCode} label={copy.sound} />
+            <Panel icon="sfx" title={m.landing_create_sound()} detail={m.landing_create_channels()}>
+              <CodeBlock code={soundCode} label={m.landing_create_sound()} />
               <div className="gx-waves" aria-hidden="true">
                 {waveforms.map(({ name, path }) => (
                   <div key={name}>
@@ -68,50 +60,50 @@ export function WorkspacePreview({
                 ))}
               </div>
             </Panel>
-            <Panel icon="code" title={copy.folder} detail="my-game/">
+            <Panel icon="code" title={m.landing_create_folder()} detail="my-game/">
               <ul className="gx-files">
                 {cartridgeFiles.map(({ id, name }) => (
                   <li key={id}>
                     <b>{name}</b>
-                    <span>{copy.files[id]}</span>
+                    <span>{m[`landing_create_files_${id}`]()}</span>
                   </li>
                 ))}
               </ul>
             </Panel>
           </div>
           <div className="gx-stack">
-            <Panel icon="sprites" title={copy.tabs.sprites} detail="128×136">
+            <Panel icon="sprites" title={m.landing_create_tabs_sprites()} detail="128×136">
               <div className="gx-sheet">
                 <PixelImage
                   file="signal-lost-sprites.png"
-                  alt={alt.sprites}
+                  alt={m.landing_alt_sprites()}
                   width={128}
                   height={136}
-                  pending={pending}
+                  pending={m.landing_missing()}
                   className="gx-spritesheet"
                 />
                 <div>
                   <PixelImage
                     file="master-palette.png"
-                    alt={alt.palette}
+                    alt={m.landing_alt_palette()}
                     width={16}
                     height={16}
-                    pending={pending}
+                    pending={m.landing_missing()}
                     className="gx-palette"
                   />
-                  <p className="gx-small">{copy.palette}</p>
+                  <p className="gx-small">{m.landing_create_palette()}</p>
                 </div>
               </div>
             </Panel>
-            <Panel icon="code" title={copy.run} detail="F5">
+            <Panel icon="code" title={m.landing_create_run()} detail="F5">
               <div className="gx-result">
                 <div className="gx-frame">
                   <PixelImage
                     file="signal-lost-title.png"
-                    alt={alt.title}
+                    alt={m.landing_alt_title()}
                     width={320}
                     height={240}
-                    pending={pending}
+                    pending={m.landing_missing()}
                   />
                 </div>
               </div>

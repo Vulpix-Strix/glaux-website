@@ -1,9 +1,9 @@
 import { absoluteUrl } from '../site.ts';
-import { landingLanguages, type LandingLanguage } from '../i18n.ts';
-import { landingCopy } from './copy.ts';
+import { locales, type Locale } from '../../paraglide/runtime.js';
+import { m } from '../../paraglide/messages.js';
 
 /** Head tags of a page that exists in every landing language at `/{lang}{page}`; `page` is '' for the landing. */
-export function pageHead(lang: LandingLanguage, page: string, { title, description }: { title: string; description: string }) {
+export function pageHead(lang: Locale, page: string, { title, description }: { title: string; description: string }) {
   return {
     meta: [
       { title },
@@ -17,7 +17,7 @@ export function pageHead(lang: LandingLanguage, page: string, { title, descripti
     ],
     links: [
       { rel: 'canonical', href: absoluteUrl(`/${lang}${page}`) },
-      ...landingLanguages.map((language) => ({
+      ...locales.map((language) => ({
         rel: 'alternate', hrefLang: language, href: absoluteUrl(`/${language}${page}`),
       })),
       { rel: 'alternate', hrefLang: 'x-default', href: absoluteUrl(`/en${page}`) },
@@ -25,4 +25,7 @@ export function pageHead(lang: LandingLanguage, page: string, { title, descripti
   };
 }
 
-export const landingHead = (lang: LandingLanguage) => pageHead(lang, '', landingCopy[lang]);
+export const landingHead = (lang: Locale) => pageHead(lang, '', {
+    title: m.landing_title({}, { locale: lang }),
+    description: m.landing_description({}, { locale: lang }),
+  });
