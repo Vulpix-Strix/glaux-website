@@ -11,19 +11,48 @@ await new Promise<void>((resolve) => portServer.listen(0, '127.0.0.1', resolve))
 const address = portServer.address();
 assert.ok(address && typeof address !== 'string');
 const port = address.port;
-await new Promise<void>((resolve, reject) => portServer.close((error) => error ? reject(error) : resolve()));
+await new Promise<void>((resolve, reject) =>
+  portServer.close((error) => (error ? reject(error) : resolve())),
+);
 const origin = `http://127.0.0.1:${port}`;
-const worker = spawn(process.execPath, ['node_modules/wrangler/bin/wrangler.js', 'dev',
-  '--config', 'dist/server/wrangler.json', '--local', '--ip', '127.0.0.1', '--port', String(port)], {
-  env: { ...process.env, WRANGLER_SEND_METRICS: 'false' }, stdio: ['ignore', 'pipe', 'pipe'],
-});
+const worker = spawn(
+  process.execPath,
+  [
+    'node_modules/wrangler/bin/wrangler.js',
+    'dev',
+    '--config',
+    'dist/server/wrangler.json',
+    '--local',
+    '--ip',
+    '127.0.0.1',
+    '--port',
+    String(port),
+  ],
+  {
+    env: { ...process.env, WRANGLER_SEND_METRICS: 'false' },
+    stdio: ['ignore', 'pipe', 'pipe'],
+  },
+);
 let output = '';
-worker.stdout.on('data', (data) => { output += data; });
-worker.stderr.on('data', (data) => { output += data; });
+worker.stdout.on('data', (data) => {
+  output += data;
+});
+worker.stderr.on('data', (data) => {
+  output += data;
+});
 
 async function request(path: string, status = 200, init?: RequestInit) {
-  const response = await fetch(`${origin}${path}`, { ...init, headers: { Accept: 'text/html', ...Object.fromEntries(new Headers(init?.headers)) }, redirect: 'manual', signal: AbortSignal.timeout(15000) });
-  assert.equal(response.status, status, `${path} (${response.headers.get("location")}): ${(await response.clone().text()).slice(0, 500)}`);
+  const response = await fetch(`${origin}${path}`, {
+    ...init,
+    headers: { Accept: 'text/html', ...Object.fromEntries(new Headers(init?.headers)) },
+    redirect: 'manual',
+    signal: AbortSignal.timeout(15000),
+  });
+  assert.equal(
+    response.status,
+    status,
+    `${path} (${response.headers.get('location')}): ${(await response.clone().text()).slice(0, 500)}`,
+  );
   return response;
 }
 
@@ -48,7 +77,10 @@ try {
   const spanish = await (await request('/es')).text();
   assert.match(spanish, /<html[^>]*lang="es"/);
   assert.match(spanish, /Crea pequeños mundos/);
-  for (const [lang, html] of [['en', home], ['es', spanish]]) {
+  for (const [lang, html] of [
+    ['en', home],
+    ['es', spanish],
+  ]) {
     assert.match(html, new RegExp(`https://glauxconsole.dev/${lang}`));
     assert.match(html, /href="\/en\/docs\/guide\/getting-started"/);
     assert.match(html, /href="\/en\/docs\/guide\/game-loop"/);
@@ -57,13 +89,70 @@ try {
     assert.doesNotMatch(html, /href="#"/);
     assert.doesNotMatch(html, /\[FILE TYPE|\[POST|proof of concept/);
   }
-  for (const [lang, title] of [['en', /Credits — Glaux/], ['es', /Créditos — Glaux/]] as const) {
+  for (const [lang, title] of [
+    ['en', /Credits — Glaux/],
+    ['es', /Créditos — Glaux/],
+  ] as const) {
     const credits = await (await request(`/${lang}/credits`)).text();
     assert.match(credits, title);
     assert.match(credits, new RegExp(`https://glauxconsole.dev/${lang}/credits`));
     assert.match(credits, /Cuervolu/);
   }
-  for (const path of ['/fonts/pixel-code-regular.woff2', '/images/landing/signal-lost-sprites.png', '/images/landing/icons/code.png', '/ASSET-CREDITS.txt', '/credits/editorial.json']) await request(path);
+  for (const lang of ['en', 'es']) {
+    for (const section of ['news', 'blog']) {
+      const html = await (await request(`/${lang}/${section}`)).text();
+      assert.match(html, new RegExp(`<html[^>]*lang="${lang}"`));
+      assert.match(html, new RegExp(`https://glauxconsole.dev/${lang}/${section}`));
+      assert.doesNotMatch(html, /Sample content|devlog-template|Development preview/);
+      assert.match(html, new RegExp(`href="/${lang}/blog"`));
+      const filtered = await (
+        await request(`/${lang}/${section}?q=term-with-no-editorial-matches`)
+      ).text();
+      assert.match(
+        filtered,
+        lang === 'es'
+          ? /No hay artículos que coincidan|Todavía no hay artículos/
+          : /No articles match|No articles published/,
+      );
+      const feed = await request(`/${lang}/${section}/rss.xml`);
+      assert.match(feed.headers.get('content-type')!, /application\/rss\+xml/);
+      assert.match(await feed.text(), /<rss version="2.0">/);
+    }
+    await request(`/${lang}/blog/devlog-template`, 404);
+    await request(`/${lang}/news/missing`, 404);
+  }
+  const { loadContent, resolveContentAssets } = await import('../src/lib/editorial/content.ts');
+  const { resolve } = await import('node:path');
+  const root = resolve('content/editorial');
+  for (const { article } of loadContent(root, false)) {
+    const url = `/${article.lang}/${article.section}/${article.slug}`;
+    const html = await (await request(url)).text();
+    assert.match(html, /id="article-body"/);
+    assert.match(html, /property="og:type" content="article"/);
+    assert.ok(html.includes(`https://glauxconsole.dev${url}`), `${url}: canonical`);
+    assert.doesNotMatch(
+      html,
+      /Switched to client rendering|Something went wrong|PRIVATE_CONTENT_SENTINEL/,
+    );
+  }
+  const draftAssets = new Map();
+  for (const entry of loadContent(root, true).filter((entry) => entry.article.status === 'draft'))
+    resolveContentAssets(entry, root, draftAssets);
+  for (const url of draftAssets.keys()) await request(url, 404);
+  for (const path of [
+    '/content/editorial/assets/drafts/demo.mp4',
+    '/editorial-assets/drafts/demo.mp4',
+    '/fr/blog',
+  ])
+    await request(path, 404);
+  for (const path of [
+    '/fonts/pixel-code-regular.woff2',
+    '/images/landing/signal-lost-sprites.png',
+    '/images/landing/icons/code.png',
+    '/ASSET-CREDITS.txt',
+    '/credits/editorial.json',
+  ])
+    await request(path);
   const docsResponse = await request('/en/docs/guide');
   assert.match(docsResponse.headers.get('vary')!, /Accept/i);
   const head = await request('/en/docs/guide', 200, { method: 'HEAD' });
@@ -81,7 +170,10 @@ try {
   assert.equal(new URL(negotiated.headers.get('location')!, origin).pathname, '/en/docs/guide.md');
   assert.match(negotiated.headers.get('vary')!, /Accept/i);
   const search = await (await request('/api/search?query=game&locale=en')).json();
-  assert.ok(Array.isArray(search) && search.length > 0, 'search returns real documentation results');
+  assert.ok(
+    Array.isArray(search) && search.length > 0,
+    'search returns real documentation results',
+  );
   for (const path of ['/llms.txt', '/llms-full.txt']) {
     assert.match(await (await request(path)).text(), /Glaux|Guide|guide/);
   }
@@ -90,11 +182,20 @@ try {
   const bytes = new Uint8Array(await og.arrayBuffer());
   assert.equal(new TextDecoder().decode(bytes.slice(0, 4)), 'RIFF');
   assert.ok(bytes.length > 1000);
-  for (const path of ['/en/docs/missing', '/en/docs/missing.md', '/en/og/missing/image.webp',
-    '/es/docs/guide', '/es/docs/guide.md', '/es/og/guide/image.webp', '/unknown']) {
+  for (const path of [
+    '/en/docs/missing',
+    '/en/docs/missing.md',
+    '/en/og/missing/image.webp',
+    '/es/docs/guide',
+    '/es/docs/guide.md',
+    '/es/og/guide/image.webp',
+    '/unknown',
+  ]) {
     await request(path, 404);
   }
-  console.log('Worker smoke passed: EN/ES landings, docs, assets, search, Markdown negotiation, LLM, WebP OG and 404s.');
+  console.log(
+    'Worker smoke passed: EN/ES landings, docs, assets, search, Markdown negotiation, LLM, WebP OG and 404s.',
+  );
 } catch (error) {
   console.error(output.slice(-10000));
   throw error;

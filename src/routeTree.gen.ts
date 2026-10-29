@@ -16,8 +16,14 @@ import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as LangIndexRouteImport } from './routes/$lang/index'
 import { Route as LangCreditsRouteImport } from './routes/$lang/credits'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
+import { Route as LangBlogIndexRouteImport } from './routes/$lang/blog/index'
+import { Route as LangBlogSlugRouteImport } from './routes/$lang/blog/$slug'
+import { Route as LangBlogRssDotxmlRouteImport } from './routes/$lang/blog/rss[.]xml'
 import { Route as LangDocsSplatRouteImport } from './routes/$lang/docs/$'
 import { Route as LangDocsChar123Char125DotmdRouteImport } from './routes/$lang/docs/{$}[.]md'
+import { Route as LangNewsIndexRouteImport } from './routes/$lang/news/index'
+import { Route as LangNewsSlugRouteImport } from './routes/$lang/news/$slug'
+import { Route as LangNewsRssDotxmlRouteImport } from './routes/$lang/news/rss[.]xml'
 import { Route as LangOgSplatRouteImport } from './routes/$lang/og/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -55,6 +61,21 @@ const ApiSearchRoute = ApiSearchRouteImport.update({
   path: '/api/search',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LangBlogIndexRoute = LangBlogIndexRouteImport.update({
+  id: '/blog/',
+  path: '/blog/',
+  getParentRoute: () => LangRouteRoute,
+} as any)
+const LangBlogSlugRoute = LangBlogSlugRouteImport.update({
+  id: '/blog/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => LangRouteRoute,
+} as any)
+const LangBlogRssDotxmlRoute = LangBlogRssDotxmlRouteImport.update({
+  id: '/blog/rss.xml',
+  path: '/blog/rss.xml',
+  getParentRoute: () => LangRouteRoute,
+} as any)
 const LangDocsSplatRoute = LangDocsSplatRouteImport.update({
   id: '/docs/$',
   path: '/docs/$',
@@ -66,6 +87,21 @@ const LangDocsChar123Char125DotmdRoute =
     path: '/docs/{$}.md',
     getParentRoute: () => LangRouteRoute,
   } as any)
+const LangNewsIndexRoute = LangNewsIndexRouteImport.update({
+  id: '/news/',
+  path: '/news/',
+  getParentRoute: () => LangRouteRoute,
+} as any)
+const LangNewsSlugRoute = LangNewsSlugRouteImport.update({
+  id: '/news/$slug',
+  path: '/news/$slug',
+  getParentRoute: () => LangRouteRoute,
+} as any)
+const LangNewsRssDotxmlRoute = LangNewsRssDotxmlRouteImport.update({
+  id: '/news/rss.xml',
+  path: '/news/rss.xml',
+  getParentRoute: () => LangRouteRoute,
+} as any)
 const LangOgSplatRoute = LangOgSplatRouteImport.update({
   id: '/og/$',
   path: '/og/$',
@@ -80,9 +116,15 @@ export interface FileRoutesByFullPath {
   '/$lang/credits': typeof LangCreditsRoute
   '/api/search': typeof ApiSearchRoute
   '/$lang/': typeof LangIndexRoute
+  '/$lang/blog/$slug': typeof LangBlogSlugRoute
+  '/$lang/blog/rss.xml': typeof LangBlogRssDotxmlRoute
   '/$lang/docs/$': typeof LangDocsSplatRoute
   '/$lang/docs/{$}.md': typeof LangDocsChar123Char125DotmdRoute
+  '/$lang/news/$slug': typeof LangNewsSlugRoute
+  '/$lang/news/rss.xml': typeof LangNewsRssDotxmlRoute
   '/$lang/og/$': typeof LangOgSplatRoute
+  '/$lang/blog/': typeof LangBlogIndexRoute
+  '/$lang/news/': typeof LangNewsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -91,9 +133,15 @@ export interface FileRoutesByTo {
   '/$lang/credits': typeof LangCreditsRoute
   '/api/search': typeof ApiSearchRoute
   '/$lang': typeof LangIndexRoute
+  '/$lang/blog/$slug': typeof LangBlogSlugRoute
+  '/$lang/blog/rss.xml': typeof LangBlogRssDotxmlRoute
   '/$lang/docs/$': typeof LangDocsSplatRoute
   '/$lang/docs/{$}.md': typeof LangDocsChar123Char125DotmdRoute
+  '/$lang/news/$slug': typeof LangNewsSlugRoute
+  '/$lang/news/rss.xml': typeof LangNewsRssDotxmlRoute
   '/$lang/og/$': typeof LangOgSplatRoute
+  '/$lang/blog': typeof LangBlogIndexRoute
+  '/$lang/news': typeof LangNewsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -104,9 +152,15 @@ export interface FileRoutesById {
   '/$lang/credits': typeof LangCreditsRoute
   '/api/search': typeof ApiSearchRoute
   '/$lang/': typeof LangIndexRoute
+  '/$lang/blog/$slug': typeof LangBlogSlugRoute
+  '/$lang/blog/rss.xml': typeof LangBlogRssDotxmlRoute
   '/$lang/docs/$': typeof LangDocsSplatRoute
   '/$lang/docs/{$}.md': typeof LangDocsChar123Char125DotmdRoute
+  '/$lang/news/$slug': typeof LangNewsSlugRoute
+  '/$lang/news/rss.xml': typeof LangNewsRssDotxmlRoute
   '/$lang/og/$': typeof LangOgSplatRoute
+  '/$lang/blog/': typeof LangBlogIndexRoute
+  '/$lang/news/': typeof LangNewsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -118,9 +172,15 @@ export interface FileRouteTypes {
     | '/$lang/credits'
     | '/api/search'
     | '/$lang/'
+    | '/$lang/blog/$slug'
+    | '/$lang/blog/rss.xml'
     | '/$lang/docs/$'
     | '/$lang/docs/{$}.md'
+    | '/$lang/news/$slug'
+    | '/$lang/news/rss.xml'
     | '/$lang/og/$'
+    | '/$lang/blog/'
+    | '/$lang/news/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -129,9 +189,15 @@ export interface FileRouteTypes {
     | '/$lang/credits'
     | '/api/search'
     | '/$lang'
+    | '/$lang/blog/$slug'
+    | '/$lang/blog/rss.xml'
     | '/$lang/docs/$'
     | '/$lang/docs/{$}.md'
+    | '/$lang/news/$slug'
+    | '/$lang/news/rss.xml'
     | '/$lang/og/$'
+    | '/$lang/blog'
+    | '/$lang/news'
   id:
     | '__root__'
     | '/'
@@ -141,9 +207,15 @@ export interface FileRouteTypes {
     | '/$lang/credits'
     | '/api/search'
     | '/$lang/'
+    | '/$lang/blog/$slug'
+    | '/$lang/blog/rss.xml'
     | '/$lang/docs/$'
     | '/$lang/docs/{$}.md'
+    | '/$lang/news/$slug'
+    | '/$lang/news/rss.xml'
     | '/$lang/og/$'
+    | '/$lang/blog/'
+    | '/$lang/news/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -205,6 +277,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiSearchRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$lang/blog/': {
+      id: '/$lang/blog/'
+      path: '/blog'
+      fullPath: '/$lang/blog/'
+      preLoaderRoute: typeof LangBlogIndexRouteImport
+      parentRoute: typeof LangRouteRoute
+    }
+    '/$lang/blog/$slug': {
+      id: '/$lang/blog/$slug'
+      path: '/blog/$slug'
+      fullPath: '/$lang/blog/$slug'
+      preLoaderRoute: typeof LangBlogSlugRouteImport
+      parentRoute: typeof LangRouteRoute
+    }
+    '/$lang/blog/rss.xml': {
+      id: '/$lang/blog/rss.xml'
+      path: '/blog/rss.xml'
+      fullPath: '/$lang/blog/rss.xml'
+      preLoaderRoute: typeof LangBlogRssDotxmlRouteImport
+      parentRoute: typeof LangRouteRoute
+    }
     '/$lang/docs/$': {
       id: '/$lang/docs/$'
       path: '/docs/$'
@@ -217,6 +310,27 @@ declare module '@tanstack/react-router' {
       path: '/docs/{$}.md'
       fullPath: '/$lang/docs/{$}.md'
       preLoaderRoute: typeof LangDocsChar123Char125DotmdRouteImport
+      parentRoute: typeof LangRouteRoute
+    }
+    '/$lang/news/': {
+      id: '/$lang/news/'
+      path: '/news'
+      fullPath: '/$lang/news/'
+      preLoaderRoute: typeof LangNewsIndexRouteImport
+      parentRoute: typeof LangRouteRoute
+    }
+    '/$lang/news/$slug': {
+      id: '/$lang/news/$slug'
+      path: '/news/$slug'
+      fullPath: '/$lang/news/$slug'
+      preLoaderRoute: typeof LangNewsSlugRouteImport
+      parentRoute: typeof LangRouteRoute
+    }
+    '/$lang/news/rss.xml': {
+      id: '/$lang/news/rss.xml'
+      path: '/news/rss.xml'
+      fullPath: '/$lang/news/rss.xml'
+      preLoaderRoute: typeof LangNewsRssDotxmlRouteImport
       parentRoute: typeof LangRouteRoute
     }
     '/$lang/og/$': {
@@ -232,17 +346,29 @@ declare module '@tanstack/react-router' {
 interface LangRouteRouteChildren {
   LangCreditsRoute: typeof LangCreditsRoute
   LangIndexRoute: typeof LangIndexRoute
+  LangBlogSlugRoute: typeof LangBlogSlugRoute
+  LangBlogRssDotxmlRoute: typeof LangBlogRssDotxmlRoute
   LangDocsSplatRoute: typeof LangDocsSplatRoute
   LangDocsChar123Char125DotmdRoute: typeof LangDocsChar123Char125DotmdRoute
+  LangNewsSlugRoute: typeof LangNewsSlugRoute
+  LangNewsRssDotxmlRoute: typeof LangNewsRssDotxmlRoute
   LangOgSplatRoute: typeof LangOgSplatRoute
+  LangBlogIndexRoute: typeof LangBlogIndexRoute
+  LangNewsIndexRoute: typeof LangNewsIndexRoute
 }
 
 const LangRouteRouteChildren: LangRouteRouteChildren = {
   LangCreditsRoute: LangCreditsRoute,
   LangIndexRoute: LangIndexRoute,
+  LangBlogSlugRoute: LangBlogSlugRoute,
+  LangBlogRssDotxmlRoute: LangBlogRssDotxmlRoute,
   LangDocsSplatRoute: LangDocsSplatRoute,
   LangDocsChar123Char125DotmdRoute: LangDocsChar123Char125DotmdRoute,
+  LangNewsSlugRoute: LangNewsSlugRoute,
+  LangNewsRssDotxmlRoute: LangNewsRssDotxmlRoute,
   LangOgSplatRoute: LangOgSplatRoute,
+  LangBlogIndexRoute: LangBlogIndexRoute,
+  LangNewsIndexRoute: LangNewsIndexRoute,
 }
 
 const LangRouteRouteWithChildren = LangRouteRoute._addFileChildren(

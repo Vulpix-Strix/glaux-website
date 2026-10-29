@@ -3,8 +3,8 @@ import * as React from 'react';
 import appCss from '@/styles/app.css?url';
 import { RootProvider } from 'fumadocs-ui/provider/tanstack';
 import { i18nProvider } from 'fumadocs-ui/i18n';
-import { translations } from '@/lib/docs/i18n';
-import { defaultLanguage, getLanguage } from '@/lib/i18n';
+import { siteTranslations } from '@/lib/site-i18n';
+import { getLanguage } from '@/lib/i18n';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -35,7 +35,7 @@ function RootComponent() {
         <HeadContent />
       </head>
       <body className="flex flex-col min-h-screen">
-        <RootProvider i18n={i18nProvider(translations, defaultLanguage)}>
+        <RootProvider i18n={i18nProvider(siteTranslations, lang)}>
           <Outlet />
         </RootProvider>
         <Scripts />

@@ -7,6 +7,8 @@ import tailwindcss from '@tailwindcss/vite';
 import { fumadocsMdx } from 'fumadocs-mdx/vite';
 import { cloudflare } from '@cloudflare/vite-plugin';
 import { editorialPlugin } from './src/lib/editorial/vite.ts';
+import { loadContent } from './src/lib/editorial/content.ts';
+import { articleUrl } from './src/lib/editorial/model.ts';
 
 // Vite refuses to import files of `public/`, which is where `pnpm credits:sync` writes the credits
 // the site serves. This exposes the small editorial one to pages as a module, so it can be rendered
@@ -36,8 +38,17 @@ export default defineConfig({
     tailwindcss(),
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     tanstackStart({
+      pages: [
+        ...['en', 'es'].flatMap((lang) =>
+          ['news', 'blog'].map((section) => ({ path: `/${lang}/${section}` })),
+        ),
+        ...loadContent(path.resolve('content/editorial'), false).map(({ article }) => ({
+          path: articleUrl(article),
+        })),
+      ],
       prerender: {
         enabled: true,
+        filter: (page) => !page.path.includes('?') && !page.path.endsWith('/rss.xml'),
       },
     }),
     react(),

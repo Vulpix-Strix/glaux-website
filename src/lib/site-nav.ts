@@ -13,7 +13,7 @@ export const siteLinks: readonly SiteLink[] = [
   { id: 'docs', label: 'Docs', href: '/en/docs/guide' },
   { id: 'learn', label: 'Learn', href: '/en#learn' },
   { id: 'games', label: 'Games', href: '/en#games' },
-  // Activate these once the pages exist.
-  { id: 'blog', label: 'Blog', planned: true },
+  { id: 'news', label: 'News', href: '/en/news' },
+  { id: 'blog', label: 'Blog', href: '/en/blog' },
   { id: 'changelog', label: 'Changelog', planned: true },
 ];
