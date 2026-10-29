@@ -3,10 +3,12 @@ import { articleUrl } from './model.ts';
 import { articleTranslations } from './catalog.ts';
 import { pageHead } from '../landing/metadata.ts';
 import { absoluteUrl } from '../site.ts';
+import { ogImagePath } from '../og/model.ts';
 export function articleHead(article: Article, articles: Article[]) {
   const head = pageHead(article.lang, `/${article.section}/${article.slug}`, {
     title: `${article.title} — Glaux`,
     description: article.description,
+    imageAlt: article.cover?.alt,
   });
   const published = article.status === 'published';
   const translations = published
@@ -22,7 +24,7 @@ export function articleHead(article: Article, articles: Article[]) {
         url: absoluteUrl(articleUrl(article)),
         inLanguage: article.lang,
         ...(article.author ? { author: { '@type': 'Person', name: article.author } } : {}),
-        ...(article.cover ? { image: absoluteUrl(article.cover.src) } : {}),
+        image: absoluteUrl(ogImagePath(article.lang, `/${article.section}/${article.slug}`)),
       }
     : undefined;
   return {
@@ -30,7 +32,6 @@ export function articleHead(article: Article, articles: Article[]) {
       ...head.meta.filter((item) => !('property' in item && item.property === 'og:type')),
       { property: 'og:type', content: 'article' },
       ...(article.date ? [{ property: 'article:published_time', content: article.date }] : []),
-      ...(article.cover ? [{ property: 'og:image', content: absoluteUrl(article.cover.src) }] : []),
       ...(!published ? [{ name: 'robots', content: 'noindex, nofollow' }] : []),
     ],
     links: [

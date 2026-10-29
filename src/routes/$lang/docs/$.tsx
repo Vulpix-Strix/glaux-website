@@ -10,9 +10,11 @@ import {
   MarkdownCopyButton,
 } from 'fumadocs-ui/layouts/docs/page';
 import { isPublishedLanguage } from '@/lib/i18n';
-import { absoluteUrl, appName } from '@/lib/site';
+import { appName } from '@/lib/site';
 import { repositoryUrl } from '@/lib/site-nav';
-import { getPageImageUrl, getPageMarkdownUrl } from '@/lib/docs/urls';
+import { getPageMarkdownUrl } from '@/lib/docs/urls';
+import { pageHead } from '@/lib/landing/metadata';
+import { isLocale } from '@/paraglide/runtime';
 import { useFumadocsLoader } from 'fumadocs-core/source/client';
 import { Suspense, use } from 'react';
 import { useMDXComponents } from '@/components/docs/mdx';
@@ -25,14 +27,14 @@ export const Route = createFileRoute('/$lang/docs/$')({
     await docs.getPage(data.path)?.preload();
     return data;
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData ? [
-      { title: `${loaderData.title} | ${appName}` },
-      { name: 'description', content: loaderData.description },
-      { property: 'og:image', content: loaderData.imageUrl },
-    ] : [],
-    links: loaderData ? [{ rel: 'canonical', href: loaderData.canonicalUrl }] : [],
-  }),
+  head: ({ loaderData, params }) => {
+    if (!loaderData || !isLocale(params.lang)) return {};
+    return pageHead(params.lang, loaderData.pagePath, {
+      title: `${loaderData.title} | ${appName}`,
+      description: loaderData.description ?? loaderData.title,
+      languages: ['en'],
+    });
+  },
 });
 
 const serverLoader = createServerFn({
@@ -48,9 +50,8 @@ const serverLoader = createServerFn({
       path: page.path,
       title: page.data.title,
       description: page.data.description,
-      canonicalUrl: absoluteUrl(page.url),
+      pagePath: page.url.slice(`/${lang}`.length),
       markdownUrl: getPageMarkdownUrl(page).url,
-      imageUrl: absoluteUrl(getPageImageUrl(page).url),
       pageTree: await source.serializePageTree(source.getPageTree(lang)),
     };
   });
