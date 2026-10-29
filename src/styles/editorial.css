@@ -1,0 +1,72 @@
+/* MDX and library-owned DOM need scoped typography and theme-aware controls. */
+.gx-editorial :where(button, a, input, summary):focus-visible {
+  outline: 2px solid var(--gx-focus);
+  outline-offset: 4px;
+}
+.gx-editorial-prose {
+  --tw-prose-body: var(--gx-text);
+  --tw-prose-headings: var(--gx-text);
+  --tw-prose-links: var(--gx-link);
+  --tw-prose-bold: var(--gx-text);
+  --tw-prose-code: var(--gx-text);
+  --tw-prose-quotes: var(--gx-muted);
+  --tw-prose-borders: var(--gx-border);
+}
+.gx-editorial-prose :where(h2, h3, h4) {
+  scroll-margin-top: 80px;
+}
+.gx-editorial-prose :where(img, video, pre, table) {
+  max-width: 100%;
+}
+.gx-editorial-prose pre {
+  overflow-x: auto;
+}
+.gx-editorial [data-theme-toggle] {
+  flex-shrink: 0;
+}
+.gx-pixel-button {
+  border-radius: 0;
+  clip-path: polygon(
+    4px 0,
+    calc(100% - 4px) 0,
+    calc(100% - 4px) 4px,
+    100% 4px,
+    100% calc(100% - 4px),
+    calc(100% - 4px) calc(100% - 4px),
+    calc(100% - 4px) 100%,
+    4px 100%,
+    4px calc(100% - 4px),
+    0 calc(100% - 4px),
+    0 4px,
+    4px 4px
+  );
+}
+.gx-pixel-button:focus-visible {
+  outline-offset: -4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gx-editorial *,
+  .gx-editorial *::before,
+  .gx-editorial *::after,
+  .glaux-theme [role='dialog'] * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Native progress internals require vendor selectors to preserve the pixel treatment. */
+.gx-reading-progress {
+  appearance: none;
+  border: 1px solid var(--gx-border-strong);
+  background: transparent;
+}
+.gx-reading-progress::-webkit-progress-bar {
+  background: transparent;
+}
+.gx-reading-progress::-webkit-progress-value {
+  background: repeating-linear-gradient(90deg, var(--gx-accent) 0 6px, transparent 6px 8px);
+}
+.gx-reading-progress::-moz-progress-bar {
+  background: repeating-linear-gradient(90deg, var(--gx-accent) 0 6px, transparent 6px 8px);
+}

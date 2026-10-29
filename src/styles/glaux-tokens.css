@@ -12,7 +12,7 @@
 /*
  * Glaux design tokens, shared by the landing and the docs.
  *
- * Nothing here is declared on :root or in @theme, so Fumadocs pages outside the
+ * Palette values stay scoped to surfaces, so Fumadocs pages outside the
  * docs layout keep Fumadocs' own look. A surface opts in with `.glaux-landing`
  * (always dark) or `.glaux-theme` (light, dark under `.dark`).
  */
@@ -130,4 +130,36 @@
   height: 18px;
   margin-bottom: 1px;
   background: var(--gx-accent);
+}
+/* Utilities resolve against the surface, so docs and editorial share light/dark tokens. */
+@theme inline {
+  --color-gx-bg: var(--gx-bg);
+  --color-gx-surface: var(--gx-surface);
+  --color-gx-raised: var(--gx-raised);
+  --color-gx-sunken: var(--gx-sunken);
+  --color-gx-hover: var(--gx-hover);
+  --color-gx-border: var(--gx-border);
+  --color-gx-border-strong: var(--gx-border-strong);
+  --color-gx-text: var(--gx-text);
+  --color-gx-muted: var(--gx-muted);
+  --color-gx-accent: var(--gx-accent);
+  --color-gx-accent-hover: var(--gx-accent-hover);
+  --color-gx-accent-subtle: var(--gx-accent-subtle);
+  --color-gx-on-accent: var(--gx-on-accent);
+  --color-gx-focus: var(--gx-focus);
+  --color-gx-warning: var(--gx-warning);
+  --color-gx-warning-subtle: var(--gx-warning-subtle);
+  --color-gx-warning-text: var(--gx-warning-text);
+  --color-gx-scrim: var(--gx-scrim);
+  --color-gx-success-subtle: var(--gx-success-subtle);
+  --color-gx-success-text: var(--gx-success-text);
+  --color-gx-danger-subtle: var(--gx-danger-subtle);
+  --color-gx-danger-text: var(--gx-danger-text);
+  --font-gx-sans: var(--gx-sans);
+  --font-gx-mono: var(--gx-mono);
+  --font-gx-pixel: var(--gx-pixel);
+  --container-site: 1200px;
+  --container-reading: 70ch;
+  --radius-gx: 4px;
+  --shadow-gx-pixel: 4px 4px 0 var(--gx-border-strong);
 }
