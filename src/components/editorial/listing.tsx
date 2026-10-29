@@ -53,7 +53,7 @@ export function EditorialListing({
   const filters: Array<Category | ''> = ['', ...topics];
   return (
     <EditorialShell lang={lang} page={`/${section}`}>
-      <main id="main" tabIndex={-1}>
+      <main id="main" tabIndex={-1} className="flex-1">
         <Container className="pt-12 pb-16 sm:pt-16 sm:pb-24">
           <div className="mb-10 flex flex-wrap items-end justify-between gap-8">
             <div className="max-w-reading">

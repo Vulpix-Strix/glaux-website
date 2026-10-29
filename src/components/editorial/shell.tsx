@@ -18,7 +18,7 @@ export function EditorialShell({
   useSurfaceTheme();
   return (
     <div
-      className="glaux-theme gx-editorial min-h-screen w-full min-w-0 bg-gx-bg font-gx-sans text-base leading-relaxed text-gx-text antialiased"
+      className="glaux-theme gx-editorial flex min-h-screen w-full min-w-0 flex-col bg-gx-bg font-gx-sans text-base leading-relaxed text-gx-text antialiased"
       id="top"
     >
       <a

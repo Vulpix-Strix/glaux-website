@@ -47,7 +47,7 @@ export function EditorialArticle({
       {article.status === 'draft' && <EditorialNotice>{m.editorial_draft()}</EditorialNotice>}
       {article.notice && <EditorialNotice>{article.notice}</EditorialNotice>}
       {article.section === 'blog' && <ReadingProgress title={article.title} />}
-      <main id="main" tabIndex={-1}>
+      <main id="main" tabIndex={-1} className="flex-1">
         <Container className="pt-10 pb-16 sm:pt-12 sm:pb-24">
           <header className="mb-10 flex flex-col items-start gap-6">
             <nav aria-label={m.editorial_breadcrumb()} className="text-sm text-gx-muted">
