@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "vite build && node scripts/check-editorial-output.ts",
+    "build": "vite build && node scripts/check-editorial-output.ts && node scripts/check-og-output.ts",
     "start": "vite preview",
     "preview": "vite preview",
     "i18n:compile": "node scripts/compile-i18n.ts",
@@ -27,7 +27,8 @@
     "pretest": "pnpm i18n:compile",
     "deploy": "pnpm build && wrangler deploy",
     "test:worker": "node scripts/smoke-worker.ts",
-    "editorial:check": "node scripts/check-editorial-output.ts"
+    "editorial:check": "node scripts/check-editorial-output.ts",
+    "og:check": "node scripts/check-og-output.ts"
   },
   "dependencies": {
     "@base-ui/react": "1.9.0",

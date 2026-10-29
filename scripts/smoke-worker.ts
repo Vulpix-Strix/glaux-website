@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { createServer } from 'node:net';
 import { setTimeout as delay } from 'node:timers/promises';
+import { pngSize } from '../src/lib/og/png.ts';
 
 assert.ok(existsSync('dist/server/wrangler.json'), 'run pnpm build first');
 const portServer = createServer();
@@ -182,8 +183,15 @@ try {
   const bytes = new Uint8Array(await og.arrayBuffer());
   assert.equal(new TextDecoder().decode(bytes.slice(0, 4)), 'RIFF');
   assert.ok(bytes.length > 1000);
+  for (const path of ['/og/en/index.png', '/og/es/news.png', '/og/en/docs/guide.png']) {
+    const card = await request(path);
+    assert.match(card.headers.get('content-type')!, /image\/png/);
+    const png = new Uint8Array(await card.arrayBuffer());
+    assert.deepEqual(pngSize(png), { width: 1200, height: 630 }, path);
+  }
   for (const path of [
     '/en/docs/missing',
+    '/og/en/missing.png',
     '/en/docs/missing.md',
     '/en/og/missing/image.webp',
     '/es/docs/guide',
@@ -194,7 +202,7 @@ try {
     await request(path, 404);
   }
   console.log(
-    'Worker smoke passed: EN/ES landings, docs, assets, search, Markdown negotiation, LLM, WebP OG and 404s.',
+    'Worker smoke passed: EN/ES landings, docs, assets, search, Markdown negotiation, LLM, WebP and PNG OG and 404s.',
   );
 } catch (error) {
   console.error(output.slice(-10000));
