@@ -217,6 +217,17 @@
         "retrieved": "2026-10-28",
         "note": "The package is a bundle of libraries under many licenses, and its own README repeats this notice. The full text of each license is not part of the package or of this notice."
       }
+    ],
+    "@lix-js/sdk@0.20.1": [
+      {
+        "kind": "license",
+        "title": "LICENSE",
+        "spdx": "MIT",
+        "file": "lix-LICENSE.txt",
+        "source": "https://github.com/opral/lix/blob/49f10757ecff2bd61530245389dd862ef06a879d/LICENSE",
+        "retrieved": "2026-10-29",
+        "note": "The package ships no license file. This is the MIT license at the root of the repository, at the commit of the v0.20.1 tag."
+      }
     ]
   }
 }
