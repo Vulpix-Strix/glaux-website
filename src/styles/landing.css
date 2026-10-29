@@ -345,7 +345,7 @@
 
 .gx-hero-shell {
   position: absolute;
-  width: 224px;
+  width: 380px;
   left: -56px;
   bottom: -56px;
   border: 2px solid var(--gx-border-strong);
@@ -353,8 +353,24 @@
   background: #181215;
 }
 
+/*
+ * The shell capture is a 1448x1086 image whose text fills only its top-left corner.
+ * Show that corner (1130x600) and let the browser smooth it: a nearest-neighbour
+ * downscale of the whole image made the text unreadable.
+ */
+.gx-hero-shell .gx-image {
+  aspect-ratio: 1130 / 600 !important;
+  overflow: hidden;
+}
+
+.gx-hero-shell .gx-image img {
+  width: 128.14%;
+  max-width: none;
+  image-rendering: auto;
+}
+
 .gx-hero-shot figcaption {
-  padding-left: 184px;
+  padding-left: 340px;
   margin-top: 16px;
   font-size: 12px;
   line-height: 16px;
@@ -1219,11 +1235,11 @@
 
   .gx-hero-shell {
     left: -16px;
-    width: 184px;
+    width: 300px;
   }
 
   .gx-hero-shot figcaption {
-    padding-left: 160px;
+    padding-left: 300px;
   }
 
   .gx-games {
@@ -1292,11 +1308,11 @@
 
   .gx-hero-shell {
     left: -32px;
-    width: 224px;
+    width: 340px;
   }
 
   .gx-hero-shot figcaption {
-    padding-left: 200px;
+    padding-left: 324px;
   }
 
   .gx-facts {
@@ -1436,17 +1452,20 @@
   .gx-hero-shot {
     width: calc(100% - 12px);
     margin-left: 12px !important;
-    margin-bottom: 60px !important;
+    margin-bottom: 0 !important;
   }
 
+  /* On phones the shell joins the flow under the frame, wide enough to read. */
   .gx-hero-shell {
-    width: 44%;
+    position: relative;
+    width: 86%;
     left: -12px;
-    bottom: -44px;
+    bottom: auto;
+    margin-top: -40px;
   }
 
   .gx-hero-shot figcaption {
-    padding-left: 44%;
+    padding-left: 0;
     line-height: 18px;
   }
 
