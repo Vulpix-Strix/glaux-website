@@ -6,10 +6,12 @@ import {
   DocsBody,
   DocsPage,
   DocsTitle,
+  EditOnGitHub,
   MarkdownCopyButton,
 } from 'fumadocs-ui/layouts/docs/page';
 import { isPublishedLanguage } from '@/lib/i18n';
 import { absoluteUrl, appName } from '@/lib/site';
+import { repositoryUrl } from '@/lib/site-nav';
 import { getPageImageUrl, getPageMarkdownUrl } from '@/lib/docs/urls';
 import { useFumadocsLoader } from 'fumadocs-core/source/client';
 import { Suspense, use } from 'react';
@@ -62,10 +64,11 @@ function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
 
   // The page's summary is the first paragraph of its body, so no description is shown here.
   return (
-    <DocsPage toc={toc}>
+    <DocsPage toc={toc} breadcrumb={{ enabled: true, includeRoot: true }}>
       <DocsTitle>{page.title}</DocsTitle>
-      <div className="flex flex-row gap-2 items-center border-b -mt-4 pb-6">
+      <div className="gx-docs-meta">
         <MarkdownCopyButton markdownUrl={markdownUrl} />
+        <EditOnGitHub href={`${repositoryUrl}/blob/main/docs/${path}`}>Edit on GitHub</EditOnGitHub>
       </div>
       <DocsBody>
         <MDX components={useMDXComponents()} />

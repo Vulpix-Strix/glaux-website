@@ -1,0 +1,133 @@
+@import '@fontsource-variable/hanken-grotesk/wght.css';
+@import '@fontsource-variable/jetbrains-mono/wght.css';
+
+@font-face {
+  font-family: 'Pixel Code';
+  src: url('/fonts/pixel-code-regular.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+/*
+ * Glaux design tokens, shared by the landing and the docs.
+ *
+ * Nothing here is declared on :root or in @theme, so Fumadocs pages outside the
+ * docs layout keep Fumadocs' own look. A surface opts in with `.glaux-landing`
+ * (always dark) or `.glaux-theme` (light, dark under `.dark`).
+ */
+
+.glaux-landing,
+.glaux-theme {
+  --gx-sans: 'Hanken Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+  --gx-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+  --gx-pixel: 'Pixel Code', ui-monospace, monospace;
+}
+
+/* Dark palette. */
+.glaux-landing,
+.dark .glaux-theme {
+  --gx-bg: #181215;
+  --gx-surface: #261f22;
+  --gx-raised: #302c2e;
+  --gx-sunken: #120d0f;
+  --gx-hover: #302c2e;
+  --gx-border: #473f40;
+  --gx-border-strong: #7d7071;
+  --gx-text: #dff6f5;
+  --gx-muted: #a0938e;
+  --gx-accent: #28ccdf;
+  --gx-accent-hover: #8aebf1;
+  --gx-accent-subtle: #26373c;
+  --gx-on-accent: #181215;
+  --gx-focus: #8aebf1;
+  --gx-link: #28ccdf;
+  --gx-success: #71aa34;
+  --gx-success-subtle: #303225;
+  --gx-success-text: #b6d53c;
+  --gx-warning: #f4b41b;
+  --gx-warning-subtle: #433421;
+  --gx-warning-text: #f4b41b;
+  --gx-danger: #e6482e;
+  --gx-danger-subtle: #452624;
+  --gx-danger-text: #ff7a63;
+  --gx-info: #28ccdf;
+  --gx-info-subtle: #26373c;
+  --gx-info-text: #8aebf1;
+  --gx-scrim: #181215d9;
+  color-scheme: dark;
+}
+
+/* Light palette (warm paper). */
+.glaux-theme {
+  --gx-bg: #fdf6eb;
+  --gx-surface: #ffffff;
+  --gx-raised: #ffffff;
+  --gx-sunken: #f3ebdf;
+  --gx-hover: #f3ebdf;
+  --gx-border: #e1d8cb;
+  --gx-border-strong: #8c827f;
+  --gx-text: #302c2e;
+  --gx-muted: #5a5353;
+  --gx-accent: #31699a;
+  --gx-accent-hover: #394778;
+  --gx-accent-subtle: #ebf2f6;
+  --gx-on-accent: #ffffff;
+  --gx-focus: #394778;
+  --gx-link: #31699a;
+  --gx-success: #397b44;
+  --gx-success-subtle: #ebf2ec;
+  --gx-success-text: #2d6236;
+  --gx-warning: #a86a00;
+  --gx-warning-subtle: #fdeecd;
+  --gx-warning-text: #7a5200;
+  --gx-danger: #a93b3b;
+  --gx-danger-subtle: #f7eded;
+  --gx-danger-text: #8c2f2f;
+  --gx-info: #31699a;
+  --gx-info-subtle: #ebf2f6;
+  --gx-info-text: #2b5c8a;
+  --gx-scrim: #302c2e8c;
+  color-scheme: light;
+}
+
+/* Fumadocs reads its own `--color-fd-*` tokens; point them at the Glaux ones inside the docs only. */
+.glaux-theme {
+  --color-fd-background: var(--gx-bg);
+  --color-fd-foreground: var(--gx-text);
+  --color-fd-muted: var(--gx-sunken);
+  --color-fd-muted-foreground: var(--gx-muted);
+  --color-fd-popover: var(--gx-raised);
+  --color-fd-popover-foreground: var(--gx-text);
+  --color-fd-card: var(--gx-surface);
+  --color-fd-card-foreground: var(--gx-text);
+  --color-fd-border: var(--gx-border);
+  --color-fd-primary: var(--gx-accent);
+  --color-fd-primary-foreground: var(--gx-on-accent);
+  --color-fd-secondary: var(--gx-raised);
+  --color-fd-secondary-foreground: var(--gx-text);
+  --color-fd-accent: var(--gx-hover);
+  --color-fd-accent-foreground: var(--gx-text);
+  --color-fd-ring: var(--gx-focus);
+  --color-fd-info: var(--gx-info);
+  --color-fd-warning: var(--gx-warning);
+  --color-fd-error: var(--gx-danger);
+  --color-fd-success: var(--gx-success);
+  --color-fd-idea: var(--gx-warning);
+}
+
+.gx-wordmark {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 4px;
+  font: 400 27px/27px var(--gx-pixel);
+  color: var(--gx-text);
+  flex-shrink: 0;
+}
+
+.gx-wordmark-cursor {
+  width: 9px;
+  height: 18px;
+  margin-bottom: 1px;
+  background: var(--gx-accent);
+}

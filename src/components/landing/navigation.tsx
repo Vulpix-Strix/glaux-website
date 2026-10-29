@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import type { LandingLanguage } from '@/lib/i18n';
 import type { LandingCopy } from '@/lib/landing/copy';
 import { documentationLinks, landingNavigation, repositoryUrl } from '@/lib/landing/navigation';
+import { Wordmark } from '@/components/brand/wordmark';
 import { Action } from './primitives';
 
 export function LanguageLink({ language, current, label }: {
@@ -40,8 +41,8 @@ export function LandingHeader({ copy, lang }: { copy: LandingCopy; lang: Landing
       }}
     >
       <div className="gx-wrap gx-nav-inner">
-        <a className="gx-wordmark" href={`/${lang}`} aria-label={copy.home}>
-          glaux<span aria-hidden="true" />
+        <a href={`/${lang}`} aria-label={copy.home}>
+          <Wordmark />
         </a>
         <button
           className="gx-menu gx-button"
@@ -81,7 +82,7 @@ export function LandingFooter({ copy, lang }: { copy: LandingCopy; lang: Landing
       <div className="gx-wrap">
         <div className="gx-footer-grid">
           <div>
-            <a className="gx-wordmark" href="#top">glaux<span aria-hidden="true" /></a>
+            <a href="#top" aria-label="glaux"><Wordmark /></a>
             <p>{copy.footer.tagline}</p>
           </div>
           <nav aria-label={copy.footer.learn}>

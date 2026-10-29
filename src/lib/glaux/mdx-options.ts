@@ -20,7 +20,15 @@ export function glauxMdxOptions(contentDir: string): MDXPresetOptions {
   const manifestPath = path.join(contentDir, 'manifest.json');
   return {
     // `langs` makes Shiki load the grammar up front; Luau is bundled and loads by itself.
-    rehypeCodeOptions: { ...rehypeCodeDefaultOptions, langs: [{ ...rhaiGrammar, name: 'rhai' }] },
+    rehypeCodeOptions: {
+      ...rehypeCodeDefaultOptions,
+      langs: [{ ...rhaiGrammar, name: 'rhai' }],
+      // The page tells Luau and Rhai samples apart by this attribute.
+      transformers: [
+        ...(rehypeCodeDefaultOptions.transformers ?? []),
+        { pre(node) { node.properties['data-language'] = this.options.lang; } },
+      ],
+    },
     // Glaux images are local files; never fetch a remote one to measure it during a build.
     remarkImageOptions: { external: false },
     remarkPlugins: [
