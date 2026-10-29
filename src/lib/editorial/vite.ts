@@ -3,6 +3,7 @@ import { applyMdxPreset } from 'fumadocs-mdx/config';
 import { createReadStream, readFileSync, statSync } from 'node:fs';
 import { glauxCodeOptions } from '../glaux/mdx-options.ts';
 import { assetRange } from './asset-range.ts';
+import { remarkAssetSize } from './remark-asset-size.ts';
 import path from 'node:path';
 import type { Plugin } from 'vite';
 import {
@@ -68,7 +69,12 @@ export function editorialPlugin(contentRoot = path.resolve('content/editorial'))
         remarkHeadingOptions: { generateToc: true },
         remarkNpmOptions: false,
       })('bundler');
-      return String(await compile({ path: entry.file, value: entry.body }, options));
+      return String(
+        await compile(
+          { path: entry.file, value: entry.body },
+          { ...options, remarkPlugins: [...(options.remarkPlugins ?? []), [remarkAssetSize, assets]] },
+        ),
+      );
     },
     generateBundle() {
       for (const asset of assets.values())

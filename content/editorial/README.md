@@ -1,116 +1,139 @@
-# Local editorial content
+# Writing articles for Glaux
 
-News and Blog share one catalog, MDX compiler, component registry and renderer.
-The imported console manual is a separate collection and is never edited here.
+News and Blog articles are plain text files written in Markdown. This guide covers everything you need to write one, add images and publish it.
 
-## Write a devlog
+## Quick start
 
-1. Start Vite with `pnpm dev` and open `/en/blog/devlog-template` or
-   `/es/blog/devlog-template`. These routes exist only in development.
-2. Copy the corresponding `.mdx` file, give it a unique kebab-case filename and
-   change `id`, title and description. Keep `status: draft` while writing.
-3. Replace the editing instructions with your own account. Remove the component
-   demonstrations, their test values and the development callout. No sample
-   text is published automatically.
-4. Add a real `date: YYYY-MM-DD`. Replace or remove every `asset:drafts/...`
-   reference before changing `status` to `published`.
-5. Run the checks below and inspect the page in both themes and on a narrow
-   screen. Commit or publish using your usual workflow.
+1. Create a draft:
 
-Files live at `{en,es}/{news,blog}/{slug}.mdx`. Translations share the same `id`
-and section, but can have different filenames. Missing translations are not
-replaced with content in the other language.
+   ```sh
+   pnpm new:post --title "My first article"
+   ```
 
-Required metadata: `id`, `title`, `description`, `status` and a nonempty
-`categories` list. Published articles also require `date`. Optional fields:
-`author`, `featured`, `number`, `notice`, `cover`, `series`, `presentation` and
-`event`. The TypeScript model in `src/lib/editorial/model.ts` documents their
-shapes. Dates are calendar dates; event times need an explicit UTC offset and
-an IANA `timeZone`.
+   This creates a Spanish blog draft. Add `--lang en` for English, `--lang both` for both languages, or `--section news` for a news item. If you leave out `--title`, you will be asked for it.
 
-Categories: `announcements`, `development`, `community`, `showcases`, `devlog`,
-`technical`, `design`, `lessons`. An article may have several categories.
-Optional `presentation` values are `story` (default), `brief`, `showcase`,
-`event` and `video`. News groups brief and showcase entries into additional
-sections. Event cards require `event` metadata. Featured articles and recent
-Blog articles share the first archive page's ten-entry budget.
+2. Run `pnpm dev` and open the draft, for example `/es/blog/my-first-article`. Drafts show up only on your computer.
+3. Fill in the `description`, then write below the second `---` line, in normal Markdown.
+4. When it is ready, change `status` to `published` and add a `date`. That is all. See [Publishing](#publishing).
 
-Series use `{ id, title, part }`. Part numbers must be positive and unique
-within a language and section. Only available articles are linked; no future
-parts are fabricated.
+Articles live in `content/editorial/{es,en}/{blog,news}/`. The file name becomes the web address.
 
-## Assets and publication boundaries
+## The top of the file
 
-Place production resources in `assets/published/` and development-only resources
-in `assets/drafts/`. Reference them with literal strings, for example:
+Every article starts with a block of settings between two `---` lines:
+
+```yaml
+---
+id: my-first-article
+title: "My first article"
+description: "One or two sentences. Search results and social posts show this."
+status: draft
+date: 2026-11-02
+categories: [development, devlog]
+cover:
+  src: asset:my-first-article/cover.png
+  alt: What the picture shows
+ogImage:
+  src: asset:my-first-article/social.png
+series:
+  id: glaux-devlog
+  title: Building Glaux
+  part: 1
+---
+```
+
+| Setting       | What it does                                                                                                                                         |
+|---------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `id`          | Name that ties the article to its translations and to its image folder. Both language versions use the same `id`. Do not change it after publishing. |
+| `title`       | The headline.                                                                                                                                        |
+| `description` | A short summary. It can stay empty while the article is a draft, but not once published.                                                             |
+| `status`      | `draft` is private. `published` is public.                                                                                                           |
+| `date`        | Publication day as `YYYY-MM-DD`. Required once published.                                                                                            |
+| `categories`  | At least one of `announcements`, `development`, `community`, `showcases`, `devlog`, `technical`, `design`, `lessons`.                                |
+| `cover`       | Optional picture shown at the top of the article and on article cards. Needs `src` and `alt`.                                                        |
+| `ogImage`     | Optional picture for link previews. See [Cover and link preview](#cover-and-link-preview). Needs `src`, and `alt` is recommended.                    |
+| `series`      | Optional. Groups articles into a numbered series. Use the same `id` and `title` in every part and give each part its own `part` number.              |
+| `author`      | Optional name shown on the article.                                                                                                                  |
+| `featured`    | Optional. `true` highlights the article on the Blog page.                                                                                            |
+| `number`      | Optional. The devlog number, for Blog articles in a numbered devlog.                                                                                 |
+
+Less common settings are `presentation` (`story`, `brief`, `showcase`, `event` or `video`) and `event` (start, end, time zone and location, needed for `presentation: event`).
+
+## Images
+
+Put images in a folder named after the article's `id`:
+
+```
+content/editorial/assets/my-first-article/shell.png
+```
+
+Then use them anywhere in the article. A normal Markdown image works:
+
+```md
+![Glaux shell](asset:my-first-article/shell.png)
+```
+
+Use `ArticleFigure` when you want a caption:
 
 ```mdx
 <ArticleFigure
-  src="asset:published/shell.png"
-  alt="Describe what this image shows"
-  width={320}
-  height={240}
+  src="asset:my-first-article/shell.png"
+  alt="Glaux shell"
+  caption="The shell on first launch"
 />
 ```
 
-Do not place draft media in `public/`: that directory is always public.
-Only resources referenced by selected articles are emitted by Vite. The
-production catalog excludes drafts before MDX compilation; it rejects
-published references to draft assets. Development serves only registered assets
-and supports byte ranges for native video seeking. There is no draft resource
-endpoint in the production Worker.
+Always write a short `alt` text that describes the image. PNG, JPEG and WebP sizes are detected automatically. For other formats, or to force a size, add `width` and `height`.
 
-MDX uses the registered components below, so imports and exports in articles
-are intentionally rejected. This prevents imports from bypassing the asset
-boundary. Relative media paths are not resolved: use `asset:published/...` for
-editorial media or existing public resources when they are already public.
+The reference `asset:<id>/<file>` never changes, so you do not edit it when you publish.
 
-The editorial build test checks that drafts and their exclusive resources are
-not compiled or emitted. `pnpm test:worker` requests draft routes and resource
-URLs from the built Worker and requires 404 responses. `noindex`
-is only an additional development hint, not the publication boundary.
+## Cover and link preview
 
-## MDX components
+The cover and the link preview are separate on purpose.
 
-The EN/ES development templates contain working examples of every component.
-Components receive their labels from the article's locale; content props such
-as captions, image descriptions and transcripts are authored in that language.
+| `cover` | `ogImage` | Top of the article | Link preview (social networks, chat apps) |
+|---------|-----------|--------------------|-------------------------------------------|
+| no      | no        | no picture         | generated card                            |
+| yes     | no        | the cover          | generated card                            |
+| yes     | yes       | the cover          | your `ogImage`                            |
+| no      | yes       | no picture         | your `ogImage`                            |
 
-| Component                  | Props and behavior                                                                                                                                                |
-|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ArticleFigure`            | `src`, `alt`, `width`, `height`, optional `caption`                                                                                                               |
-| `ArticleGallery`           | `images` with figure props, optional `title`; Base UI modal, arrows, close and focus restoration                                                                  |
-| `ImageComparison`          | `before`, `after` images, optional `label` and `initial` percentage; native range keyboard controls                                                               |
-| `ArticleVideo`             | `title`, `sources: [{src,type}]`, optional `poster`, `tracks: [{src,srcLang,label,default}]`, `transcript`, `chapters: [{time,title}]`; chapter times are seconds |
-| `AnimatedClip`             | `title`, `sources`, `poster`; starts paused, explicit playback, pauses on reduced-motion preference changes                                                       |
-| `EventCard`                | `title`, `start`, `end`, `timeZone`, `location`, optional `description`, `url`; local ICS download                                                                |
-| `Metric`                   | `label`, `value`, optional `unit`, `context`; use verified values in published content                                                                            |
-| `Milestone`                | `label`, `value`, positive `goal`, optional `context`; requires `0 <= value <= goal`                                                                              |
-| `EditorialNotice`          | Article-authored children; absent unless explicitly used, no default sample warning                                                                               |
-| `ResourceCard`, `GameCard` | `href`, `title`, optional `image`, explanatory children; no playable content or statistics are invented                                                           |
-| `InlineTOC`                | Fumadocs index; `items={toc}` uses compiler-generated headings                                                                                                    |
-| `Tabs`, `Tab`              | Fumadocs tabs; `items={['First', 'Second']}` and matching `Tab` children                                                                                          |
-| `TypeTable`                | Fumadocs type documentation table; `type={{name: {type: 'string', description: '...', required: true}}}`                                                          |
-| `Callout`                  | Fumadocs callout with optional `title` and children                                                                                                               |
+The generated card shows the title, date and category, and uses the cover when there is one. Set `ogImage` only when you want to design the preview yourself. 1200 by 630 pixels works well.
 
-Fenced code blocks reuse Fumadocs highlighting and copy controls. Markdown
-supports GFM tables and lists. Reading estimates use `reading-time` at build
-time (200 words/minute), with localized labels; they are independent of the
-scroll-based reading progress indicator. Videos use native controls, local
-WebVTT captions and an optional transcript. Use MP4/WebM rather than GIF when
-readers need to pause an animation.
+## Publishing
 
-## Verification
+Change two things in the settings block:
+
+```diff
+-status: draft
++status: published
++date: 2026-11-02
+```
+
+Nothing else moves and no image references change. Before you push, run the checks in [Before you publish](#before-you-publish).
+
+Two things to know:
+
+- Pictures used only by drafts are not part of the public site. A picture that a published article also uses becomes public, even if a draft uses it as well.
+- Never put private images in `public/`. Everything in that folder is public.
+
+## Translations
+
+Write the Spanish and English versions as two files with the same `id`. They can have different file names, so each language gets its own web address. If only one language exists, only that language shows the article.
+
+## Components
+
+Besides Markdown, articles can use ready-made components for galleries, before and after sliders, video, events, metrics, tabs and more. The demo article shows every one of them working, with copyable examples. It only exists on your computer, at `/en/blog/component-demo` and `/es/blog/component-demo`.
+
+Articles cannot use `import` or `export`. Only the components in the demo are available.
+
+## Before you publish
 
 ```sh
-pnpm build
 pnpm test
 pnpm types:check
 pnpm lint
-pnpm credits:check
-pnpm test:worker
+pnpm build
 ```
 
-No CMS, remote media player, GitHub statistics fetch or external publishing
-service is used. Base UI is the same version used by Fumadocs. Tailwind tokens
-are shared with the existing site; complex scoped CSS remains where it is clearer.
+Then open the article in light and dark mode and on a narrow screen.

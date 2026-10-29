@@ -57,14 +57,14 @@ test('content validates metadata, publication dates, duplicate identities and se
   );
   expect(() => loadContent(dir, false)).toThrow(/Duplicate series part/);
 });
-test('drafts are excluded before compilation and published entries cannot reference draft resources', () => {
+test('drafts are excluded before compilation and their exclusive assets are never registered', () => {
   const dir = writeTree(tempDir(), {
     'en/blog/public.mdx': frontmatter(),
     'en/blog/private.mdx':
       frontmatter()
         .replace('id: example', 'id: private')
-        .replace('status: published', 'status: draft') + '\n![Private](asset:drafts/private.png)\n',
-    'assets/drafts/private.png': 'PRIVATE_ASSET_SENTINEL',
+        .replace('status: published', 'status: draft') + '\n![Private](asset:private/private.png)\n',
+    'assets/private/private.png': 'PRIVATE_ASSET_SENTINEL',
   });
   const published = loadContent(dir, false);
   const development = loadContent(dir, true);
@@ -77,18 +77,57 @@ test('drafts are excluded before compilation and published entries cannot refere
   const resolved = resolveContentAssets(draft, dir, assets);
   expect(resolved.body).toMatch(/\/editorial-assets\/[a-f0-9]+-private.png/);
   expect(assets.size).toBe(1);
-  expect(() =>
-      resolveContentAssets(
-        { ...draft, article: { ...draft.article, status: 'published' } },
-        dir,
-        new Map(),
-      )).toThrow(/cannot reference draft/);
-  expect(() =>
-      resolveContentAssets(
-        { ...draft, body: 'asset:published/../drafts/private.png' },
-        dir,
-        new Map(),
-      )).toThrow(/invalid asset/);
+});
+test('asset references are valid only inside an article folder and must exist', () => {
+  const dir = writeTree(tempDir(), { 'en/blog/public.mdx': frontmatter(), 'assets/example/a.png': 'A' });
+  const [entry] = loadContent(dir, false);
+  const resolve = (body: string) => resolveContentAssets({ ...entry, body }, dir, new Map());
+  expect(resolve('asset:example/a.png').body).toMatch(/^\/editorial-assets\/[a-f0-9]+-a\.png$/);
+  expect(() => resolve('asset:example/../../secret.png')).toThrow(/invalid asset/);
+  expect(() => resolve('asset:a.png')).toThrow(/invalid asset/);
+  expect(() => resolve('asset:example/missing.png')).toThrow(/asset not found/);
+});
+test('publishing only needs status and date: references resolve to the same URLs', () => {
+  const draft = frontmatter()
+    .replace('status: published\ndate: 2026-10-01\n', 'status: draft\n')
+    .concat('\n![Shell](asset:example/shell.png)\n');
+  const dir = writeTree(tempDir(), { 'en/blog/example.mdx': draft, 'assets/example/shell.png': 'SHELL' });
+  const urls = () => {
+    const [entry] = loadContent(dir, true);
+    return resolveContentAssets(entry, dir, new Map()).body.match(/\/editorial-assets\/\S+\.png/)?.[0];
+  };
+  const before = urls();
+  expect(before).toBeTruthy();
+  writeFileSync(
+    path.join(dir, 'en/blog/example.mdx'),
+    draft.replace('status: draft\n', 'status: published\ndate: 2026-10-01\n'),
+  );
+  expect(loadContent(dir, false).length).toBe(1);
+  expect(urls()).toBe(before);
+});
+test('an asset shared with a published article is public even when a draft also uses it', () => {
+  const dir = writeTree(tempDir(), {
+    'en/blog/public.mdx': frontmatter() + '\n![Shared](asset:example/shared.png)\n',
+    'en/blog/private.mdx':
+      frontmatter().replace('id: example', 'id: private').replace('status: published', 'status: draft') +
+      '\n![Shared](asset:example/shared.png)\n![Own](asset:example/own.png)\n',
+    'assets/example/shared.png': 'SHARED',
+    'assets/example/own.png': 'OWN',
+  });
+  const assets = new Map();
+  for (const entry of loadContent(dir, false)) resolveContentAssets(entry, dir, assets);
+  expect([...assets.keys()].map((url) => url.split('-').pop())).toStrictEqual(['shared.png']);
+});
+test('drafts may leave the description empty, published articles may not', () => {
+  const dir = writeTree(tempDir(), {
+    'en/blog/draft.mdx': frontmatter()
+      .replace('status: published\ndate: 2026-10-01\n', 'status: draft\n')
+      .replace('description: Test fixture only', 'description: ""'),
+  });
+  const file = path.join(dir, 'en/blog/draft.mdx');
+  expect(parseContent(file, dir).article.description).toBe('');
+  writeFileSync(file, frontmatter().replace('description: Test fixture only', 'description: ""'));
+  expect(() => parseContent(file, dir)).toThrow(/description/);
 });
 test('catalog filters, clamps pagination and excludes drafts and other locales', () => {
   const articles = Array.from({ length: 14 }, (_, i) =>
@@ -152,10 +191,10 @@ test('calendar handles offsets, injection characters and UTF-8 folding', () => {
   expect(() =>
     calendarFile({ title: 'Test', start: '2000-01-01', end: '2000-01-02', location: 'Test' })).toThrow();
 });
-test('both development templates include every editorial block and no publication date', () => {
+test('the component demo includes every editorial block and is never publishable', () => {
   for (const lang of ['en', 'es']) {
     const entry = parseContent(
-      path.resolve(`content/editorial/${lang}/blog/devlog-template.mdx`),
+      path.resolve(`content/editorial/${lang}/blog/component-demo.mdx`),
       path.resolve('content/editorial'),
     );
     expect(entry.article.status).toBe('draft');

@@ -15,6 +15,7 @@
     "pretypes:check": "pnpm i18n:compile",
     "types:check": "tsc --noEmit",
     "lint": "oxlint",
+    "new:post": "node scripts/new-post.ts",
     "docs:sync": "node scripts/sync-glaux-docs.ts",
     "docs:pin": "node scripts/pin-glaux-docs.ts",
     "docs:check": "node scripts/check-glaux-docs.ts",

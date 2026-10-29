@@ -64,6 +64,15 @@ export default defineConfig(({ mode }) => ({
         ]),
     react(),
   ],
+  environments: {
+    ssr: {
+      optimizeDeps: {
+        // fumadocs-mdx adds this import while transforming the first MDX page, so the optimizer would
+        // find it mid-request, rebuild and reload, leaving two React instances and stale chunks.
+        include: ['fumadocs-mdx/runtime/macro'],
+      },
+    },
+  },
   resolve: {
     tsconfigPaths: true,
     alias: {

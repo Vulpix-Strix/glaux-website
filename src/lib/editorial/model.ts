@@ -16,9 +16,16 @@ export type Category = (typeof categories)[number];
 export interface EditorialImage {
   src: string;
   alt: string;
-  width: number;
-  height: number;
+  /** Filled from the file header when omitted, for PNG, JPEG and WebP. */
+  width?: number;
+  height?: number;
   caption?: string;
+}
+export interface OgImage {
+  src: string;
+  alt?: string;
+  width?: number;
+  height?: number;
 }
 export interface Article {
   id: string;
@@ -32,6 +39,7 @@ export interface Article {
   status: 'draft' | 'published';
   author?: string;
   cover?: EditorialImage;
+  ogImage?: OgImage;
   featured?: boolean;
   number?: number;
   series?: { id: string; title: string; part: number };

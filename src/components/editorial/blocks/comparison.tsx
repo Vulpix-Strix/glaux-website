@@ -18,7 +18,7 @@ export function ImageComparison({
     <figure className="not-prose my-8">
       <div
         className="relative overflow-hidden rounded-lg border border-gx-border"
-        style={{ aspectRatio: `${before.width}/${before.height}` }}
+        style={before.width && before.height ? { aspectRatio: `${before.width}/${before.height}` } : undefined}
       >
         <img
           src={before.src}

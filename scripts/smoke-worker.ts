@@ -104,7 +104,7 @@ try {
       const html = await (await request(`/${lang}/${section}`)).text();
       assert.match(html, new RegExp(`<html[^>]*lang="${lang}"`));
       assert.match(html, new RegExp(`https://glauxconsole.dev/${lang}/${section}`));
-      assert.doesNotMatch(html, /Sample content|devlog-template|Development preview/);
+      assert.doesNotMatch(html, /Sample content|component-demo|Development preview/);
       assert.match(html, new RegExp(`href="/${lang}/blog"`));
       const filtered = await (
         await request(`/${lang}/${section}?q=term-with-no-editorial-matches`)
@@ -119,13 +119,16 @@ try {
       assert.match(feed.headers.get('content-type')!, /application\/rss\+xml/);
       assert.match(await feed.text(), /<rss version="2.0">/);
     }
-    await request(`/${lang}/blog/devlog-template`, 404);
+    await request(`/${lang}/blog/component-demo`, 404);
     await request(`/${lang}/news/missing`, 404);
   }
   const { loadContent, resolveContentAssets } = await import('../src/lib/editorial/content.ts');
   const { resolve } = await import('node:path');
   const root = resolve('content/editorial');
-  for (const { article } of loadContent(root, false)) {
+  const publicAssets = new Map();
+  for (const entry of loadContent(root, false)) {
+    resolveContentAssets(entry, root, publicAssets);
+    const { article } = entry;
     const url = `/${article.lang}/${article.section}/${article.slug}`;
     const html = await (await request(url)).text();
     assert.match(html, /id="article-body"/);
@@ -136,13 +139,16 @@ try {
       /Switched to client rendering|Something went wrong|PRIVATE_CONTENT_SENTINEL/,
     );
   }
+  // Everything a published article references, including a custom ogImage, is served.
+  for (const url of publicAssets.keys()) await request(url);
+  // Assets used only by drafts are not, but one shared with a published article is public.
   const draftAssets = new Map();
   for (const entry of loadContent(root, true).filter((entry) => entry.article.status === 'draft'))
     resolveContentAssets(entry, root, draftAssets);
-  for (const url of draftAssets.keys()) await request(url, 404);
+  for (const url of draftAssets.keys()) if (!publicAssets.has(url)) await request(url, 404);
   for (const path of [
-    '/content/editorial/assets/drafts/demo.mp4',
-    '/editorial-assets/drafts/demo.mp4',
+    '/content/editorial/assets/component-demo/demo.mp4',
+    '/editorial-assets/component-demo/demo.mp4',
     '/fr/blog',
   ])
     await request(path, 404);
