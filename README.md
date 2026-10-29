@@ -128,3 +128,14 @@ Until supplied, failed images show a localized message in reserved space.
 
 News and binary downloads show their actual unavailable states. No release
 URLs are fabricated. The source repository and existing docs remain usable.
+
+## Credits
+
+The data of the Credits page (the people, the art, and the licenses of Glaux's crates and of this website's npm packages) is generated and committed in `public/credits/`.
+
+```bash
+pnpm credits:sync
+pnpm credits:check
+```
+
+Run `pnpm credits:sync` after changing a dependency or moving the Glaux revision, and commit the result. CI runs `pnpm credits:check`. The npm packages are described in this repository only; Glaux's own credit files are read at the revision in `glaux-docs.lock` and never edited. See `credits/README.md` for how the data is built and how to add a missing license text.
