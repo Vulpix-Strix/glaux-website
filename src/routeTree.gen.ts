@@ -14,6 +14,7 @@ import { Route as LangRouteRouteImport } from './routes/$lang/route'
 import { Route as LlmsFullDottxtRouteImport } from './routes/llms-full[.]txt'
 import { Route as LlmsDottxtRouteImport } from './routes/llms[.]txt'
 import { Route as LangIndexRouteImport } from './routes/$lang/index'
+import { Route as LangCreditsRouteImport } from './routes/$lang/credits'
 import { Route as ApiSearchRouteImport } from './routes/api/search'
 import { Route as LangDocsSplatRouteImport } from './routes/$lang/docs/$'
 import { Route as LangDocsChar123Char125DotmdRouteImport } from './routes/$lang/docs/{$}[.]md'
@@ -44,6 +45,11 @@ const LangIndexRoute = LangIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LangRouteRoute,
 } as any)
+const LangCreditsRoute = LangCreditsRouteImport.update({
+  id: '/credits',
+  path: '/credits',
+  getParentRoute: () => LangRouteRoute,
+} as any)
 const ApiSearchRoute = ApiSearchRouteImport.update({
   id: '/api/search',
   path: '/api/search',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/$lang': typeof LangRouteRouteWithChildren
   '/llms-full.txt': typeof LlmsFullDottxtRoute
   '/llms.txt': typeof LlmsDottxtRoute
+  '/$lang/credits': typeof LangCreditsRoute
   '/api/search': typeof ApiSearchRoute
   '/$lang/': typeof LangIndexRoute
   '/$lang/docs/$': typeof LangDocsSplatRoute
@@ -81,6 +88,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/llms-full.txt': typeof LlmsFullDottxtRoute
   '/llms.txt': typeof LlmsDottxtRoute
+  '/$lang/credits': typeof LangCreditsRoute
   '/api/search': typeof ApiSearchRoute
   '/$lang': typeof LangIndexRoute
   '/$lang/docs/$': typeof LangDocsSplatRoute
@@ -93,6 +101,7 @@ export interface FileRoutesById {
   '/$lang': typeof LangRouteRouteWithChildren
   '/llms-full.txt': typeof LlmsFullDottxtRoute
   '/llms.txt': typeof LlmsDottxtRoute
+  '/$lang/credits': typeof LangCreditsRoute
   '/api/search': typeof ApiSearchRoute
   '/$lang/': typeof LangIndexRoute
   '/$lang/docs/$': typeof LangDocsSplatRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/$lang'
     | '/llms-full.txt'
     | '/llms.txt'
+    | '/$lang/credits'
     | '/api/search'
     | '/$lang/'
     | '/$lang/docs/$'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/llms-full.txt'
     | '/llms.txt'
+    | '/$lang/credits'
     | '/api/search'
     | '/$lang'
     | '/$lang/docs/$'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/$lang'
     | '/llms-full.txt'
     | '/llms.txt'
+    | '/$lang/credits'
     | '/api/search'
     | '/$lang/'
     | '/$lang/docs/$'
@@ -179,6 +191,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LangIndexRouteImport
       parentRoute: typeof LangRouteRoute
     }
+    '/$lang/credits': {
+      id: '/$lang/credits'
+      path: '/credits'
+      fullPath: '/$lang/credits'
+      preLoaderRoute: typeof LangCreditsRouteImport
+      parentRoute: typeof LangRouteRoute
+    }
     '/api/search': {
       id: '/api/search'
       path: '/api/search'
@@ -211,6 +230,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface LangRouteRouteChildren {
+  LangCreditsRoute: typeof LangCreditsRoute
   LangIndexRoute: typeof LangIndexRoute
   LangDocsSplatRoute: typeof LangDocsSplatRoute
   LangDocsChar123Char125DotmdRoute: typeof LangDocsChar123Char125DotmdRoute
@@ -218,6 +238,7 @@ interface LangRouteRouteChildren {
 }
 
 const LangRouteRouteChildren: LangRouteRouteChildren = {
+  LangCreditsRoute: LangCreditsRoute,
   LangIndexRoute: LangIndexRoute,
   LangDocsSplatRoute: LangDocsSplatRoute,
   LangDocsChar123Char125DotmdRoute: LangDocsChar123Char125DotmdRoute,

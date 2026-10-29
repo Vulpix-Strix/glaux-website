@@ -57,7 +57,13 @@ try {
     assert.doesNotMatch(html, /href="#"/);
     assert.doesNotMatch(html, /\[FILE TYPE|\[POST|proof of concept/);
   }
-  for (const path of ['/fonts/pixel-code-regular.woff2', '/images/landing/signal-lost-sprites.png', '/images/landing/icons/code.png', '/ASSET-CREDITS.txt']) await request(path);
+  for (const [lang, title] of [['en', /Credits — Glaux/], ['es', /Créditos — Glaux/]] as const) {
+    const credits = await (await request(`/${lang}/credits`)).text();
+    assert.match(credits, title);
+    assert.match(credits, new RegExp(`https://glauxconsole.dev/${lang}/credits`));
+    assert.match(credits, /Cuervolu/);
+  }
+  for (const path of ['/fonts/pixel-code-regular.woff2', '/images/landing/signal-lost-sprites.png', '/images/landing/icons/code.png', '/ASSET-CREDITS.txt', '/credits/editorial.json']) await request(path);
   const docsResponse = await request('/en/docs/guide');
   assert.match(docsResponse.headers.get('vary')!, /Accept/i);
   const head = await request('/en/docs/guide', 200, { method: 'HEAD' });
