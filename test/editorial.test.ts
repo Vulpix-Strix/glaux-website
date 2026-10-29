@@ -1,5 +1,4 @@
-import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { expect, test } from 'vitest';
 import { writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { tempDir, writeTree } from './helpers.ts';
@@ -39,7 +38,7 @@ function article(overrides: Partial<Article> = {}): Article {
 test('content validates metadata, publication dates, duplicate identities and series parts', () => {
   const dir = writeTree(tempDir(), { 'en/blog/example.mdx': frontmatter() });
   const file = path.join(dir, 'en/blog/example.mdx');
-  assert.equal(parseContent(file, dir).article.minutes, 1);
+  expect(parseContent(file, dir).article.minutes).toBe(1);
   for (const source of [
     frontmatter().replace('2026-10-01', '2026-02-30'),
     frontmatter().replace('status: published', 'status: unknown'),
@@ -47,16 +46,16 @@ test('content validates metadata, publication dates, duplicate identities and se
     frontmatter() + '\nimport X from "./private.mdx";\n',
   ]) {
     writeFileSync(file, source);
-    assert.throws(() => parseContent(file, dir));
+    expect(() => parseContent(file, dir)).toThrow();
   }
   writeFileSync(file, frontmatter('series: {id: test, title: Test, part: 1}\n'));
   writeFileSync(path.join(dir, 'en/blog/another.mdx'), frontmatter());
-  assert.throws(() => loadContent(dir, false), /Duplicate article identity/);
+  expect(() => loadContent(dir, false)).toThrow(/Duplicate article identity/);
   writeFileSync(
     path.join(dir, 'en/blog/another.mdx'),
     frontmatter('series: {id: test, title: Test, part: 1}\n').replace('id: example', 'id: other'),
   );
-  assert.throws(() => loadContent(dir, false), /Duplicate series part/);
+  expect(() => loadContent(dir, false)).toThrow(/Duplicate series part/);
 });
 test('drafts are excluded before compilation and published entries cannot reference draft resources', () => {
   const dir = writeTree(tempDir(), {
@@ -69,33 +68,27 @@ test('drafts are excluded before compilation and published entries cannot refere
   });
   const published = loadContent(dir, false);
   const development = loadContent(dir, true);
-  assert.equal(published.length, 1);
-  assert.equal(development.length, 2);
+  expect(published.length).toBe(1);
+  expect(development.length).toBe(2);
   const assets = new Map();
   for (const entry of published) resolveContentAssets(entry, dir, assets);
-  assert.equal(assets.size, 0);
+  expect(assets.size).toBe(0);
   const draft = development.find((entry) => entry.article.status === 'draft')!;
   const resolved = resolveContentAssets(draft, dir, assets);
-  assert.match(resolved.body, /\/editorial-assets\/[a-f0-9]+-private.png/);
-  assert.equal(assets.size, 1);
-  assert.throws(
-    () =>
+  expect(resolved.body).toMatch(/\/editorial-assets\/[a-f0-9]+-private.png/);
+  expect(assets.size).toBe(1);
+  expect(() =>
       resolveContentAssets(
         { ...draft, article: { ...draft.article, status: 'published' } },
         dir,
         new Map(),
-      ),
-    /cannot reference draft/,
-  );
-  assert.throws(
-    () =>
+      )).toThrow(/cannot reference draft/);
+  expect(() =>
       resolveContentAssets(
         { ...draft, body: 'asset:published/../drafts/private.png' },
         dir,
         new Map(),
-      ),
-    /invalid asset/,
-  );
+      )).toThrow(/invalid asset/);
 });
 test('catalog filters, clamps pagination and excludes drafts and other locales', () => {
   const articles = Array.from({ length: 14 }, (_, i) =>
@@ -107,13 +100,13 @@ test('catalog filters, clamps pagination and excludes drafts and other locales',
   );
   articles.push(article({ status: 'draft' }), article({ lang: 'es' }));
   const published = articlesFor(articles, 'en', 'blog');
-  assert.equal(published.length, 14);
-  assert.equal(published[0].slug, 'post-13');
-  assert.equal(queryArticles(published, parseArticleSearch({ page: 99 })).items.length, 4);
-  assert.equal(queryArticles(published, parseArticleSearch({ page: -1 })).page, 1);
-  assert.equal(queryArticles(published, parseArticleSearch({ q: 'SPECIFIC' })).total, 14);
-  assert.equal(queryArticles(published, parseArticleSearch({ category: 'community' })).total, 0);
-  assert.equal(queryArticles(published, parseArticleSearch({ q: 'missing' })).total, 0);
+  expect(published.length).toBe(14);
+  expect(published[0].slug).toBe('post-13');
+  expect(queryArticles(published, parseArticleSearch({ page: 99 })).items.length).toBe(4);
+  expect(queryArticles(published, parseArticleSearch({ page: -1 })).page).toBe(1);
+  expect(queryArticles(published, parseArticleSearch({ q: 'SPECIFIC' })).total).toBe(14);
+  expect(queryArticles(published, parseArticleSearch({ category: 'community' })).total).toBe(0);
+  expect(queryArticles(published, parseArticleSearch({ q: 'missing' })).total).toBe(0);
 });
 test('translations, neighbors, related entries and series preserve publication boundaries', () => {
   const current = article({ series: { id: 'a', title: 'A', part: 2 } });
@@ -126,20 +119,14 @@ test('translations, neighbors, related entries and series preserve publication b
   const translated = article({ lang: 'es', slug: 'ejemplo' });
   const draft = article({ lang: 'es', status: 'draft' });
   const articles = [current, older, translated, draft];
-  assert.deepEqual(
-    articleTranslations(articles, current).map((item) => item.slug),
-    ['example', 'ejemplo'],
-  );
-  assert.equal(articleNeighbors(articles, current).older, older);
-  assert.equal(articleNeighbors(articles, current).newer, undefined);
-  assert.deepEqual(relatedArticles(articles, current), [older]);
-  assert.deepEqual(
-    seriesArticles(articles, current).map((item) => item.series!.part),
-    [1, 2],
-  );
+  expect(articleTranslations(articles, current).map((item) => item.slug)).toStrictEqual(['example', 'ejemplo']);
+  expect(articleNeighbors(articles, current).older).toBe(older);
+  expect(articleNeighbors(articles, current).newer).toBe(undefined);
+  expect(relatedArticles(articles, current)).toStrictEqual([older]);
+  expect(seriesArticles(articles, current).map((item) => item.series!.part)).toStrictEqual([1, 2]);
   const head = articleHead(current, [current, older]);
-  assert.ok(!head.links.some((link) => 'hrefLang' in link && link.hrefLang === 'es'));
-  assert.match(JSON.stringify(articleHead(draft, articles).meta), /noindex/);
+  expect(!head.links.some((link) => 'hrefLang' in link && link.hrefLang === 'es')).toBeTruthy();
+  expect(JSON.stringify(articleHead(draft, articles).meta)).toMatch(/noindex/);
 });
 test('RSS escapes XML and never includes drafts', () => {
   const xml = rssFeed(
@@ -148,9 +135,9 @@ test('RSS escapes XML and never includes drafts', () => {
     'blog',
     'https://glauxconsole.dev',
   );
-  assert.match(xml, /A &amp; &lt;B&gt;/);
-  assert.doesNotMatch(xml, /Private sentinel/);
-  assert.equal((xml.match(/<item>/g) ?? []).length, 1);
+  expect(xml).toMatch(/A &amp; &lt;B&gt;/);
+  expect(xml).not.toMatch(/Private sentinel/);
+  expect((xml.match(/<item>/g) ?? []).length).toBe(1);
 });
 test('calendar handles offsets, injection characters and UTF-8 folding', () => {
   const value = calendarFile({
@@ -159,12 +146,11 @@ test('calendar handles offsets, injection characters and UTF-8 folding', () => {
     end: '2000-01-01T13:00:00-03:00',
     location: 'Local test',
   });
-  assert.match(value, /DTSTART:20000101T150000Z/);
-  assert.match(value, /Test\\, only\\;\\n/);
-  for (const line of value.split('\r\n')) assert.ok(Buffer.byteLength(line) <= 75);
-  assert.throws(() =>
-    calendarFile({ title: 'Test', start: '2000-01-01', end: '2000-01-02', location: 'Test' }),
-  );
+  expect(value).toMatch(/DTSTART:20000101T150000Z/);
+  expect(value).toMatch(/Test\\, only\\;\\n/);
+  for (const line of value.split('\r\n')) expect(Buffer.byteLength(line) <= 75).toBeTruthy();
+  expect(() =>
+    calendarFile({ title: 'Test', start: '2000-01-01', end: '2000-01-02', location: 'Test' })).toThrow();
 });
 test('both development templates include every editorial block and no publication date', () => {
   for (const lang of ['en', 'es']) {
@@ -172,8 +158,8 @@ test('both development templates include every editorial block and no publicatio
       path.resolve(`content/editorial/${lang}/blog/devlog-template.mdx`),
       path.resolve('content/editorial'),
     );
-    assert.equal(entry.article.status, 'draft');
-    assert.equal(entry.article.date, undefined);
+    expect(entry.article.status).toBe('draft');
+    expect(entry.article.date).toBe(undefined);
     for (const component of [
       'ArticleGallery',
       'ImageComparison',
@@ -189,7 +175,7 @@ test('both development templates include every editorial block and no publicatio
       'ResourceCard',
       'GameCard',
     ])
-      assert.ok(entry.body.includes(`<${component}`), component);
+      expect(entry.body.includes(`<${component}`), component).toBeTruthy();
   }
 });
 
@@ -203,37 +189,34 @@ test('reduced motion pauses initially and on changes, never resumes and removes 
   const cleanup = pauseOnReducedMotion(preference as unknown as MediaQueryList, () => {
     pauses++;
   });
-  assert.equal(pauses, 1);
+  expect(pauses).toBe(1);
   preference.matches = false;
   preference.dispatchEvent(new Event('change'));
-  assert.equal(pauses, 1);
+  expect(pauses).toBe(1);
   preference.matches = true;
   preference.dispatchEvent(new Event('change'));
-  assert.equal(pauses, 2);
+  expect(pauses).toBe(2);
   cleanup();
   preference.dispatchEvent(new Event('change'));
-  assert.equal(pauses, 2);
+  expect(pauses).toBe(2);
 });
 
 test('development media supports bounded, open and suffix byte ranges for native seeking', async () => {
   const { assetRange } = await import('../src/lib/editorial/asset-range.ts');
-  assert.deepEqual(assetRange('bytes=0-9', 100), { start: 0, end: 9 });
-  assert.deepEqual(assetRange('bytes=50-', 100), { start: 50, end: 99 });
-  assert.deepEqual(assetRange('bytes=-10', 100), { start: 90, end: 99 });
-  assert.deepEqual(assetRange('bytes=0-999', 100), { start: 0, end: 99 });
-  assert.equal(assetRange(undefined, 100), undefined);
+  expect(assetRange('bytes=0-9', 100)).toStrictEqual({ start: 0, end: 9 });
+  expect(assetRange('bytes=50-', 100)).toStrictEqual({ start: 50, end: 99 });
+  expect(assetRange('bytes=-10', 100)).toStrictEqual({ start: 90, end: 99 });
+  expect(assetRange('bytes=0-999', 100)).toStrictEqual({ start: 0, end: 99 });
+  expect(assetRange(undefined, 100)).toBe(undefined);
   for (const value of ['bytes=100-', 'bytes=9-1', 'bytes=-0', 'bytes=0-1,5-6', 'bytes=-'])
-    assert.throws(() => assetRange(value, 100));
+    expect(() => assetRange(value, 100)).toThrow();
 });
 
 test('search defaults do not introduce redirects on canonical list URLs', async () => {
   const { validateArticleSearch } = await import('../src/lib/editorial/catalog.ts');
-  assert.deepEqual(validateArticleSearch({}), {});
-  assert.deepEqual(
-    validateArticleSearch({ q: '', category: '', page: '1', unknown: 'discard' }),
-    {},
-  );
-  assert.deepEqual(validateArticleSearch({ q: 'shell', category: 'devlog', page: '2' }), {
+  expect(validateArticleSearch({})).toStrictEqual({});
+  expect(validateArticleSearch({ q: '', category: '', page: '1', unknown: 'discard' })).toStrictEqual({});
+  expect(validateArticleSearch({ q: 'shell', category: 'devlog', page: '2' })).toStrictEqual({
     q: 'shell',
     category: 'devlog',
     page: 2,

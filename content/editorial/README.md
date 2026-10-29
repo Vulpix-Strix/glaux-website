@@ -103,10 +103,10 @@ readers need to pause an animation.
 ## Verification
 
 ```sh
+pnpm build
 pnpm test
 pnpm types:check
 pnpm lint
-pnpm build
 pnpm credits:check
 pnpm test:worker
 ```

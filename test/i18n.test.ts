@@ -1,6 +1,5 @@
-import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { test } from 'node:test';
+import { expect, test } from 'vitest';
 import { m } from '../src/paraglide/messages.js';
 import { baseLocale, locales } from '../src/paraglide/runtime.js';
 
@@ -14,17 +13,17 @@ test('every locale translates every message with the same placeholders', () => {
   const base = catalog(baseLocale);
   for (const locale of locales) {
     const messages = catalog(locale);
-    assert.deepEqual(Object.keys(messages).sort(), Object.keys(base).sort(), locale);
+    expect(Object.keys(messages).sort(), locale).toStrictEqual(Object.keys(base).sort());
     for (const [key, text] of Object.entries(messages)) {
-      assert.ok(text.trim(), `${locale}: ${key} is empty`);
-      assert.ok(!text.includes('[POST'), `${locale}: ${key} has a placeholder`);
-      assert.deepEqual(placeholders(text), placeholders(base[key]), `${locale}: ${key}`);
+      expect(text.trim(), `${locale}: ${key} is empty`).toBeTruthy();
+      expect(!text.includes('[POST'), `${locale}: ${key} has a placeholder`).toBeTruthy();
+      expect(placeholders(text), `${locale}: ${key}`).toStrictEqual(placeholders(base[key]));
     }
   }
 });
 
 test('messages follow an explicit locale, whatever the current one is', () => {
-  assert.equal(m.editorial_news({}, { locale: 'en' }), 'News');
-  assert.equal(m.editorial_news({}, { locale: 'es' }), 'Noticias');
-  assert.equal(m.credits_libraries_summary({ shown: 3, total: 9 }, { locale: 'es' }), 'Mostrando 3 de 9');
+  expect(m.editorial_news({}, { locale: 'en' })).toBe('News');
+  expect(m.editorial_news({}, { locale: 'es' })).toBe('Noticias');
+  expect(m.credits_libraries_summary({ shown: 3, total: 9 }, { locale: 'es' })).toBe('Mostrando 3 de 9');
 });

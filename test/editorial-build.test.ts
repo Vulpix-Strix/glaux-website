@@ -1,5 +1,4 @@
-import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { assert, expect, test } from 'vitest';
 import path from 'node:path';
 import { build } from 'vite';
 import { editorialPlugin } from '../src/lib/editorial/vite.ts';
@@ -30,18 +29,15 @@ test('the production MDX pipeline compiles published articles and emits only the
       minify: false,
     },
   });
-  assert.ok(!Array.isArray(result) && 'output' in result);
+  assert(!Array.isArray(result) && 'output' in result);
   const output = result.output
     .map((item) => (item.type === 'chunk' ? item.code : String(item.source)))
     .join('\n');
-  assert.match(output, /Public fixture/);
-  assert.match(output, /public-heading/);
-  assert.match(output, /PUBLIC_RESOURCE_SENTINEL/);
-  assert.doesNotMatch(
-    output,
-    /PRIVATE_CONTENT_SENTINEL|PRIVATE_RESOURCE_SENTINEL|private\.png|private\.mdx/,
-  );
+  expect(output).toMatch(/Public fixture/);
+  expect(output).toMatch(/public-heading/);
+  expect(output).toMatch(/PUBLIC_RESOURCE_SENTINEL/);
+  expect(output).not.toMatch(/PRIVATE_CONTENT_SENTINEL|PRIVATE_RESOURCE_SENTINEL|private\.png|private\.mdx/);
   const assets = result.output.filter((item) => item.type === 'asset');
-  assert.equal(assets.length, 1);
-  assert.match(assets[0].fileName, /^editorial-assets\/[a-f0-9]+-public.png$/);
+  expect(assets.length).toBe(1);
+  expect(assets[0].fileName).toMatch(/^editorial-assets\/[a-f0-9]+-public.png$/);
 });

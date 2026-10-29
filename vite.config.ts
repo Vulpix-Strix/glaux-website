@@ -30,7 +30,9 @@ const creditsEditorial = (): Plugin => {
   };
 };
 
-export default defineConfig({
+// Vitest reuses this file. The Cloudflare and TanStack Start plugins only make sense for the
+// application build, where they own the environments and prerendering, so tests skip them.
+export default defineConfig(({ mode }) => ({
   server: {
     port: 3000,
   },
@@ -41,21 +43,25 @@ export default defineConfig({
     ogImages(),
     fumadocsMdx(),
     tailwindcss(),
-    cloudflare({ viteEnvironment: { name: 'ssr' } }),
-    tanstackStart({
-      pages: [
-        ...['en', 'es'].flatMap((lang) =>
-          ['news', 'blog'].map((section) => ({ path: `/${lang}/${section}` })),
-        ),
-        ...loadContent(path.resolve('content/editorial'), false).map(({ article }) => ({
-          path: articleUrl(article),
-        })),
-      ],
-      prerender: {
-        enabled: true,
-        filter: (page) => !page.path.includes('?') && !page.path.endsWith('/rss.xml'),
-      },
-    }),
+    ...(mode === 'test'
+      ? []
+      : [
+          cloudflare({ viteEnvironment: { name: 'ssr' } }),
+          tanstackStart({
+            pages: [
+              ...['en', 'es'].flatMap((lang) =>
+                ['news', 'blog'].map((section) => ({ path: `/${lang}/${section}` })),
+              ),
+              ...loadContent(path.resolve('content/editorial'), false).map(({ article }) => ({
+                path: articleUrl(article),
+              })),
+            ],
+            prerender: {
+              enabled: true,
+              filter: (page) => !page.path.includes('?') && !page.path.endsWith('/rss.xml'),
+            },
+          }),
+        ]),
     react(),
   ],
   resolve: {
@@ -64,4 +70,4 @@ export default defineConfig({
       tslib: 'tslib/tslib.es6.js',
     },
   },
-});
+}));

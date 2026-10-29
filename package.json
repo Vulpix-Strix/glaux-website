@@ -22,8 +22,7 @@
     "credits:check": "node scripts/sync-credits.ts --check",
     "predev": "pnpm docs:sync",
     "prebuild": "pnpm docs:sync",
-    "test": "node --test test/*.test.ts",
-    "pretest": "pnpm i18n:compile",
+    "test": "vitest run",
     "deploy": "pnpm build && wrangler deploy",
     "test:worker": "node scripts/smoke-worker.ts"
   },
@@ -64,6 +63,7 @@
     "unified": "^11.0.5",
     "unist-util-visit": "^5.1.0",
     "vite": "^8.3.4",
+    "vitest": "^5.0.5",
     "wrangler": "4.154.0",
     "yaml": "2.9.1"
   }

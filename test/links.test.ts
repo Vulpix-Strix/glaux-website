@@ -1,5 +1,4 @@
-import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { assert, expect, test } from 'vitest';
 import { docUrl, GlauxLinkError, resolveLink } from '../src/lib/glaux/links.ts';
 import type { Manifest } from '../src/lib/glaux/manifest.ts';
 
@@ -21,26 +20,23 @@ const manifest: Manifest = {
 const ctx = { manifest, lang: 'en', pageId: 'api/graphics/spr' };
 
 test('glaux:// ids become site URLs for the page language', () => {
-  assert.equal(resolveLink('glaux://api/graphics/spr', ctx), '/en/docs/api/graphics/spr');
-  assert.equal(resolveLink('glaux://api/graphics/spr', { ...ctx, lang: 'en' }), '/en/docs/api/graphics/spr');
+  expect(resolveLink('glaux://api/graphics/spr', ctx)).toBe('/en/docs/api/graphics/spr');
+  expect(resolveLink('glaux://api/graphics/spr', { ...ctx, lang: 'en' })).toBe('/en/docs/api/graphics/spr');
 });
 
 test('folder index pages drop the index segment', () => {
-  assert.equal(resolveLink('glaux://api/index', ctx), '/en/docs/api');
-  assert.equal(docUrl('es', 'guide/index'), '/es/docs/guide');
+  expect(resolveLink('glaux://api/index', ctx)).toBe('/en/docs/api');
+  expect(docUrl('es', 'guide/index')).toBe('/es/docs/guide');
 });
 
 test('fragments are preserved', () => {
-  assert.equal(
-    resolveLink('glaux://api/graphics/spr#parameters', ctx),
-    '/en/docs/api/graphics/spr#parameters',
-  );
-  assert.equal(resolveLink('#parameters', ctx), '#parameters');
+  expect(resolveLink('glaux://api/graphics/spr#parameters', ctx)).toBe('/en/docs/api/graphics/spr#parameters');
+  expect(resolveLink('#parameters', ctx)).toBe('#parameters');
 });
 
 test('external links pass through', () => {
   for (const url of ['https://example.com/a#b', 'http://example.com', 'mailto:a@b.c', 'HTTPS://EXAMPLE.COM']) {
-    assert.equal(resolveLink(url, ctx), url);
+    expect(resolveLink(url, ctx)).toBe(url);
   }
 });
 
@@ -49,36 +45,36 @@ test('invalid links are errors', () => {
     try {
       resolveLink(target, ctx);
     } catch (error) {
-      assert.ok(error instanceof GlauxLinkError);
+      assert(error instanceof GlauxLinkError);
       return error.code;
     }
     return 'resolved';
   };
-  assert.equal(code('glaux://api/nope'), 'broken-link');
-  assert.equal(code('glaux://api/graphics/spr#nope'), 'broken-fragment');
-  assert.equal(code('#nope'), 'broken-fragment');
-  assert.equal(code(''), 'empty-link');
-  assert.equal(code('../other.md'), 'relative-link');
-  assert.equal(code('javascript:alert(1)'), 'unsupported-link');
-  assert.equal(code('file:///etc/passwd'), 'unsupported-link');
+  expect(code('glaux://api/nope')).toBe('broken-link');
+  expect(code('glaux://api/graphics/spr#nope')).toBe('broken-fragment');
+  expect(code('#nope')).toBe('broken-fragment');
+  expect(code('')).toBe('empty-link');
+  expect(code('../other.md')).toBe('relative-link');
+  expect(code('javascript:alert(1)')).toBe('unsupported-link');
+  expect(code('file:///etc/passwd')).toBe('unsupported-link');
 });
 
 test('a fragment naming the page title opens the page, as it does in Glaux', () => {
-  assert.equal(resolveLink('glaux://api/graphics/spr#spr', ctx), '/en/docs/api/graphics/spr');
-  assert.equal(resolveLink('#spr', ctx), '#');
+  expect(resolveLink('glaux://api/graphics/spr#spr', ctx)).toBe('/en/docs/api/graphics/spr');
+  expect(resolveLink('#spr', ctx)).toBe('#');
 });
 
 test('links resolve in the language of the page', () => {
   const es = { manifest, lang: 'es', pageId: 'api/graphics/spr' };
-  assert.equal(resolveLink('glaux://api/graphics/spr#parametros', es), '/es/docs/api/graphics/spr#parametros');
+  expect(resolveLink('glaux://api/graphics/spr#parametros', es)).toBe('/es/docs/api/graphics/spr#parametros');
   // The Spanish headings are the ones that count, not the English ones.
-  assert.throws(() => resolveLink('glaux://api/graphics/spr#parameters', es), /no heading with anchor #parameters/);
+  expect(() => resolveLink('glaux://api/graphics/spr#parameters', es)).toThrow(/no heading with anchor #parameters/);
 });
 
 test('a page without translation resolves to the fallback language, with its own headings', () => {
   const es = { manifest, lang: 'es', pageId: 'api/graphics/spr' };
-  assert.equal(resolveLink('glaux://api/graphics/cls', es), '/en/docs/api/graphics/cls');
-  assert.equal(resolveLink('glaux://api/index#colors', es), '/en/docs/api#colors');
-  assert.throws(() => resolveLink('glaux://api/index#nope', es), /no heading with anchor #nope/);
-  assert.throws(() => resolveLink('glaux://api/none', es), /no page with id api\/none in es/);
+  expect(resolveLink('glaux://api/graphics/cls', es)).toBe('/en/docs/api/graphics/cls');
+  expect(resolveLink('glaux://api/index#colors', es)).toBe('/en/docs/api#colors');
+  expect(() => resolveLink('glaux://api/index#nope', es)).toThrow(/no heading with anchor #nope/);
+  expect(() => resolveLink('glaux://api/none', es)).toThrow(/no page with id api\/none in es/);
 });

@@ -1,7 +1,6 @@
-import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { test } from 'node:test';
+import { expect, test } from 'vitest';
 import { familyCounts, filterEntries, licenseFamilies, licenseFamily } from '../src/lib/credits/browse.ts';
 import { m } from '../src/paraglide/messages.js';
 import { pageHead } from '../src/lib/landing/metadata.ts';
@@ -12,14 +11,14 @@ const npm = read('npm.json').entries;
 const glaux = read('glaux.json');
 
 test('licenses are grouped by what a reader would check first', () => {
-  assert.equal(licenseFamily('MIT'), 'mit');
-  assert.equal(licenseFamily('Apache-2.0'), 'apache');
-  assert.equal(licenseFamily('MIT OR Apache-2.0'), 'mitApache');
-  assert.equal(licenseFamily('Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT'), 'mitApache');
-  assert.equal(licenseFamily('LGPL-3.0-or-later'), 'copyleft');
-  assert.equal(licenseFamily('MPL-2.0'), 'copyleft');
-  assert.equal(licenseFamily('ISC'), 'other');
-  assert.equal(licenseFamily(''), 'other');
+  expect(licenseFamily('MIT')).toBe('mit');
+  expect(licenseFamily('Apache-2.0')).toBe('apache');
+  expect(licenseFamily('MIT OR Apache-2.0')).toBe('mitApache');
+  expect(licenseFamily('Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT')).toBe('mitApache');
+  expect(licenseFamily('LGPL-3.0-or-later')).toBe('copyleft');
+  expect(licenseFamily('MPL-2.0')).toBe('copyleft');
+  expect(licenseFamily('ISC')).toBe('other');
+  expect(licenseFamily('')).toBe('other');
 });
 
 test('family counts add up to the entries that match the query', () => {
@@ -27,16 +26,16 @@ test('family counts add up to the entries that match the query', () => {
     for (const query of ['', 'a', 'babel']) {
       const counts = familyCounts(entries, query);
       const total = Object.values(counts).reduce((sum, count) => sum + count, 0);
-      assert.equal(total, filterEntries(entries, query, 'all').length);
-      for (const family of licenseFamilies) assert.equal(filterEntries(entries, query, family).length, counts[family]);
+      expect(total).toBe(filterEntries(entries, query, 'all').length);
+      for (const family of licenseFamilies) expect(filterEntries(entries, query, family).length).toBe(counts[family]);
     }
   }
 });
 
 test('search matches names and npm authors, ignoring case', () => {
-  assert.ok(filterEntries(npm, 'BABEL', 'all').length > 0);
-  assert.ok(filterEntries(npm, 'the babel team', 'all').length > 0);
-  assert.equal(filterEntries(glaux.libraries, 'no such crate', 'all').length, 0);
+  expect(filterEntries(npm, 'BABEL', 'all').length > 0).toBeTruthy();
+  expect(filterEntries(npm, 'the babel team', 'all').length > 0).toBeTruthy();
+  expect(filterEntries(glaux.libraries, 'no such crate', 'all').length).toBe(0);
 });
 
 test('credits heads point at /credits in both languages', () => {
@@ -44,6 +43,6 @@ test('credits heads point at /credits in both languages', () => {
     title: m.credits_title({}, { locale: 'es' }),
     description: m.credits_description({}, { locale: 'es' }),
   });
-  assert.ok(head.links.some((link) => link.rel === 'canonical' && link.href === 'https://glauxconsole.dev/es/credits'));
-  assert.ok(head.links.some((link) => link.hrefLang === 'x-default' && link.href === 'https://glauxconsole.dev/en/credits'));
+  expect(head.links.some((link) => link.rel === 'canonical' && link.href === 'https://glauxconsole.dev/es/credits')).toBeTruthy();
+  expect(head.links.some((link) => link.hrefLang === 'x-default' && link.href === 'https://glauxconsole.dev/en/credits')).toBeTruthy();
 });

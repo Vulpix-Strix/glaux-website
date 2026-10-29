@@ -84,11 +84,13 @@ The generated documentation is not maintained manually in this repository. Chang
 Before submitting changes, run the available checks:
 
 ```bash
+pnpm build
 pnpm test
 pnpm types:check
 pnpm lint
-pnpm build
 ```
+
+`pnpm test` runs Vitest and includes `test/build-output.test.ts`, which reads `dist/`, so build first.
 
 Documentation-related changes should preserve compatibility with Glaux's own documentation renderer.
 
@@ -115,8 +117,8 @@ Site interface text lives in `messages/en.json` and `messages/es.json`, compiled
 [Paraglide JS](https://paraglidejs.com) into typed messages (`m.landing_hero_title()`) under
 `src/paraglide/`, which is generated and ignored by git. Keys are lowercase snake_case, because
 Paraglide lowercases message ids. Both catalogs must define the same keys and placeholders;
-`pnpm test` checks it. `pnpm i18n:compile` regenerates the messages, and `pnpm test` and
-`pnpm types:check` run it first.
+`pnpm test` checks it. `pnpm i18n:compile` regenerates the messages, and `pnpm types:check`
+runs it first. Vitest compiles them through the Vite plugin.
 
 The locale comes from the `/en` or `/es` path segment, which TanStack Router owns. Paraglide only
 reads it (see `paraglide.config.ts`) and never rewrites URLs. Pass `{ locale }` as the second
