@@ -1,12 +1,12 @@
 import { expect, test } from 'vitest';
-import { copyFileSync, mkdirSync } from 'node:fs';
+import { copyFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { root, tempDir, writeTree } from './helpers.ts';
 import { collectOgEntries } from '@/lib/og/entries';
 import { ogHeight, ogImagePath, ogWidth, type OgEntry } from '@/lib/og/model';
 import { pngSize } from '@/lib/og/png';
 import { createOgRenderer } from '@/lib/og/render';
-import { loadContent } from '@/lib/editorial/content';
+import { loadContent, resolveContentAssets } from '@/lib/editorial/content';
 import { articleHead } from '@/lib/editorial/metadata';
 import { landingHead, pageHead } from '@/lib/landing/metadata';
 
@@ -20,14 +20,22 @@ function fixture() {
   const editorial = writeTree(path.join(dir, 'editorial'), {
     'en/news/with-cover.mdx': article(
       'Meet the cover',
-      'cover:\n  src: asset:published/shot.png\n  alt: A screenshot\n  width: 320\n  height: 240\n',
+      'cover:\n  src: asset:with-cover/shot.png\n  alt: A screenshot\n  width: 320\n  height: 240\n',
     ),
     'es/news/sin-portada.mdx': article('Una noticia sin portada'),
     'en/blog/devlog-twelve.mdx': article('Devlog twelve', 'number: 12\n'),
+    'en/news/cover-and-og.mdx': article(
+      'Cover and card',
+      'cover:\n  src: asset:with-cover/shot.png\n  alt: Cover alt\nogImage:\n  src: asset:custom/card.png\n  alt: Card alt\n',
+    ),
+    'en/news/og-only.mdx': article('Only a card', 'ogImage:\n  src: asset:custom/card.png\n'),
+    'en/news/og-unknown-size.mdx': article('Card of unknown size', 'ogImage:\n  src: asset:custom/card.svg\n'),
     'en/blog/secret.mdx': article('Secret draft').replace('status: published', 'status: draft'),
   });
-  mkdirSync(path.join(editorial, 'assets/published'), { recursive: true });
-  copyFileSync(screenshot, path.join(editorial, 'assets/published/shot.png'));
+  for (const folder of ['with-cover', 'custom']) mkdirSync(path.join(editorial, 'assets', folder), { recursive: true });
+  copyFileSync(screenshot, path.join(editorial, 'assets/with-cover/shot.png'));
+  copyFileSync(screenshot, path.join(editorial, 'assets/custom/card.png'));
+  writeFileSync(path.join(editorial, 'assets/custom/card.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>');
   const docs = writeTree(path.join(dir, 'docs'), {
     'en/api/graphics/spr.md': '---\ntitle: "spr"\ndescription: "Draws a sprite. Second sentence."\n---\n\nBody.\n',
     'en/guide/index.md': '---\ntitle: "Glaux guide"\n---\n\nBody.\n',
@@ -164,4 +172,52 @@ test('article heads use the generated card and keep canonical and alternates', (
   expect(tags(head, 'name')['twitter:card']).toBe('summary_large_image');
   expect(head.links.some((link) => link.rel === 'canonical')).toBeTruthy();
   expect(head.scripts[0].children).toMatch(/\/og\/en\/news\/with-cover\.png/);
+});
+
+test('cover and ogImage are independent: the cover never replaces the generated card', () => {
+  const sources = fixture();
+  const assets = new Map();
+  const articles = loadContent(sources.editorial, false).map((entry) => resolveContentAssets(entry, sources.editorial, assets).article);
+  const head = (slug: string) => {
+    const item = articles.find((candidate) => candidate.slug === slug)!;
+    const result = articleHead(item, articles);
+    return { item, og: tags(result, 'property'), twitter: tags(result, 'name'), json: JSON.parse(result.scripts[0].children) };
+  };
+  const card = (slug: string) => `https://glauxconsole.dev/og/en/news/${slug}.png`;
+
+  const coverOnly = head('with-cover');
+  expect(coverOnly.item.cover).toBeTruthy();
+  expect(coverOnly.og['og:image']).toBe(card('with-cover'));
+  expect(coverOnly.twitter['twitter:image']).toBe(card('with-cover'));
+  expect(coverOnly.json.image).toBe(card('with-cover'));
+  expect(coverOnly.og['og:image:width']).toBe('1200');
+
+  const both = head('cover-and-og');
+  expect(both.item.cover?.src).toMatch(/^\/editorial-assets\/.+shot\.png$/);
+  expect(both.og['og:image']).toMatch(/^https:\/\/glauxconsole\.dev\/editorial-assets\/[a-f0-9]+-card\.png$/);
+  expect(both.twitter['twitter:image']).toBe(both.og['og:image']);
+  expect(both.json.image).toBe(both.og['og:image']);
+  expect(both.og['og:image:alt']).toBe('Card alt');
+  expect(both.twitter['twitter:image:alt']).toBe('Card alt');
+
+  const only = head('og-only');
+  expect(only.item.cover).toBe(undefined);
+  expect(only.og['og:image']).toBe(both.og['og:image']);
+  expect(only.og['og:image:alt']).toBe('Only a card');
+  expect(only.og['og:image:width']).toBe('1154');
+  expect(only.og['og:image:height']).toBe('866');
+
+  const unknown = head('og-unknown-size');
+  expect(unknown.og['og:image']).toMatch(/card\.svg$/);
+  expect(unknown.og['og:image:width']).toBe(undefined);
+  expect(unknown.og['og:image:height']).toBe(undefined);
+
+  for (const { og, twitter } of [coverOnly, both, only, unknown]) {
+    expect(twitter['twitter:title']).toBe(og['og:title']);
+    expect(twitter['twitter:description']).toBe(og['og:description']);
+    expect(og['og:image']).toMatch(/^https:\/\//);
+  }
+  const entries = collectOgEntries(sources);
+  for (const slug of ['cover-and-og', 'og-only', 'og-unknown-size'])
+    expect(find(entries, 'en', `/news/${slug}`)).toBeTruthy();
 });

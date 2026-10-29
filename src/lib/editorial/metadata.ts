@@ -8,7 +8,8 @@ export function articleHead(article: Article, articles: Article[]) {
   const head = pageHead(article.lang, `/${article.section}/${article.slug}`, {
     title: `${article.title} — Glaux`,
     description: article.description,
-    imageAlt: article.cover?.alt,
+    imageAlt: article.ogImage ? (article.ogImage.alt ?? article.title) : article.cover?.alt,
+    image: article.ogImage,
   });
   const published = article.status === 'published';
   const translations = published
@@ -24,7 +25,9 @@ export function articleHead(article: Article, articles: Article[]) {
         url: absoluteUrl(articleUrl(article)),
         inLanguage: article.lang,
         ...(article.author ? { author: { '@type': 'Person', name: article.author } } : {}),
-        image: absoluteUrl(ogImagePath(article.lang, `/${article.section}/${article.slug}`)),
+        image: absoluteUrl(
+          article.ogImage?.src ?? ogImagePath(article.lang, `/${article.section}/${article.slug}`),
+        ),
       }
     : undefined;
   return {
