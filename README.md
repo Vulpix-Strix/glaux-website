@@ -126,8 +126,8 @@ See `public/images/landing/README.md` for their exact content. The reference
 HTML is visual guidance only; none of its embedded assets or scripts are used.
 Until supplied, failed images show a localized message in reserved space.
 
-News and binary downloads show their actual unavailable states. No release
-URLs are fabricated. The source repository and existing docs remain usable.
+News and Blog show their actual empty states until local articles are published.
+Binary downloads remain unavailable; no release URLs are fabricated. The source repository and existing docs remain usable.
 
 ## Credits
 
@@ -139,3 +139,20 @@ pnpm credits:check
 ```
 
 Run `pnpm credits:sync` after changing a dependency or moving the Glaux revision, and commit the result. CI runs `pnpm credits:check`. The npm packages are described in this repository only; Glaux's own credit files are read at the revision in `glaux-docs.lock` and never edited. See `credits/README.md` for how the data is built and how to add a missing license text.
+
+
+## News and Blog
+
+Localized listings live at `/en/news`, `/es/news`, `/en/blog` and `/es/blog`.
+Articles are local MDX files with shared metadata, loading and rendering. Each
+section has its own localized RSS feed at `/{lang}/{section}/rss.xml`.
+
+Start with `/en/blog/devlog-template` or `/es/blog/devlog-template` in development.
+The templates demonstrate all editorial components, including galleries,
+comparisons, media, events and metrics. Draft articles and their exclusive
+resources are excluded before production compilation and checked again in the
+built output and Worker smoke tests.
+
+See [the editorial authoring guide](content/editorial/README.md) for metadata,
+publication, translations, assets and component examples. Never store draft
+resources in `public/`.
