@@ -6,7 +6,8 @@ import { parse } from 'yaml';
 import { createProcessor } from '@mdx-js/mdx';
 import readingTime from 'reading-time';
 import { toString } from 'mdast-util-to-string';
-import { categories, type Article, type EditorialImage } from './model.ts';
+import { categories, type Article, type EditorialImage, type OgImage } from './model.ts';
+import { imageSize } from './image-size.ts';
 
 export interface ContentEntry {
   article: Article;
@@ -16,6 +17,8 @@ export interface ContentEntry {
 export interface ContentAsset {
   file: string;
   url: string;
+  width?: number;
+  height?: number;
 }
 export function walkContent(dir: string): string[] {
   if (!existsSync(dir)) return [];
@@ -76,9 +79,17 @@ export function parseContent(file: string, root: string): ContentEntry {
     cover = {
       src: text(image.src, 'cover.src'),
       alt: text(image.alt, 'cover.alt'),
-      width: positive(image.width, 'cover.width'),
-      height: positive(image.height, 'cover.height'),
+      width: image.width === undefined ? undefined : positive(image.width, 'cover.width'),
+      height: image.height === undefined ? undefined : positive(image.height, 'cover.height'),
       caption: image.caption === undefined ? undefined : text(image.caption, 'cover.caption'),
+    };
+  }
+  let ogImage: OgImage | undefined;
+  if (data.ogImage) {
+    const image = data.ogImage as Record<string, unknown>;
+    ogImage = {
+      src: text(image.src, 'ogImage.src'),
+      alt: image.alt === undefined ? undefined : text(image.alt, 'ogImage.alt'),
     };
   }
   let series: Article['series'];
@@ -122,11 +133,14 @@ export function parseContent(file: string, root: string): ContentEntry {
       section: section as Article['section'],
       slug,
       title: text(data.title, 'title'),
-      description: text(data.description, 'description'),
+      // Drafts may start with an empty description, as `pnpm new:post` writes them.
+      description:
+        data.status === 'draft' && data.description === '' ? '' : text(data.description, 'description'),
       date,
       status: data.status,
       categories: [...new Set(data.categories)] as Article['categories'],
       cover,
+      ogImage,
       series,
       event,
       author: data.author === undefined ? undefined : text(data.author, 'author'),
@@ -158,6 +172,11 @@ export function loadContent(root: string, development: boolean): ContentEntry[] 
   }
   return entries.filter(({ article }) => development || article.status === 'published');
 }
+/**
+ * Resolves `asset:<article-id>/<file>` references anywhere in an article, in Markdown, JSX or
+ * frontmatter. Only assets of articles that were loaded are registered, so files used only by
+ * drafts never reach a production build.
+ */
 export function resolveContentAssets(
   entry: ContentEntry,
   root: string,
@@ -165,21 +184,26 @@ export function resolveContentAssets(
 ): ContentEntry {
   function replace(source: string) {
     return source.replace(/asset:([a-zA-Z0-9_./-]+)/g, (_, name: string) => {
-      if (!/^(drafts|published)\//.test(name) || name.split('/').includes('..'))
+      if (!name.includes('/') || name.split('/').includes('..'))
         throw new Error(`${entry.file}: invalid asset reference ${name}`);
-      if (entry.article.status === 'published' && name.startsWith('drafts/'))
-        throw new Error(`${entry.file}: a published article cannot reference draft assets`);
       const file = path.join(root, 'assets', name);
+      if (!existsSync(file)) throw new Error(`${entry.file}: asset not found: ${name}`);
       const bytes = readFileSync(file);
       const hash = createHash('sha256').update(bytes).digest('hex').slice(0, 20);
       const url = `/editorial-assets/${hash}-${path.basename(file)}`;
-      assets.set(url, { file, url });
+      assets.set(url, { file, url, ...imageSize(bytes) });
       return url;
     });
   }
-  return {
-    ...entry,
-    body: replace(entry.body),
-    article: JSON.parse(replace(JSON.stringify(entry.article))) as Article,
-  };
+  const article = JSON.parse(replace(JSON.stringify(entry.article))) as Article;
+  // Explicit dimensions in the frontmatter win over the ones read from the file.
+  for (const key of ['cover', 'ogImage'] as const) {
+    const image = article[key];
+    const asset = image && assets.get(image.src);
+    if (image && asset) {
+      image.width ??= asset.width;
+      image.height ??= asset.height;
+    }
+  }
+  return { ...entry, body: replace(entry.body), article };
 }

@@ -1,0 +1,78 @@
+---
+id: component-demo
+title: Demostración de componentes
+description: Todos los componentes editoriales con valores de prueba. Solo desarrollo, nunca se publica.
+status: draft
+categories: [development]
+---
+
+<Callout title="Solo desarrollo">
+Esta página sirve para ver todos los componentes funcionando. Los valores, fechas y etiquetas son datos de prueba, no anuncios ni mediciones de Glaux.
+</Callout>
+
+<InlineTOC items={toc}>Índice de ejemplo</InlineTOC>
+
+## Figuras y galería
+
+<ArticleFigure src="asset:component-demo/demo-gameplay.png" alt="Captura existente de Signal Lost para probar el componente" width={320} height={240} caption="Imagen de prueba de desarrollo" />
+
+Las imágenes Markdown normales también funcionan, y su tamaño se detecta solo:
+
+![Glaux shell](asset:component-demo/demo-shell.png)
+
+<ArticleGallery title="Galería de prueba de desarrollo" images={[
+  {src: 'asset:component-demo/demo-gameplay.png', alt: 'Signal Lost', width: 320, height: 240, caption: 'Signal Lost'},
+  {src: 'asset:component-demo/demo-shell.png', alt: 'Glaux shell', width: 320, height: 240, caption: 'Glaux shell'}
+]} />
+
+## Comparador
+
+<ImageComparison label="Comparación de prueba de dos capturas distintas" before={{src: 'asset:component-demo/demo-gameplay.png', alt: 'Signal Lost', width: 320, height: 240}} after={{src: 'asset:component-demo/demo-shell.png', alt: 'Glaux shell', width: 320, height: 240}} />
+
+## Vídeo y animación
+
+<ArticleVideo title="Vídeo de prueba, fundido de dos segundos" sources={[{src: 'asset:component-demo/demo.mp4', type: 'video/mp4'}]} poster="asset:component-demo/demo-gameplay.png" tracks={[{src: 'asset:component-demo/demo.vtt', srcLang: 'es', label: 'Español', default: true}]} chapters={[{time: 0, title: 'Inicio'}, {time: 1, title: 'Fundido'}]} transcript="Prueba multimedia de desarrollo. Una captura se oscurece. No hay voz ni anuncios del producto." />
+
+<AnimatedClip title="Animación de prueba con pausa" sources={[{src: 'asset:component-demo/demo.mp4', type: 'video/mp4'}]} poster="asset:component-demo/demo-gameplay.png" />
+
+## Evento y métricas
+
+<EventCard title="Prueba de calendario, no es un evento real" start="2000-01-01T12:00:00Z" end="2000-01-01T13:00:00Z" timeZone="UTC" location="Datos de prueba" description="Solo datos de prueba. No publicar." />
+
+<Metric label="Valor de prueba, no es una medición" value={12} unit="ms" context="Solo un ejemplo" />
+
+<Milestone label="Hito de prueba" value={3} goal={10} context="Valores de ejemplo, no es el progreso del proyecto" />
+
+## Pestañas, tipos y código
+
+<Tabs items={['English', 'Español']}>
+  <Tab>Development example.</Tab>
+  <Tab>Ejemplo de desarrollo.</Tab>
+</Tabs>
+
+<TypeTable type={{label: {type: 'string', description: 'Etiqueta accesible del componente', required: true}}} />
+
+```ts title="example.ts"
+// Development example only.
+const message = 'Glaux';
+console.log(message);
+```
+
+## Avisos y enlaces
+
+<EditorialNotice>Nota opcional de este artículo, no es un aviso predeterminado.</EditorialNotice>
+
+<ResourceCard href="/en/docs/guide" title="Documentación">Documentación existente en inglés.</ResourceCard>
+
+<GameCard href="https://github.com/Vulpix-Strix/glaux/tree/main/examples/signal-lost" title="Signal Lost">Cartucho de ejemplo existente en el repositorio.</GameCard>
+
+
+```luau title="example.luau"
+-- Development example only.
+print("Glaux")
+```
+
+```rhai title="example.rhai"
+// Development example only.
+print("Glaux");
+```

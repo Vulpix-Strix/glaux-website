@@ -1,0 +1,78 @@
+---
+id: component-demo
+title: Component demo
+description: Every editorial component with test values. Development only, never published.
+status: draft
+categories: [development]
+---
+
+<Callout title="Development only">
+This page exists to see every component working. All values, dates and labels are test data, not Glaux announcements or measurements.
+</Callout>
+
+<InlineTOC items={toc}>Example index</InlineTOC>
+
+## Figures and gallery
+
+<ArticleFigure src="asset:component-demo/demo-gameplay.png" alt="Existing Signal Lost screenshot, used for component testing" width={320} height={240} caption="Development test image" />
+
+Plain Markdown images work too, and their size is detected automatically:
+
+![Glaux shell](asset:component-demo/demo-shell.png)
+
+<ArticleGallery title="Development test gallery" images={[
+  {src: 'asset:component-demo/demo-gameplay.png', alt: 'Signal Lost', width: 320, height: 240, caption: 'Signal Lost'},
+  {src: 'asset:component-demo/demo-shell.png', alt: 'Glaux shell', width: 320, height: 240, caption: 'Glaux shell'}
+]} />
+
+## Comparison
+
+<ImageComparison label="Test comparison of two different screenshots" before={{src: 'asset:component-demo/demo-gameplay.png', alt: 'Signal Lost', width: 320, height: 240}} after={{src: 'asset:component-demo/demo-shell.png', alt: 'Glaux shell', width: 320, height: 240}} />
+
+## Video and animation
+
+<ArticleVideo title="Test video, two second fade" sources={[{src: 'asset:component-demo/demo.mp4', type: 'video/mp4'}]} poster="asset:component-demo/demo-gameplay.png" tracks={[{src: 'asset:component-demo/demo.vtt', srcLang: 'en', label: 'English', default: true}]} chapters={[{time: 0, title: 'Start'}, {time: 1, title: 'Fade'}]} transcript="Development media test. A screenshot fades to dark. No speech or product announcement." />
+
+<AnimatedClip title="Pausable test animation" sources={[{src: 'asset:component-demo/demo.mp4', type: 'video/mp4'}]} poster="asset:component-demo/demo-gameplay.png" />
+
+## Event and metrics
+
+<EventCard title="Calendar test, not a real event" start="2000-01-01T12:00:00Z" end="2000-01-01T13:00:00Z" timeZone="UTC" location="Development fixture" description="Test data only. Do not publish." />
+
+<Metric label="Test value, not a measurement" value={12} unit="ms" context="Example only" />
+
+<Milestone label="Test milestone" value={3} goal={10} context="Example values, not project progress" />
+
+## Tabs, types and code
+
+<Tabs items={['English', 'Español']}>
+  <Tab>Development example.</Tab>
+  <Tab>Ejemplo de desarrollo.</Tab>
+</Tabs>
+
+<TypeTable type={{label: {type: 'string', description: 'Accessible component label', required: true}}} />
+
+```ts title="example.ts"
+// Development example only.
+const message = 'Glaux';
+console.log(message);
+```
+
+## Notices and links
+
+<EditorialNotice>An optional note written by this article, not a default warning.</EditorialNotice>
+
+<ResourceCard href="/en/docs/guide" title="Documentation">Existing English documentation.</ResourceCard>
+
+<GameCard href="https://github.com/Vulpix-Strix/glaux/tree/main/examples/signal-lost" title="Signal Lost">Existing example cartridge in the repository.</GameCard>
+
+
+```luau title="example.luau"
+-- Development example only.
+print("Glaux")
+```
+
+```rhai title="example.rhai"
+// Development example only.
+print("Glaux");
+```
