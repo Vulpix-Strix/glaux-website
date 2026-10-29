@@ -1,6 +1,13 @@
 import { useState, type ReactNode } from 'react';
+import { buttonClasses } from '@/components/site/primitives';
 
-export function Action({ href, children, primary = false, large = false, ...props }: {
+export function Action({
+  href,
+  children,
+  primary = false,
+  large = false,
+  ...props
+}: {
   href: string;
   children: ReactNode;
   primary?: boolean;
@@ -8,13 +15,21 @@ export function Action({ href, children, primary = false, large = false, ...prop
   hrefLang?: string;
 }) {
   return (
-    <a href={href} className={`gx-button${primary ? ' gx-button-primary' : ''}${large ? ' gx-button-large' : ''}`} {...props}>
+    <a
+      href={href}
+      className={`${buttonClasses} ${primary ? 'border-transparent! bg-gx-accent! text-gx-on-accent! shadow-[inset_0_-2px_#0004] hover:bg-gx-accent-hover!' : ''} ${large ? 'min-h-12! px-6! text-base!' : ''} ${primary && large ? 'gx-pixel-button' : ''}`}
+      {...props}
+    >
       {children}
     </a>
   );
 }
 
-export function SectionHeading({ eyebrow, title, lead }: {
+export function SectionHeading({
+  eyebrow,
+  title,
+  lead,
+}: {
   eyebrow: string;
   title: string;
   lead?: string;
@@ -28,7 +43,15 @@ export function SectionHeading({ eyebrow, title, lead }: {
   );
 }
 
-export function PixelImage({ file, alt, width, height, pending, priority = false, className = '' }: {
+export function PixelImage({
+  file,
+  alt,
+  width,
+  height,
+  pending,
+  priority = false,
+  className = '',
+}: {
   file: string;
   alt: string;
   width: number;
@@ -73,7 +96,8 @@ export function Icon({ name }: { name: string }) {
 
 // Lightweight highlighting of the fixed Luau/Rhai snippets. No HTML injection
 // or client-side highlighter dependency; React escapes every token as text.
-const tokens = /("[^"\n]*"|'[^'\n]*'|--[^\n]*|\b(?:local|function|end|if|then)\b|\b(?:true|false)\b|\b\d+\b|\b[A-Za-z_]\w*(?=\())/g;
+const tokens =
+  /("[^"\n]*"|'[^'\n]*'|--[^\n]*|\b(?:local|function|end|if|then)\b|\b(?:true|false)\b|\b\d+\b|\b[A-Za-z_]\w*(?=\())/g;
 function tokenClass(token: string) {
   if (/^--/.test(token)) return 'comment';
   if (/^["']/.test(token)) return 'string';
@@ -84,20 +108,34 @@ function tokenClass(token: string) {
   return undefined;
 }
 
-export function CodeBlock({ code, label, numbered = false, terminal = false }: {
+export function CodeBlock({
+  code,
+  label,
+  numbered = false,
+  terminal = false,
+}: {
   code: string;
   label: string;
   numbered?: boolean;
   terminal?: boolean;
 }) {
   return (
-    <pre className={`gx-code${numbered ? ' gx-code-numbered' : ''}${terminal ? ' gx-terminal' : ''}`} aria-label={label}>
+    <pre
+      className={`gx-code${numbered ? ' gx-code-numbered' : ''}${terminal ? ' gx-terminal' : ''}`}
+      aria-label={label}
+    >
       <code>
         {code.split('\n').map((line, lineNumber) => (
           <span className="gx-code-line" key={lineNumber}>
             {line.split(tokens).map((part, tokenIndex) => {
               const kind = tokenClass(part);
-              return kind ? <span className={`gx-syn-${kind}`} key={tokenIndex}>{part}</span> : part;
+              return kind ? (
+                <span className={`gx-syn-${kind}`} key={tokenIndex}>
+                  {part}
+                </span>
+              ) : (
+                part
+              );
             })}
             {!line && '\u200b'}
           </span>
@@ -107,7 +145,12 @@ export function CodeBlock({ code, label, numbered = false, terminal = false }: {
   );
 }
 
-export function Panel({ icon, title, detail, children }: {
+export function Panel({
+  icon,
+  title,
+  detail,
+  children,
+}: {
   icon: string;
   title: string;
   detail?: string;
@@ -115,7 +158,11 @@ export function Panel({ icon, title, detail, children }: {
 }) {
   return (
     <div className="gx-panel">
-      <header><Icon name={icon} /><h3>{title}</h3>{detail && <span>{detail}</span>}</header>
+      <header>
+        <Icon name={icon} />
+        <h3>{title}</h3>
+        {detail && <span>{detail}</span>}
+      </header>
       {children}
     </div>
   );

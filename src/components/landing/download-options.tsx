@@ -1,3 +1,5 @@
+import { Container } from '@/components/site/primitives';
+import { Button } from '@/components/site/primitives';
 import { ArrowRight } from 'lucide-react';
 import type { LandingCopy } from '@/lib/landing/copy';
 import { buildCommands } from '@/lib/landing/examples';
@@ -7,16 +9,17 @@ import { CodeBlock, SectionHeading } from './primitives';
 export function DownloadOptions({ copy }: { copy: LandingCopy['get'] }) {
   return (
     <section className="gx-section gx-sunken gx-dither" id="download">
-      <div className="gx-wrap">
+      <Container className="gx-wrap">
         <SectionHeading eyebrow={copy.eyebrow} title={copy.title} lead={copy.lead} />
         <div className="gx-downloads">
           {['Linux', 'macOS', 'Windows'].map((os) => (
             <article key={os}>
               <h3>{os}</h3>
               <p className="gx-small">{copy.binary}</p>
-              <button className="gx-button gx-button-large" disabled>
-                {copy.unavailable}<span className="gx-sr">: {os}</span>
-              </button>
+              <Button className="min-h-12! px-6! text-base!" disabled>
+                {copy.unavailable}
+                <span className="gx-sr">: {os}</span>
+              </Button>
             </article>
           ))}
         </div>
@@ -33,12 +36,14 @@ export function DownloadOptions({ copy }: { copy: LandingCopy['get'] }) {
             <h3>{copy.browser}</h3>
             <p>{copy.browserText}</p>
             <div className="gx-browser-unavailable">
-              <button className="gx-button gx-button-large" disabled>{copy.browserButton}</button>
+              <Button className="min-h-12! px-6! text-base!" disabled>
+                {copy.browserButton}
+              </Button>
               <span className="gx-small">{copy.unavailable}</span>
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 }
