@@ -13,6 +13,7 @@ export function Action({
   primary?: boolean;
   large?: boolean;
   hrefLang?: string;
+  onClick?: () => void;
 }) {
   return (
     <a

@@ -3,6 +3,7 @@ import { useDocsLayout } from 'fumadocs-ui/layouts/docs';
 import { GitBranch, Menu } from 'lucide-react';
 import { Wordmark } from '@/components/brand/wordmark';
 import { LanguageLink } from '@/components/landing/navigation';
+import { track } from '@/lib/posthog';
 import { downloadUrl, repositoryUrl, siteLinks } from '@/lib/site-nav';
 
 /** The wordmark, as the layout's `navTitle`. Plain link: Fumadocs would mark it current on every page. */
@@ -53,10 +54,17 @@ export function DocsTopbar(props: ComponentProps<'header'>) {
             <LanguageLink language="es" current="en" label="ES" />
           </div>
           {ThemeSwitch && <ThemeSwitch />}
-          <a className="gx-docs-iconbtn gx-docs-github" href={repositoryUrl} aria-label="Glaux on GitHub">
+          <a
+            className="gx-docs-iconbtn gx-docs-github"
+            href={repositoryUrl}
+            aria-label="Glaux on GitHub"
+            onClick={() => track('github_clicked', { source: 'docs_topbar' })}
+          >
             <GitBranch aria-hidden="true" />
           </a>
-          <a className="gx-docs-download" href={downloadUrl}>Download</a>
+          <a className="gx-docs-download" href={downloadUrl} onClick={() => track('download_clicked', { source: 'docs_topbar' })}>
+            Download
+          </a>
         </div>
       </div>
     </header>
@@ -70,8 +78,12 @@ export function DrawerLinks() {
       {siteLinks.map((link) =>
         link.href === undefined || link.id === 'docs' ? null : <a key={link.id} href={link.href}>{link.label}</a>,
       )}
-      <a href={downloadUrl}>Download</a>
-      <a href={repositoryUrl}>GitHub</a>
+      <a href={downloadUrl} onClick={() => track('download_clicked', { source: 'docs_drawer' })}>
+        Download
+      </a>
+      <a href={repositoryUrl} onClick={() => track('github_clicked', { source: 'docs_drawer' })}>
+        GitHub
+      </a>
     </nav>
   );
 }
