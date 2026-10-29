@@ -109,6 +109,20 @@ The website's source code is licensed under the [MIT License](LICENSE).
 Documentation imported from Glaux retains its original licensing and attribution. Glaux and Vulpix Strix branding, logos, and other separately identified visual assets are not automatically covered by the website's source-code license.
 
 
+## Interface translations
+
+Site interface text lives in `messages/en.json` and `messages/es.json`, compiled by
+[Paraglide JS](https://paraglidejs.com) into typed messages (`m.landing_hero_title()`) under
+`src/paraglide/`, which is generated and ignored by git. Keys are lowercase snake_case, because
+Paraglide lowercases message ids. Both catalogs must define the same keys and placeholders;
+`pnpm test` checks it. `pnpm i18n:compile` regenerates the messages, and `pnpm test` and
+`pnpm types:check` run it first.
+
+The locale comes from the `/en` or `/es` path segment, which TanStack Router owns. Paraglide only
+reads it (see `paraglide.config.ts`) and never rewrites URLs. Pass `{ locale }` as the second
+argument of a message in code that has the route language at hand, such as `head()`. The manual
+(`/en/docs`) and the editorial MDX articles keep their own i18n and are not part of these catalogs.
+
 ## Landing page
 
 The landing is available at `/en` and `/es`; `/` redirects to English.
