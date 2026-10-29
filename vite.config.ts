@@ -11,6 +11,7 @@ import { paraglideOptions } from './paraglide.config.ts';
 import { editorialPlugin } from './src/lib/editorial/vite.ts';
 import { loadContent } from './src/lib/editorial/content.ts';
 import { articleUrl } from './src/lib/editorial/model.ts';
+import { ogImages } from './src/lib/og/vite.ts';
 
 // Vite refuses to import files of `public/`, which is where `pnpm credits:sync` writes the credits
 // the site serves. This exposes the small editorial one to pages as a module, so it can be rendered
@@ -37,6 +38,7 @@ export default defineConfig({
     paraglideVitePlugin(paraglideOptions),
     creditsEditorial(),
     editorialPlugin(),
+    ogImages(),
     fumadocsMdx(),
     tailwindcss(),
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
