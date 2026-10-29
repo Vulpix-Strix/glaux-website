@@ -228,6 +228,17 @@
         "retrieved": "2026-10-29",
         "note": "The package ships no license file. This is the MIT license at the root of the repository, at the commit of the v0.20.1 tag."
       }
+    ],
+    "@posthog/browser-common@0.10.1": [
+      {
+        "kind": "license",
+        "title": "LICENSE",
+        "spdx": "MIT",
+        "file": "posthog-LICENSE.txt",
+        "source": "https://github.com/PostHog/posthog-js/blob/fd7d0c9cbab001e3aabcd8c3162eeccc4ff73e13/LICENSE",
+        "retrieved": "2026-10-29",
+        "note": "The package ships no license file. This is the MIT license at the root of the repository, at the commit of the @posthog/browser-common@0.10.1 tag. It is identical to the LICENSE that @posthog/core ships."
+      }
     ]
   }
 }
