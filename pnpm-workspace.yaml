@@ -1,6 +1,8 @@
 # esbuild only checks its prebuilt binary on install; the build does not need the script.
 allowBuilds:
   esbuild: false
+  # Pulled in by posthog-js. Its install script only prints a funding notice.
+  core-js: false
   # Wrangler requires the platform workerd binary for local Worker execution.
   workerd: true
 minimumReleaseAgeExclude:
