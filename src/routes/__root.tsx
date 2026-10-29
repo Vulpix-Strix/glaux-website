@@ -2,9 +2,8 @@ import { createRootRoute, HeadContent, Outlet, Scripts, useParams } from '@tanst
 import * as React from 'react';
 import appCss from '@/styles/app.css?url';
 import { RootProvider } from 'fumadocs-ui/provider/tanstack';
-import { i18nProvider } from 'fumadocs-ui/i18n';
-import { siteTranslations } from '@/lib/site-i18n';
-import { getLanguage } from '@/lib/i18n';
+import { siteI18nProvider } from '@/lib/fumadocs-i18n';
+import { baseLocale, isLocale } from '@/paraglide/runtime';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -26,8 +25,10 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  // Reading the route param subscribes the root to navigation, so `<html lang>` follows client-side
+  // transitions as well as direct loads.
   const params = useParams({ strict: false });
-  const lang = getLanguage(params.lang);
+  const lang = isLocale(params.lang) ? params.lang : baseLocale;
 
   return (
     <html lang={lang} suppressHydrationWarning>
@@ -35,7 +36,7 @@ function RootComponent() {
         <HeadContent />
       </head>
       <body className="flex flex-col min-h-screen">
-        <RootProvider i18n={i18nProvider(siteTranslations, lang)}>
+        <RootProvider i18n={siteI18nProvider(lang)}>
           <Outlet />
         </RootProvider>
         <Scripts />
