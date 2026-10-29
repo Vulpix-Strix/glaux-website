@@ -38,6 +38,11 @@ jobs:
       - name: Sync the Glaux documentation
         run: pnpm docs:sync
 
+      # The credits data is committed. This fails when a dependency or the Glaux pin moved without
+      # `pnpm credits:sync`, so the Credits page never shows an outdated list.
+      - name: Check the credits data
+        run: pnpm credits:check
+
       - run: pnpm test
         env:
           GLAUX_DOCS_DIR: ${{ github.workspace }}/.cache/glaux-source/docs
