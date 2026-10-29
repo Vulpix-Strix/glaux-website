@@ -37,6 +37,7 @@
     "fumadocs-mdx": "15.4.9",
     "fumadocs-ui": "npm:@fumadocs/base-ui@16.17.7",
     "lucide-react": "^1.59.0",
+    "posthog-js": "^1.441.2",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "reading-time": "1.5.0",
