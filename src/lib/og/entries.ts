@@ -18,7 +18,7 @@ import type { OgEntry, OgHue } from './model.ts';
 export interface OgSources {
   /** `content/editorial`. */
   editorial: string;
-  /** `content/glaux`, the synced documentation. May be absent before `pnpm docs:sync`. */
+  /** The version of the synced documentation the site shows, `content/glaux/<version>`. */
   docs: string;
   /** `public/`, for the screenshot of the landing. */
   publicDir: string;

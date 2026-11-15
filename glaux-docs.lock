@@ -1,5 +1,0 @@
-# The Glaux revision the website documentation is built from.
-# Production and CI build exactly this commit, never a branch.
-# Move it with `pnpm docs:pin`; see "Updating the documentation" in the README.
-repository = https://github.com/Vulpix-Strix/glaux.git
-commit = 7dfd8f4dceb8f0d702dca4dda7ba2b23653f6e6f

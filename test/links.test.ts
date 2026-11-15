@@ -3,7 +3,6 @@ import { docUrl, GlauxLinkError, resolveLink } from '@/lib/glaux/links';
 import type { Manifest } from '@/lib/glaux/manifest';
 
 const manifest: Manifest = {
-  source: { kind: 'local' },
   languages: {
     en: {
       'api/graphics/spr': { id: 'api/graphics/spr', title: 'spr', titleAnchor: 'spr', anchors: ['parameters'] },

@@ -31,7 +31,7 @@ const files = (editorial = credits) => ({
   thirdParty: inventory([text('A')], [entry('serde', 'library', [0])]),
   extra: inventory([text('Font'), text('Luau')], [entry('Pixel Code', 'art', [0]), entry('Luau', 'native', [1])]),
 });
-const source = { repository: 'https://example.com/glaux.git', commit: 'a'.repeat(40) };
+const source = { repository: 'https://example.com/glaux.git', commit: 'a'.repeat(40), version: 'development' };
 
 test('Glaux credits become an editorial file, an index per kind and one file of texts', () => {
   const out = buildGlauxFiles(files(), source);

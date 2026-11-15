@@ -16,9 +16,6 @@ permissions:
 jobs:
   web:
     runs-on: ubuntu-latest
-    env:
-      # Build the Glaux revision pinned in glaux-docs.lock, never a branch and never a sibling checkout.
-      GLAUX_DOCS_LOCKED: '1'
     steps:
       - uses: actions/checkout@v7
         with:
@@ -33,21 +30,18 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # Fetches the pinned commit, reads its docs/ and fails on a missing page or a broken
-      # link or heading fragment. `pnpm build` does it again through `prebuild`, from the cache.
-      - name: Sync the Glaux documentation
-        run: pnpm docs:sync
-
-      # The credits data is committed. This fails when a dependency or the Glaux pin moved without
+      # The npm credits are committed. This fails when a dependency moved without
       # `pnpm credits:sync`, so the Credits page never shows an outdated list.
-      - name: Check the credits data
+      - name: Check the npm credits
         run: pnpm credits:check
 
+      # `prebuild` discovers the Glaux releases and main on GitHub, syncs the documentation of each
+      # one and writes the Glaux credits of the default version. The steps below reuse that output.
       - run: pnpm build
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - run: pnpm test
-        env:
-          GLAUX_DOCS_DIR: ${{ github.workspace }}/.cache/glaux-source/docs
 
       - run: pnpm types:check
 

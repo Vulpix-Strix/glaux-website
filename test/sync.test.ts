@@ -90,9 +90,8 @@ test('every folder of the manual lists exactly what it holds, guide section firs
 });
 
 test('the manifest says where the documentation came from', () => {
-  const manifest = syncDocs(fixtures, tempDir(), { source: { kind: 'locked', commit: 'abc' } });
-  expect(manifest.source).toStrictEqual({ kind: 'locked', commit: 'abc' });
-  expect(syncDocs(fixtures, tempDir()).source).toStrictEqual({ kind: 'local' });
+  const source = { version: 'v1.0.0', commit: 'a'.repeat(40) };
+  expect(syncDocs(fixtures, tempDir(), { source }).source).toStrictEqual(source);
 });
 
 test('syncing twice gives byte for byte the same files', () => {
@@ -184,7 +183,13 @@ test('a page without a title is an error', () => {
 });
 
 test('generated files are ignored by git', () => {
-  for (const file of ['content/glaux/en/guide/index.md', 'content/glaux/manifest.json', '.cache/glaux-source/docs/en/guide/index.md']) {
-    execFileSync('git', ['check-ignore', '-q', file], { cwd: root }); // exits 1 when not ignored
+  for (const file of [
+    'content/glaux/versions.json',
+    'content/glaux/development/en/guide/index.md',
+    'content/glaux.next/development/manifest.json',
+    `.cache/glaux-source/${'a'.repeat(40)}/docs/en/guide/index.md`,
+    'public/credits/glaux.json',
+  ]) {
+    execFileSync('git', ['check-ignore', '-q', '--no-index', file], { cwd: root }); // exits 1 when not ignored
   }
 });

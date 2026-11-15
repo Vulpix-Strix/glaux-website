@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { expect, test } from 'vitest';
 import { parseEditorial, parseRon } from '@/lib/credits/ron';
-import { glauxDocs } from './helpers.ts';
+import { glauxCredits } from './helpers.ts';
 
 const SAMPLE = `// Editorial credits.
 (
@@ -57,7 +57,7 @@ test('syntax outside the supported subset fails with a line number', () => {
   expect(() => parseRon('(a: "x", a: "y")')).toThrow(/field `a` is set twice/);
 });
 
-test('the real credits file parses when Glaux is next to this repository', { skip: !existsSync(path.join(glauxDocs, '../rom/credits.ron')) }, () => {
-  const credits = parseEditorial(readFileSync(path.join(glauxDocs, '../rom/credits.ron'), 'utf8'));
+test('the real credits file of the published version parses', { skip: !existsSync(path.join(glauxCredits, 'rom/credits.ron')) }, () => {
+  const credits = parseEditorial(readFileSync(path.join(glauxCredits, 'rom/credits.ron'), 'utf8'));
   expect(credits.sections.length > 0).toBeTruthy();
 });

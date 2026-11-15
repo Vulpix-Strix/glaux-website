@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import { DocsLayout } from '@/components/layouts/docs';
 import { createServerFn } from '@tanstack/react-start';
-import { docs, source } from '@/lib/docs/source';
+import { getDocsEntry, source } from '@/lib/docs/source';
 import {
   DocsBody,
   DocsPage,
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/$lang/docs/$')({
   loader: async ({ params }) => {
     const slugs = params._splat?.split('/') ?? [];
     const data = await serverLoader({ data: { slugs, lang: params.lang } });
-    await docs.getPage(data.path)?.preload();
+    await getDocsEntry(data.path)?.preload();
     return data;
   },
   head: ({ loaderData, params }) => {
@@ -57,7 +57,7 @@ const serverLoader = createServerFn({
   });
 
 function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
-  const page = docs.getPage(path);
+  const page = getDocsEntry(path);
   if (!page) throw new Error(`unknown page: ${path}`);
 
   const { toc } = use(page.load());

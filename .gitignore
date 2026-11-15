@@ -16,8 +16,12 @@ node_modules
 .tanstack
 .idea/
 .source
-# generated from the Glaux repository by `pnpm docs:sync`
+# generated from the Glaux repository by `pnpm docs:sync` and `pnpm credits:glaux`
 /content/glaux/
+/content/glaux.next/
+/public/credits/editorial.json
+/public/credits/glaux.json
+/public/credits/glaux-texts.json
 
 # Cloudflare local state and Vite build output
 .wrangler/

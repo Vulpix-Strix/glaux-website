@@ -13,7 +13,7 @@ import { folderOrders, orderPages } from './order.ts';
 
 const LANGUAGE_DIR = /^[a-z]{2,3}(-[A-Za-z0-9]+)*$/;
 /** Marks a directory this module owns, so it never empties one it did not create. */
-const MARKER = '.glaux-generated';
+export const MARKER = '.glaux-generated';
 
 export interface SyncOptions {
   /** Recorded in the manifest. */
@@ -137,7 +137,7 @@ function publishedIds(sourceDir: string): string[] {
  */
 export function syncDocs(sourceDir: string, outDir: string, options: SyncOptions = {}): Manifest {
   if (!statSync(sourceDir, { throwIfNoEntry: false })?.isDirectory()) {
-    throw new Error(`Glaux docs not found at ${sourceDir}; set GLAUX_DOCS_DIR, pass --source or use --locked`);
+    throw new Error(`Glaux docs not found at ${sourceDir}`);
   }
   const owned = statSync(path.join(outDir, MARKER), { throwIfNoEntry: false });
   if (statSync(outDir, { throwIfNoEntry: false }) && !owned && readdirSync(outDir).length > 0) {
@@ -153,7 +153,7 @@ export function syncDocs(sourceDir: string, outDir: string, options: SyncOptions
     throw new Error(`${sourceDir} has no ${FALLBACK_LANGUAGE}/ pages, and ${FALLBACK_LANGUAGE} is the fallback for every language`);
   }
 
-  const manifest: Manifest = { source: options.source ?? { kind: 'local' }, languages: {}, order: {}, missing: {} };
+  const manifest: Manifest = { ...(options.source ? { source: options.source } : {}), languages: {}, order: {}, missing: {} };
   const parsed: Record<string, Record<string, ParsedPage>> = {};
   for (const lang of languages) {
     const langSource = path.join(sourceDir, lang);
@@ -217,8 +217,11 @@ export function syncDocs(sourceDir: string, outDir: string, options: SyncOptions
     }
   }
   // Images are relative paths into the docs tree (`../../assets/x.png`), so `assets/` keeps its place.
-  if (statSync(path.join(sourceDir, 'assets'), { throwIfNoEntry: false })?.isDirectory()) {
-    cpSync(path.join(sourceDir, 'assets'), path.join(outDir, 'assets'), { recursive: true });
+  // `api/` holds the API catalog of the same revision.
+  for (const dir of ['assets', 'api']) {
+    if (statSync(path.join(sourceDir, dir), { throwIfNoEntry: false })?.isDirectory()) {
+      cpSync(path.join(sourceDir, dir), path.join(outDir, dir), { recursive: true });
+    }
   }
   writeFileSync(path.join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
   return manifest;
