@@ -1,7 +1,8 @@
 # Credits data
 
-`public/credits/` holds the data the Credits page reads. It is generated, committed, and served
-as static files, so the page never builds it. Everything about npm lives here; nothing about it
+`public/credits/` holds the data the Credits page reads. It is generated and served as static
+files, so the page never builds it. The npm files are committed; the Glaux files are written by
+every build. Everything about npm lives here; nothing about it
 is written in Glaux.
 
 | File | Content |
@@ -20,17 +21,17 @@ of Glaux's `apps/glaux/licenses/*.json`: each distinct text is stored once. The 
 ## Updating
 
 ```bash
-pnpm credits:sync    # writes public/credits/
-pnpm credits:check   # fails when the files differ from what sync would write (runs in CI)
+pnpm credits:sync    # writes npm.json and npm-texts.json
+pnpm credits:check   # fails when they differ from what sync would write (runs in CI)
+pnpm credits:glaux   # writes the Glaux files; pnpm dev and pnpm build run it
 ```
 
-Run `sync` after `pnpm install` changes a dependency, or after `pnpm docs:pin` moves the Glaux
-revision, and commit the result. Neither runs during a build.
+Run `sync` after `pnpm install` changes a dependency, and commit the result. It never runs during
+a build.
 
-Glaux is read from the commit in `glaux-docs.lock`, the same one the documentation uses, and
-only `rom/credits.ron` and `apps/glaux/licenses/` are fetched. They are never edited.
-`pnpm credits:sync --source ../glaux` reads a local checkout instead, for development; `check`
-does not accept it.
+`credits:glaux` reads Glaux at the commit of the documentation version the site shows, from the
+catalog `pnpm docs:sync` writes, and only `rom/credits.ron` and `apps/glaux/licenses/` are
+fetched. They are never edited, and the files it writes are not committed.
 
 ## Where npm packages come from
 

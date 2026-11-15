@@ -1,28 +1,16 @@
-// Usage: node scripts/sync-credits.ts [--check] [--source <glaux dir>]
-// Writes public/credits/ from the Glaux revision in glaux-docs.lock and from the installed npm
-// packages. --check writes nothing and fails when the files are not what it would write.
-// --source reads a local Glaux checkout instead of the locked revision, for development.
+// Usage: node scripts/sync-credits.ts [--check]
+// Writes the npm credits of public/credits/ from the installed packages. --check writes nothing
+// and fails when the files are not what it would write. The Glaux credits are written by
+// `pnpm credits:glaux` during the build.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { LOCK_FILE } from '../src/lib/glaux/docs-source.ts';
-import { localCommit } from '../src/lib/glaux/checkout.ts';
-import { readLock } from '../src/lib/glaux/lock.ts';
-import { OUT_DIR, generate } from '../src/lib/credits/generate.ts';
-import { fetchLockedCredits } from '../src/lib/credits/glaux.ts';
+import { OUT_DIR, generateNpm } from '../src/lib/credits/generate.ts';
 
 const root = path.resolve(process.env.CREDITS_ROOT ?? path.join(import.meta.dirname, '..'));
-const args = process.argv.slice(2);
-const check = args.includes('--check');
-const sourceAt = args.indexOf('--source');
+const check = process.argv.includes('--check');
 
 try {
-  if (check && sourceAt >= 0) throw new Error('--check always uses the locked Glaux revision, so it cannot take --source');
-  const lock = readLock(path.join(root, LOCK_FILE));
-  const glauxDir = sourceAt >= 0 ? path.resolve(args[sourceAt + 1]) : fetchLockedCredits(lock, path.join(root, '.cache/glaux-credits'));
-  const commit = localCommit(glauxDir);
-  if (sourceAt >= 0 && commit !== lock.commit) console.warn(`warning: ${glauxDir} is at ${commit?.slice(0, 10)} but ${LOCK_FILE} pins ${lock.commit.slice(0, 10)}; pnpm credits:check will not accept this output`);
-
-  const files = generate(root, glauxDir, { repository: lock.repository, commit });
+  const files = generateNpm(root);
   const out = path.join(root, OUT_DIR);
 
   if (check) {

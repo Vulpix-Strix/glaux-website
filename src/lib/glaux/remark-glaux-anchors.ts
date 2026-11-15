@@ -1,14 +1,12 @@
-import path from 'node:path';
 import type { Heading, Root } from 'mdast';
 import type { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 import { assignAnchors, inlineText } from './anchor.ts';
-import { readManifest } from './manifest.ts';
+import { locatePage, readManifest } from './manifest.ts';
 
 export interface RemarkGlauxAnchorsOptions {
-  /** Directory the sync step generated; its first level is the language. */
+  /** Directory the sync step generated; its first level is the version, then the language. */
   contentDir: string;
-  manifestPath: string;
 }
 
 /**
@@ -18,13 +16,12 @@ export interface RemarkGlauxAnchorsOptions {
  * heading plugin and overwrites the `id` it set.
  */
 export const remarkGlauxAnchors: Plugin<[RemarkGlauxAnchorsOptions], Root> =
-  ({ contentDir, manifestPath }) =>
+  ({ contentDir }) =>
   (tree, file) => {
     if (!file.path) return;
-    const relative = path.relative(contentDir, file.path);
-    if (relative.startsWith('..')) return; // not a Glaux page
-    const [lang, ...rest] = relative.split(path.sep);
-    const id = rest.join('/').replace(/\.mdx?$/, '');
+    const location = locatePage(contentDir, file.path);
+    if (!location) return; // not a Glaux page
+    const { relative, lang, id, manifestPath } = location;
     const page = readManifest(manifestPath).languages[lang]?.[id];
     if (!page) return file.fail(`${relative} is not in the manifest; run \`pnpm docs:sync\``, undefined, 'remark-glaux-anchors:unknown-page');
 

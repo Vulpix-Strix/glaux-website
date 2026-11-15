@@ -30,11 +30,10 @@ export const glauxCodeOptions: DefaultMDXOptions['rehypeCodeOptions'] = {
 };
 
 /**
- * MDX options for Glaux pages. Fumadocs adds its own plugins (GFM, headings,
- * code) around these.
+ * MDX options for the Glaux pages below `contentDir`, which holds one directory per version.
+ * Fumadocs adds its own plugins (GFM, headings, code) around these.
  */
 export function glauxMdxOptions(contentDir: string): MDXPresetOptions {
-  const manifestPath = path.join(contentDir, 'manifest.json');
   return {
     rehypeCodeOptions: glauxCodeOptions,
     // Glaux images are local files; never fetch a remote one to measure it during a build.
@@ -42,9 +41,9 @@ export function glauxMdxOptions(contentDir: string): MDXPresetOptions {
     remarkPlugins: [
       // Runs after Fumadocs' heading plugin and replaces the ids it derived; its table of
       // contents and the search index are built later and read the final ids.
-      [remarkGlauxAnchors, { contentDir, manifestPath }],
+      [remarkGlauxAnchors, { contentDir }],
       remarkGithubAlerts,
-      [remarkGlauxLinks, { contentDir, manifestPath }],
+      [remarkGlauxLinks, { contentDir }],
     ],
   };
 }

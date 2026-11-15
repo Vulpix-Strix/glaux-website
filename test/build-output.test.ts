@@ -5,7 +5,7 @@ import { collectOgEntries } from '@/lib/og/entries';
 import { ogHeight, ogImagePath, ogWidth } from '@/lib/og/model';
 import { pngSize } from '@/lib/og/png';
 import { absoluteUrl } from '@/lib/site';
-import { root, walk } from './helpers.ts';
+import { publishedDocs, root, walk } from './helpers.ts';
 
 // Reads the output of `pnpm build`, so it fails until the site is built. CI builds before testing.
 const client = path.join(root, 'dist/client');
@@ -13,7 +13,7 @@ test('the build emits a card for every published page and each prerendered page 
   expect(existsSync(client), 'Run pnpm build before this test: dist/client does not exist').toBe(true);
   const entries = collectOgEntries({
     editorial: path.join(root, 'content/editorial'),
-    docs: path.join(root, 'content/glaux'),
+    docs: publishedDocs,
     publicDir: path.join(root, 'public'),
   });
   const expected = new Set(entries.map((entry) => path.join(client, ogImagePath(entry.lang, entry.page))));

@@ -1,36 +1,69 @@
 name: Glaux docs check
 
-# Glaux's own documentation validator, run on the revision the website pins. It only needs
-# to run when the pin moves; the Glaux repository is where the Rust test suite belongs.
+# Glaux's own documentation validator, run on every documented version. A commit never changes,
+# so each one is validated once and remembered in the Actions cache; the daily run only validates
+# a new release or a new main.
 on:
-  push:
-    branches: [main]
-    paths: [glaux-docs.lock]
+  schedule:
+    - cron: '0 6 * * *'
   pull_request:
-    paths: [glaux-docs.lock]
+    paths: [src/lib/glaux/**, scripts/sync-glaux-docs.ts, .github/workflows/glaux-docs-check.yml]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  docs-check:
+  discover:
     runs-on: ubuntu-latest
+    outputs:
+      repository: ${{ steps.catalog.outputs.repository }}
+      commits: ${{ steps.catalog.outputs.commits }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
 
-      - name: Read the pinned revision
-        id: pin
-        run: |
-          echo "repository=$(sed -n 's/^repository *= *//p' glaux-docs.lock)" >> "$GITHUB_OUTPUT"
-          echo "commit=$(sed -n 's/^commit *= *//p' glaux-docs.lock)" >> "$GITHUB_OUTPUT"
+      - uses: pnpm/action-setup@v6
 
-      - name: Download the pinned public Glaux revision
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm docs:sync
         env:
-          REPOSITORY: ${{ steps.pin.outputs.repository }}
-          COMMIT: ${{ steps.pin.outputs.commit }}
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Read the catalog
+        id: catalog
+        run: |
+          echo "repository=$(node -p "require('./content/glaux/versions.json').repository")" >> "$GITHUB_OUTPUT"
+          echo "commits=$(node -p "JSON.stringify(require('./content/glaux/versions.json').versions.map((v) => v.commit))")" >> "$GITHUB_OUTPUT"
+
+  docs-check:
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        commit: ${{ fromJSON(needs.discover.outputs.commits) }}
+    steps:
+      - name: Look for an earlier validation of this commit
+        id: checked
+        uses: actions/cache/restore@v4
+        with:
+          path: .glaux-docs-checked
+          key: glaux-docs-checked-${{ matrix.commit }}
+          lookup-only: true
+
+      - name: Download the Glaux revision
+        if: steps.checked.outputs.cache-hit != 'true'
+        env:
+          REPOSITORY: ${{ needs.discover.outputs.repository }}
+          COMMIT: ${{ matrix.commit }}
           GIT_CONFIG_GLOBAL: /dev/null
           GIT_CONFIG_NOSYSTEM: '1'
           GIT_CONFIG_COUNT: '0'
@@ -47,11 +80,25 @@ jobs:
           git -C glaux checkout --quiet --detach FETCH_HEAD
           test "$(git -C glaux rev-parse HEAD)" = "$COMMIT"
 
-      - uses: dtolnay/rust-toolchain@stable
+      - if: steps.checked.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
 
-      - uses: Swatinem/rust-cache@v2
+      - if: steps.checked.outputs.cache-hit != 'true'
+        uses: Swatinem/rust-cache@v2
         with:
           workspaces: glaux
+
       - name: Validate the documentation
+        if: steps.checked.outputs.cache-hit != 'true'
         working-directory: glaux
         run: cargo run --quiet -p glaux-docs --bin glaux-docs -- check
+
+      - name: Remember the validation
+        if: steps.checked.outputs.cache-hit != 'true'
+        run: echo "${{ matrix.commit }}" > .glaux-docs-checked
+
+      - if: steps.checked.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .glaux-docs-checked
+          key: glaux-docs-checked-${{ matrix.commit }}

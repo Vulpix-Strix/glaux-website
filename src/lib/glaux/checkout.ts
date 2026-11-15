@@ -1,7 +1,16 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, realpathSync, rmSync, statSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync, statSync } from 'node:fs';
 import path from 'node:path';
-import type { DocsLock } from './lock.ts';
+
+/** A Glaux commit and the repository it is fetched from. */
+export interface Revision {
+  /** Anything `git fetch` accepts. */
+  repository: string;
+  /** Full 40 character commit hash. */
+  commit: string;
+}
+
+export const COMMIT = /^[0-9a-f]{40}$/;
 
 export function git(cwd: string, ...args: string[]): string {
   try {
@@ -35,64 +44,37 @@ export function localCommit(dir: string): string | undefined {
 }
 
 /**
- * The commit a Glaux `docs/` directory is at: the HEAD of the repository it is the `docs/`
- * of. `undefined` for any other directory, such as test fixtures inside another repository.
- */
-export function docsCommit(docsDir: string): string | undefined {
-  try {
-    const top = git(docsDir, 'rev-parse', '--show-toplevel');
-    return path.join(realpathSync(top), 'docs') === realpathSync(docsDir) ? git(docsDir, 'rev-parse', 'HEAD') : undefined;
-  } catch {
-    return undefined;
-  }
-}
-
-/**
- * Makes `cacheDir` a checkout of just the `docs/` directory at the locked commit and returns
+ * Makes `cacheDir` a checkout of just the `docs/` directory at `revision.commit` and returns
  * the path of `docs/`. A checkout that already is at that commit is reused. Nothing is
  * resolved from a branch: the commit is fetched by its hash, so the result is the same
  * whatever `main` is now.
  * Pass `docsOnly = false` with a separate cache for validators that need the full source.
  */
-export function fetchLockedDocs(lock: DocsLock, cacheDir: string, docsOnly = true): string {
+export function fetchDocs(revision: Revision, cacheDir: string, docsOnly = true): string {
   const docs = path.join(cacheDir, 'docs');
-  const atCommit = () => existsSync(path.join(cacheDir, '.git')) && localCommit(cacheDir) === lock.commit;
+  const atCommit = () => existsSync(path.join(cacheDir, '.git')) && localCommit(cacheDir) === revision.commit;
   if (!(atCommit() && statSync(docs, { throwIfNoEntry: false })?.isDirectory() && git(cacheDir, 'status', '--porcelain', '--', ...(docsOnly ? ['docs'] : [])) === '')) {
     rmSync(cacheDir, { recursive: true, force: true });
     mkdirSync(cacheDir, { recursive: true });
     git(cacheDir, 'init', '--quiet');
-    git(cacheDir, 'remote', 'add', 'origin', lock.repository);
+    git(cacheDir, 'remote', 'add', 'origin', revision.repository);
     if (docsOnly) git(cacheDir, 'sparse-checkout', 'set', 'docs');
     try {
-      git(cacheDir, 'fetch', '--quiet', '--depth', '1', '--filter=blob:none', 'origin', lock.commit);
+      git(cacheDir, 'fetch', '--quiet', '--depth', '1', '--filter=blob:none', 'origin', revision.commit);
       git(cacheDir, 'checkout', '--quiet', '--detach', 'FETCH_HEAD');
     } catch (error) {
       rmSync(cacheDir, { recursive: true, force: true });
       throw new Error(
-        `cannot fetch Glaux commit ${lock.commit} from ${lock.repository}. ` +
+        `cannot fetch Glaux commit ${revision.commit} from ${revision.repository}. ` +
           `Anonymous download requires a public repository and a pushed commit; no local fallback is used.\n${(error as Error).message}`,
       );
     }
-    if (localCommit(cacheDir) !== lock.commit) {
-      throw new Error(`fetched ${localCommit(cacheDir)} instead of ${lock.commit}`);
+    if (localCommit(cacheDir) !== revision.commit) {
+      throw new Error(`fetched ${localCommit(cacheDir)} instead of ${revision.commit}`);
     }
   }
   if (!statSync(docs, { throwIfNoEntry: false })?.isDirectory()) {
-    throw new Error(`Glaux commit ${lock.commit} has no docs/ directory`);
+    throw new Error(`Glaux commit ${revision.commit} has no docs/ directory`);
   }
   return docs;
-}
-
-/** Resolves a branch, tag or hash of `repository` to a full commit hash, asking the remote. */
-export function resolveRemoteRef(repository: string, ref: string): string {
-  const out = git(process.cwd(), 'ls-remote', repository, ref);
-  const lines = out.split('\n').filter(Boolean);
-  // `ls-remote` matches by suffix, so prefer the exact branch or tag.
-  const exact =
-    lines.find((l) => l.endsWith(`\trefs/heads/${ref}`)) ??
-    lines.find((l) => l.endsWith(`\trefs/tags/${ref}^{}`)) ??
-    lines.find((l) => l.endsWith(`\trefs/tags/${ref}`)) ??
-    lines.find((l) => l.endsWith(`\t${ref}`));
-  if (!exact) throw new Error(`${repository} has no branch or tag named ${ref}`);
-  return exact.split('\t')[0];
 }

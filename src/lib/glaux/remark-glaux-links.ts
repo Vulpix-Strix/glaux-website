@@ -1,14 +1,12 @@
-import path from 'node:path';
 import type { Root } from 'mdast';
 import type { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 import { GlauxLinkError, resolveLink } from './links.ts';
-import { readManifest } from './manifest.ts';
+import { locatePage, readManifest } from './manifest.ts';
 
 export interface RemarkGlauxLinksOptions {
-  /** Directory the sync step generated; its first level is the language. */
+  /** Directory the sync step generated; its first level is the version, then the language. */
   contentDir: string;
-  manifestPath: string;
 }
 
 /**
@@ -17,13 +15,12 @@ export interface RemarkGlauxLinksOptions {
  * not resolve fails the compilation of the page.
  */
 export const remarkGlauxLinks: Plugin<[RemarkGlauxLinksOptions], Root> =
-  ({ contentDir, manifestPath }) =>
+  ({ contentDir }) =>
   (tree, file) => {
     if (!file.path) return;
-    const relative = path.relative(contentDir, file.path);
-    if (relative.startsWith('..')) return; // not a Glaux page
-    const [lang, ...rest] = relative.split(path.sep);
-    const pageId = rest.join('/').replace(/\.mdx?$/, '');
+    const location = locatePage(contentDir, file.path);
+    if (!location) return; // not a Glaux page
+    const { lang, id: pageId, manifestPath } = location;
     const manifest = readManifest(manifestPath);
 
     visit(tree, (node) => {

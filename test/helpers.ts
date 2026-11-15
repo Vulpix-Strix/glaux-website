@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -8,11 +8,30 @@ import defaultMdxComponents from 'fumadocs-ui/mdx';
 import * as runtime from 'react/jsx-runtime';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { glauxMdxOptions } from '@/lib/glaux/mdx-options';
+import { CATALOG_FILE, defaultVersion, readCatalog } from '@/lib/glaux/versions';
 
 export const root = path.resolve(import.meta.dirname, '..');
 export const fixtures = path.join(root, 'test/fixtures/docs');
-/** The real manual. Tests that need it are skipped when the repository is not next to this one. */
-export const glauxDocs = path.resolve(process.env.GLAUX_DOCS_DIR ?? path.join(root, '../glaux/docs'));
+/**
+ * The version of the real manual the site shows, as the last `pnpm docs:sync` left it. Tests
+ * that need it are skipped locally before a sync, and fail in CI, which always builds first.
+ */
+function publishedVersion() {
+  const contentDir = path.join(root, 'content/glaux');
+  if (!existsSync(path.join(contentDir, CATALOG_FILE))) {
+    if (process.env.CI) throw new Error(`${contentDir}/${CATALOG_FILE} is missing; run pnpm build before the tests`);
+    return undefined;
+  }
+  return defaultVersion(readCatalog(contentDir));
+}
+const published = publishedVersion();
+const missing = path.join(root, '.cache/not-synced');
+/** `docs/` of the Glaux commit of the default version. */
+export const glauxDocs = published ? path.join(root, '.cache/glaux-source', published.commit, 'docs') : missing;
+/** The synced output of the default version, `content/glaux/<version>`. */
+export const publishedDocs = published ? path.join(root, 'content/glaux', published.id) : missing;
+/** The Glaux credit files `pnpm credits:glaux` checked out for the default version. */
+export const glauxCredits = published ? path.join(root, '.cache/glaux-credits') : missing;
 
 export const tempDir = () => mkdtempSync(path.join(tmpdir(), 'glaux-website-'));
 
@@ -38,10 +57,13 @@ export const digest = (dir: string) =>
     .map((f) => `${path.relative(dir, f)} ${createHash('sha256').update(readFileSync(f)).digest('hex')}`)
     .join('\n');
 
-/** Compiles a synced page with the options the site uses, and renders it with Fumadocs' components. */
-export async function render(contentDir: string, id: string, lang = 'en') {
-  const options = await applyMdxPreset(glauxMdxOptions(contentDir))('runtime');
-  const file = path.join(contentDir, lang, `${id}.md`);
+/**
+ * Compiles a page of a synced version with the options the site uses, and renders it with
+ * Fumadocs' components. `versionDir` is the output of `syncDocs`, read as one version of its parent.
+ */
+export async function render(versionDir: string, id: string, lang = 'en') {
+  const options = await applyMdxPreset(glauxMdxOptions(path.dirname(versionDir)))('runtime');
+  const file = path.join(versionDir, lang, `${id}.md`);
   const { default: Content } = await evaluate(
     // The loader that compiles the site's pages has taken the frontmatter off by now.
     { path: file, value: readFileSync(file, 'utf8').replace(/^---\n[^]*?\n---\n/, '') },

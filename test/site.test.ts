@@ -5,6 +5,7 @@ import { m } from '@/paraglide/messages';
 import { absoluteUrl } from '@/lib/site';
 import { FALLBACK_LANGUAGE } from '@/lib/glaux/manifest';
 import { decodeMarkdownUrl, getPageMarkdownUrl, getPageImageUrl } from '@/lib/docs/urls';
+import { publishedDocs } from './helpers.ts';
 
 test('only English docs are published; the HTML shell also supports Spanish', () => {
   expect(languages).toStrictEqual(['en']);
@@ -39,7 +40,7 @@ test('landing copy, SEO and documentation destinations support both languages', 
   }
   const { existsSync } = await import('node:fs');
   for (const slug of [...documentationLinks, ...apiLinks].map((link) => link.slug)) {
-    expect(existsSync(`content/glaux/en/${slug}.md`) || existsSync(`content/glaux/en/${slug}/index.md`), slug).toBeTruthy();
+    expect(existsSync(`${publishedDocs}/en/${slug}.md`) || existsSync(`${publishedDocs}/en/${slug}/index.md`), slug).toBeTruthy();
   }
 });
 
@@ -47,6 +48,6 @@ test('landing copy, SEO and documentation destinations support both languages', 
 test('the starter Luau example matches the published getting-started guide', async () => {
   const { readFileSync } = await import('node:fs');
   const { firstGame } = await import('@/lib/landing/examples');
-  const guide = readFileSync('content/glaux/en/guide/getting-started.md', 'utf8');
+  const guide = readFileSync(`${publishedDocs}/en/guide/getting-started.md`, 'utf8');
   expect(guide.includes('```luau\n' + firstGame + '\n```')).toBeTruthy();
 });

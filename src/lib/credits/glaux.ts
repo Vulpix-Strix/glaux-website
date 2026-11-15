@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import { git, localCommit } from '../glaux/checkout.ts';
-import type { DocsLock } from '../glaux/lock.ts';
+import type { Revision } from '../glaux/checkout.ts';
 import { parseEditorial } from './ron.ts';
 
 /** The files of Glaux that hold its credits. They are read as they are and never edited. */
@@ -90,7 +90,9 @@ export function mergeInventories(base: Inventory, extra: Inventory): Inventory {
 
 export interface GlauxSource {
   repository: string;
-  commit?: string;
+  commit: string;
+  /** The documentation version the commit is, as in the catalog. */
+  version: string;
 }
 
 /**
@@ -120,28 +122,28 @@ export function buildGlauxFiles(files: { editorial: string; thirdParty: string; 
 }
 
 /**
- * Checks out only the credit files of `lock.commit` into `cacheDir` and returns the directory.
+ * Checks out only the credit files of `revision.commit` into `cacheDir` and returns the directory.
  * Like the documentation, the commit is fetched by hash, so a branch never changes the result.
  */
-export function fetchLockedCredits(lock: DocsLock, cacheDir: string): string {
+export function fetchCredits(revision: Revision, cacheDir: string): string {
   const files = Object.values(GLAUX_FILES);
-  if (existsSync(path.join(cacheDir, '.git')) && localCommit(cacheDir) === lock.commit && files.every((file) => existsSync(path.join(cacheDir, file)))) {
+  if (existsSync(path.join(cacheDir, '.git')) && localCommit(cacheDir) === revision.commit && files.every((file) => existsSync(path.join(cacheDir, file)))) {
     return cacheDir;
   }
   rmSync(cacheDir, { recursive: true, force: true });
   mkdirSync(cacheDir, { recursive: true });
   git(cacheDir, 'init', '--quiet');
-  git(cacheDir, 'remote', 'add', 'origin', lock.repository);
+  git(cacheDir, 'remote', 'add', 'origin', revision.repository);
   git(cacheDir, 'sparse-checkout', 'set', '--no-cone', ...files.map((file) => `/${file}`));
   try {
-    git(cacheDir, 'fetch', '--quiet', '--depth', '1', '--filter=blob:none', 'origin', lock.commit);
+    git(cacheDir, 'fetch', '--quiet', '--depth', '1', '--filter=blob:none', 'origin', revision.commit);
     git(cacheDir, 'checkout', '--quiet', '--detach', 'FETCH_HEAD');
   } catch (error) {
     rmSync(cacheDir, { recursive: true, force: true });
-    throw new Error(`cannot fetch Glaux commit ${lock.commit} from ${lock.repository}: ${(error as Error).message}`);
+    throw new Error(`cannot fetch Glaux commit ${revision.commit} from ${revision.repository}: ${(error as Error).message}`);
   }
   for (const file of files) {
-    if (!existsSync(path.join(cacheDir, file))) throw new Error(`Glaux commit ${lock.commit} has no ${file}`);
+    if (!existsSync(path.join(cacheDir, file))) throw new Error(`Glaux commit ${revision.commit} has no ${file}`);
   }
   return cacheDir;
 }
