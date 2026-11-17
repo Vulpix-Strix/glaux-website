@@ -10,8 +10,8 @@ export interface RemarkGlauxLinksOptions {
 }
 
 /**
- * Rewrites the `glaux://<id>[#fragment]` links of a page to website URLs. The
- * language comes from the page's folder below `contentDir`. A link that does
+ * Rewrites the `glaux://<id>[#fragment]` links of a page to website URLs of the same version.
+ * The version and language come from the page's folders below `contentDir`. A link that does
  * not resolve fails the compilation of the page.
  */
 export const remarkGlauxLinks: Plugin<[RemarkGlauxLinksOptions], Root> =
@@ -20,13 +20,13 @@ export const remarkGlauxLinks: Plugin<[RemarkGlauxLinksOptions], Root> =
     if (!file.path) return;
     const location = locatePage(contentDir, file.path);
     if (!location) return; // not a Glaux page
-    const { lang, id: pageId, manifestPath } = location;
+    const { version, lang, id: pageId, manifestPath } = location;
     const manifest = readManifest(manifestPath);
 
     visit(tree, (node) => {
       if (node.type !== 'link' && node.type !== 'definition') return;
       try {
-        node.url = resolveLink(node.url, { manifest, lang, pageId });
+        node.url = resolveLink(node.url, { manifest, lang, version, pageId });
       } catch (error) {
         if (!(error instanceof GlauxLinkError)) throw error;
         file.fail(error.message, node, `remark-glaux-links:${error.code}`);

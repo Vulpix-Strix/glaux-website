@@ -36,10 +36,27 @@ function fixture() {
   copyFileSync(screenshot, path.join(editorial, 'assets/with-cover/shot.png'));
   copyFileSync(screenshot, path.join(editorial, 'assets/custom/card.png'));
   writeFileSync(path.join(editorial, 'assets/custom/card.svg'), '<svg xmlns="http://www.w3.org/2000/svg"/>');
+  const page = (id: string, title: string, description?: string) => ({ id, title, ...(description ? { description } : {}), titleAnchor: id, anchors: [] });
+  const manifest = (languages: object) => JSON.stringify({ languages, order: {}, missing: {} });
   const docs = writeTree(path.join(dir, 'docs'), {
-    'en/api/graphics/spr.md': '---\ntitle: "spr"\ndescription: "Draws a sprite. Second sentence."\n---\n\nBody.\n',
-    'en/guide/index.md': '---\ntitle: "Glaux guide"\n---\n\nBody.\n',
-    'es/guide/index.md': '---\ntitle: "Guia"\n---\n\nBody.\n',
+    'versions.json': JSON.stringify({
+      repository: 'https://github.com/example/glaux.git',
+      default: 'v0.1.0',
+      versions: [
+        { id: 'v0.1.0', kind: 'release', tag: 'v0.1.0', commit: 'a'.repeat(40) },
+        { id: 'dev', kind: 'development', commit: 'b'.repeat(40) },
+      ],
+    }),
+    'v0.1.0/manifest.json': manifest({
+      en: { 'guide/index': page('guide/index', 'Glaux guide') },
+      es: { 'guide/index': page('guide/index', 'Guia') },
+    }),
+    'dev/manifest.json': manifest({
+      en: {
+        'api/graphics/spr': page('api/graphics/spr', 'spr', 'Draws a sprite. Second sentence.'),
+        'guide/index': page('guide/index', 'Glaux guide'),
+      },
+    }),
   });
   return { editorial, docs, publicDir: path.join(root, 'public') };
 }
@@ -79,11 +96,12 @@ test('a cover is optional and only present when the article declares one', () =>
   expect(find(entries, 'en', '')?.cover).toBeTruthy();
 });
 
-test('documentation entries follow the manual and only cover published languages', () => {
+test('documentation entries follow the manual of every version and only cover published languages', () => {
   const entries = collectOgEntries(fixture()).filter((entry) => entry.kind === 'docs');
-  expect(entries.map((entry) => entry.page).sort()).toStrictEqual(['/docs/api/graphics/spr', '/docs/guide']);
-  const spr = find(entries, 'en', '/docs/api/graphics/spr');
-  expect(spr?.path).toBe('~/docs/api/graphics');
+  // Every version has its own cards, and a page only one version has is only in that version.
+  expect(entries.map((entry) => entry.page).sort()).toStrictEqual(['/docs/dev/api/graphics/spr', '/docs/dev/guide', '/docs/v0.1.0/guide']);
+  const spr = find(entries, 'en', '/docs/dev/api/graphics/spr');
+  expect(spr?.path).toBe('~/docs/dev/api/graphics');
   expect(spr?.subtitle).toBe('Draws a sprite.');
 });
 

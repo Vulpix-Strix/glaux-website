@@ -22,16 +22,23 @@ function scheme(target: string): string | undefined {
   return /^[A-Za-z0-9+.-]+$/.test(found) ? found : undefined;
 }
 
-/** `api/graphics/spr` in `en` is `/en/docs/api/graphics/spr`. A trailing `index` is the folder page. */
-export function docUrl(lang: string, id: string): string {
+/** The slugs of page `id`. A trailing `index` is the folder page. */
+export function docSlugs(id: string): string[] {
   const slugs = id.split('/');
   if (slugs.at(-1) === 'index') slugs.pop();
-  return ['', lang, 'docs', ...slugs].join('/');
+  return slugs;
+}
+
+/** `api/graphics/spr` in `en` of `dev` is `/en/docs/dev/api/graphics/spr`. */
+export function docUrl(lang: string, version: string, id: string): string {
+  return ['', lang, 'docs', version, ...docSlugs(id)].join('/');
 }
 
 export interface LinkContext {
   manifest: Manifest;
   lang: string;
+  /** The version the page belongs to. Links never leave it. */
+  version: string;
   /** Id of the page that holds the link, for `#fragment` links to itself. */
   pageId: string;
 }
@@ -45,7 +52,7 @@ export interface LinkContext {
  * Glaux viewer does, and the link goes to the page that exists. A fragment is checked
  * against the headings of the page it ends up on; one that names the title opens the page.
  */
-export function resolveLink(target: string, { manifest, lang, pageId }: LinkContext): string {
+export function resolveLink(target: string, { manifest, lang, version, pageId }: LinkContext): string {
   if (target === '') throw new GlauxLinkError('empty-link', 'link has no target');
 
   const own = manifest.languages[lang];
@@ -79,7 +86,7 @@ export function resolveLink(target: string, { manifest, lang, pageId }: LinkCont
   if (found.toLowerCase() === INTERNAL_SCHEME) {
     const [id, fragment] = splitFragment(target.slice(INTERNAL_SCHEME.length + 3));
     const where = locate(id, fragment);
-    return docUrl(where.lang, id) + where.suffix;
+    return docUrl(where.lang, version, id) + where.suffix;
   }
   if (EXTERNAL_SCHEMES.includes(found.toLowerCase())) return target;
   throw new GlauxLinkError('unsupported-link', `links with scheme ${found}: are not supported`);

@@ -17,7 +17,7 @@ export interface TitleSlot {
 
 const domain = new URL(siteUrl).host;
 const isDevlog = (entry: OgEntry) => entry.devlog !== undefined;
-const isApiName = (entry: OgEntry) => entry.page.startsWith('/docs/api/') && /^[\w.:]+$/.test(entry.title);
+const isApiName = (entry: OgEntry) => /^\/docs\/[^/]+\/api\//.test(entry.page) && /^[\w.:]+$/.test(entry.title);
 // A devlog without a cover shows its number as a large numeral behind the title.
 const hasNumeral = (entry: OgEntry, withCover: boolean) => isDevlog(entry) && !withCover;
 

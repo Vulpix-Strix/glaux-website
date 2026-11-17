@@ -16,20 +16,20 @@ const manifest: Manifest = {
   order: {},
   missing: { es: ['api/graphics/cls', 'api/index'] },
 };
-const ctx = { manifest, lang: 'en', pageId: 'api/graphics/spr' };
+const ctx = { manifest, lang: 'en', version: 'v0.2.0', pageId: 'api/graphics/spr' };
 
-test('glaux:// ids become site URLs for the page language', () => {
-  expect(resolveLink('glaux://api/graphics/spr', ctx)).toBe('/en/docs/api/graphics/spr');
-  expect(resolveLink('glaux://api/graphics/spr', { ...ctx, lang: 'en' })).toBe('/en/docs/api/graphics/spr');
+test('glaux:// ids become site URLs for the language and version of the page', () => {
+  expect(resolveLink('glaux://api/graphics/spr', ctx)).toBe('/en/docs/v0.2.0/api/graphics/spr');
+  expect(resolveLink('glaux://api/graphics/spr', { ...ctx, version: 'dev' })).toBe('/en/docs/dev/api/graphics/spr');
 });
 
 test('folder index pages drop the index segment', () => {
-  expect(resolveLink('glaux://api/index', ctx)).toBe('/en/docs/api');
-  expect(docUrl('es', 'guide/index')).toBe('/es/docs/guide');
+  expect(resolveLink('glaux://api/index', ctx)).toBe('/en/docs/v0.2.0/api');
+  expect(docUrl('es', 'dev', 'guide/index')).toBe('/es/docs/dev/guide');
 });
 
 test('fragments are preserved', () => {
-  expect(resolveLink('glaux://api/graphics/spr#parameters', ctx)).toBe('/en/docs/api/graphics/spr#parameters');
+  expect(resolveLink('glaux://api/graphics/spr#parameters', ctx)).toBe('/en/docs/v0.2.0/api/graphics/spr#parameters');
   expect(resolveLink('#parameters', ctx)).toBe('#parameters');
 });
 
@@ -59,21 +59,21 @@ test('invalid links are errors', () => {
 });
 
 test('a fragment naming the page title opens the page, as it does in Glaux', () => {
-  expect(resolveLink('glaux://api/graphics/spr#spr', ctx)).toBe('/en/docs/api/graphics/spr');
+  expect(resolveLink('glaux://api/graphics/spr#spr', ctx)).toBe('/en/docs/v0.2.0/api/graphics/spr');
   expect(resolveLink('#spr', ctx)).toBe('#');
 });
 
 test('links resolve in the language of the page', () => {
-  const es = { manifest, lang: 'es', pageId: 'api/graphics/spr' };
-  expect(resolveLink('glaux://api/graphics/spr#parametros', es)).toBe('/es/docs/api/graphics/spr#parametros');
+  const es = { manifest, lang: 'es', version: 'v0.2.0', pageId: 'api/graphics/spr' };
+  expect(resolveLink('glaux://api/graphics/spr#parametros', es)).toBe('/es/docs/v0.2.0/api/graphics/spr#parametros');
   // The Spanish headings are the ones that count, not the English ones.
   expect(() => resolveLink('glaux://api/graphics/spr#parameters', es)).toThrow(/no heading with anchor #parameters/);
 });
 
 test('a page without translation resolves to the fallback language, with its own headings', () => {
-  const es = { manifest, lang: 'es', pageId: 'api/graphics/spr' };
-  expect(resolveLink('glaux://api/graphics/cls', es)).toBe('/en/docs/api/graphics/cls');
-  expect(resolveLink('glaux://api/index#colors', es)).toBe('/en/docs/api#colors');
+  const es = { manifest, lang: 'es', version: 'v0.2.0', pageId: 'api/graphics/spr' };
+  expect(resolveLink('glaux://api/graphics/cls', es)).toBe('/en/docs/v0.2.0/api/graphics/cls');
+  expect(resolveLink('glaux://api/index#colors', es)).toBe('/en/docs/v0.2.0/api#colors');
   expect(() => resolveLink('glaux://api/index#nope', es)).toThrow(/no heading with anchor #nope/);
   expect(() => resolveLink('glaux://api/none', es)).toThrow(/no page with id api\/none in es/);
 });

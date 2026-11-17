@@ -6,6 +6,7 @@ import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 import { assignAnchors, inlineText } from './anchor.ts';
+import { DEVELOPMENT } from './catalog.ts';
 import { GlauxLinkError, resolveLink } from './links.ts';
 import { FALLBACK_LANGUAGE } from './manifest.ts';
 import type { Manifest, ManifestPage, ManifestSource } from './manifest.ts';
@@ -182,7 +183,7 @@ export function syncDocs(sourceDir: string, outDir: string, options: SyncOptions
     for (const [id, { links, definitions }] of Object.entries(parsed[lang])) {
       for (const { target, line } of [...links, ...definitions]) {
         try {
-          resolveLink(target, { manifest, lang, pageId: id });
+          resolveLink(target, { manifest, lang, version: options.source?.version ?? DEVELOPMENT, pageId: id });
         } catch (error) {
           if (!(error instanceof GlauxLinkError)) throw error;
           problems.add(`${lang}/${id}.md:${line}`, `${error.message} (${error.code})`);

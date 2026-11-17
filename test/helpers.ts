@@ -35,8 +35,8 @@ export const glauxCredits = published ? path.join(root, '.cache/glaux-credits') 
 
 export const tempDir = () => mkdtempSync(path.join(tmpdir(), 'glaux-website-'));
 
-/** Writes `files` (path below `dir` -> text) and returns `dir`. */
-export function writeTree(dir: string, files: Record<string, string>): string {
+/** Writes `files` (path below `dir` -> contents) and returns `dir`. */
+export function writeTree(dir: string, files: Record<string, string | Buffer>): string {
   for (const [file, text] of Object.entries(files)) {
     mkdirSync(path.dirname(path.join(dir, file)), { recursive: true });
     writeFileSync(path.join(dir, file), text);

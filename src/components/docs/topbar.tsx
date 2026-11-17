@@ -1,4 +1,5 @@
 import type { ComponentProps } from 'react';
+import { useParams } from '@tanstack/react-router';
 import { useDocsLayout } from 'fumadocs-ui/layouts/docs';
 import { GitBranch, Menu } from 'lucide-react';
 import { Wordmark } from '@/components/brand/wordmark';
@@ -25,6 +26,8 @@ export function DocsTopbar(props: ComponentProps<'header'>) {
   const SearchTrigger = slots.searchTrigger ? slots.searchTrigger.sm : null;
   const ThemeSwitch = slots.themeSwitch || null;
   const NavTitle = slots.navTitle;
+  // Within the manual, Docs opens the start of the version being read.
+  const [version] = (useParams({ strict: false })._splat ?? '').split('/');
 
   return (
     <header id="nd-subnav" {...props} className="gx-docs-topbar">
@@ -41,7 +44,7 @@ export function DocsTopbar(props: ComponentProps<'header'>) {
                 <small>Soon</small>
               </span>
             ) : link.id === 'docs' ? (
-              <a key={link.id} href={link.href} aria-current="page">{link.label}</a>
+              <a key={link.id} href={`/en/docs/${version}`} aria-current="page">{link.label}</a>
             ) : (
               <a key={link.id} href={link.href}>{link.label}</a>
             ),

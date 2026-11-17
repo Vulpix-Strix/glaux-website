@@ -272,5 +272,18 @@
   "fumadocs_inline_toc": "Table of Contents",
   "fumadocs_type_prop": "Prop",
   "fumadocs_type_type": "Type",
-  "fumadocs_type_default": "Default"
+  "fumadocs_type_default": "Default",
+  "docs_version_label": "Version",
+  "docs_version_development": "Development (main)",
+  "docs_version_prerelease": "pre-release",
+  "docs_version_recommended": "recommended",
+  "docs_version_hint_release": "Documentation of a published release.",
+  "docs_version_hint_prerelease": "Documentation of a pre-release. It can still change.",
+  "docs_version_hint_development": "Documentation of unreleased work on main.",
+  "docs_notice_development_title": "Development",
+  "docs_notice_development": "This documentation follows the main branch of Glaux and can describe features that are not released yet.",
+  "docs_notice_missing_title": "Page not in this version",
+  "docs_notice_missing": "“{page}” does not exist in {version}, so this is the start of its documentation.",
+  "docs_source_edit": "Edit on GitHub",
+  "docs_source_view": "View source at {version}"
 }

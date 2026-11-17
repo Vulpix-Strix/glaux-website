@@ -1,24 +1,24 @@
 // Build-time only: reads the content tree and the compiled Paraglide messages.
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
-import { parse } from 'yaml';
 import { m } from '../../paraglide/messages.js';
 import { locales, isLocale, type Locale } from '../../paraglide/runtime.js';
 import {
   loadContent,
   resolveContentAssets,
-  walkContent,
   type ContentAsset,
 } from '../editorial/content.ts';
 import { formatArticleDate } from '../editorial/format.ts';
 import { sections, type Category } from '../editorial/model.ts';
+import { docSlugs } from '../glaux/links.ts';
+import { syncedPages } from '../glaux/versions.ts';
 import { isPublishedLanguage } from '../i18n.ts';
 import type { OgEntry, OgHue } from './model.ts';
 
 export interface OgSources {
   /** `content/editorial`. */
   editorial: string;
-  /** The version of the synced documentation the site shows, `content/glaux/<version>`. */
+  /** The synced documentation of every version, `content/glaux`. */
   docs: string;
   /** `public/`, for the screenshot of the landing. */
   publicDir: string;
@@ -116,32 +116,22 @@ function articleEntries({ editorial, drafts }: OgSources): OgEntry[] {
     });
 }
 
-function frontmatter(file: string): { title?: unknown; description?: unknown } {
-  const match = /^---\n([^]*?)\n---/.exec(readFileSync(file, 'utf8'));
-  return match ? (parse(match[1]) ?? {}) : {};
-}
-
 function docsEntries({ docs }: OgSources): OgEntry[] {
   if (!existsSync(docs)) return [];
-  return walkContent(docs)
-    .filter((file) => file.endsWith('.md'))
-    .flatMap((file): OgEntry[] => {
-      const [lang, ...segments] = path.relative(docs, file).replace(/\.md$/, '').split(path.sep);
-      if (!isLocale(lang) || !isPublishedLanguage(lang)) return [];
-      const slugs = segments.at(-1) === 'index' ? segments.slice(0, -1) : segments;
-      const { title, description } = frontmatter(file);
-      if (typeof title !== 'string') throw new Error(`${file}: missing title`);
-      return [
-        {
-          lang,
-          page: ['/docs', ...slugs].join('/'),
-          kind: 'docs',
-          path: ['~', 'docs', ...slugs.slice(0, -1)].join('/'),
-          title,
-          ...(typeof description === 'string' ? { subtitle: firstSentence(description) } : {}),
-        },
-      ];
-    });
+  return syncedPages(docs).flatMap(({ version, lang, id, title, description }): OgEntry[] => {
+    if (!isLocale(lang) || !isPublishedLanguage(lang)) return [];
+    const slugs = docSlugs(id);
+    return [
+      {
+        lang,
+        page: ['/docs', version, ...slugs].join('/'),
+        kind: 'docs',
+        path: ['~', 'docs', version, ...slugs.slice(0, -1)].join('/'),
+        title,
+        ...(description ? { subtitle: firstSentence(description) } : {}),
+      },
+    ];
+  });
 }
 
 /** Every card of the site, published pages only unless `drafts` is set. */

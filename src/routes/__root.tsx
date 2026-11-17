@@ -1,10 +1,11 @@
-import { createRootRoute, HeadContent, Outlet, Scripts, useParams } from '@tanstack/react-router';
+import { createRootRoute, HeadContent, Outlet, Scripts, useParams, useRouterState } from '@tanstack/react-router';
 import * as React from 'react';
 import appCss from '@/styles/app.css?url';
 import { RootProvider } from 'fumadocs-ui/provider/tanstack';
 import { siteI18nProvider } from '@/lib/fumadocs-i18n';
 import { baseLocale, isLocale } from '@/paraglide/runtime';
 import { initializePostHog } from '@/lib/posthog';
+import { searchVersion } from '@/lib/docs/catalog';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -39,6 +40,8 @@ function RootComponent() {
   // transitions as well as direct loads.
   const params = useParams({ strict: false });
   const lang = isLocale(params.lang) ? params.lang : baseLocale;
+  // Search stays within the version of the manual page, so its results never lead to another one.
+  const version = useRouterState({ select: (state) => searchVersion(state.location.pathname) });
 
   return (
     <html lang={lang} suppressHydrationWarning>
@@ -46,7 +49,7 @@ function RootComponent() {
         <HeadContent />
       </head>
       <body className="flex flex-col min-h-screen">
-        <RootProvider i18n={siteI18nProvider(lang)}>
+        <RootProvider i18n={siteI18nProvider(lang)} search={{ options: { defaultTag: version, allowClear: false } }}>
           <Outlet />
         </RootProvider>
         <Scripts />

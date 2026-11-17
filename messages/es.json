@@ -272,5 +272,18 @@
   "fumadocs_inline_toc": "Índice",
   "fumadocs_type_prop": "Propiedad",
   "fumadocs_type_type": "Tipo",
-  "fumadocs_type_default": "Valor predeterminado"
+  "fumadocs_type_default": "Valor predeterminado",
+  "docs_version_label": "Versión",
+  "docs_version_development": "Desarrollo (main)",
+  "docs_version_prerelease": "preliminar",
+  "docs_version_recommended": "recomendada",
+  "docs_version_hint_release": "Documentación de una versión publicada.",
+  "docs_version_hint_prerelease": "Documentación de una versión preliminar. Todavía puede cambiar.",
+  "docs_version_hint_development": "Documentación del trabajo sin publicar en main.",
+  "docs_notice_development_title": "Desarrollo",
+  "docs_notice_development": "Esta documentación sigue la rama main de Glaux y puede describir funcionalidades que todavía no se han publicado.",
+  "docs_notice_missing_title": "Página no disponible en esta versión",
+  "docs_notice_missing": "«{page}» no existe en {version}, así que se muestra el inicio de su documentación.",
+  "docs_source_edit": "Editar en GitHub",
+  "docs_source_view": "Ver el código fuente en {version}"
 }

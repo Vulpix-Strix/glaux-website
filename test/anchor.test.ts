@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { existsSync } from 'node:fs';
 import { expect, test } from 'vitest';
 import GithubSlugger from 'github-slugger';
@@ -79,7 +80,7 @@ test('the manifest records the anchors Glaux would find, not the ones Fumadocs w
 });
 
 test('the rendered headings carry the ids Glaux computes', async () => {
-  const out = tempDir();
+  const out = path.join(tempDir(), 'dev');
   syncDocs(fixtures, out);
   const html = await render(out, 'guide/anchors');
   const id = (text: string) => new RegExp(`<h\\d id="([^"]+)"[^>]*><a[^>]*>${text}</a>`).exec(html)?.[1];
@@ -96,10 +97,10 @@ test('the rendered headings carry the ids Glaux computes', async () => {
 });
 
 test('links to headings and to the title resolve in the rendered page', async () => {
-  const out = tempDir();
+  const out = path.join(tempDir(), 'dev');
   syncDocs(fixtures, out);
   const html = await render(out, 'guide/anchors');
-  for (const href of ['#don-t-panic', '#snake-case-name', '#año-nuevo', '#same-2', '/en/docs/guide/anchors#same']) {
+  for (const href of ['#don-t-panic', '#snake-case-name', '#año-nuevo', '#same-2', '/en/docs/dev/guide/anchors#same']) {
     expect(html.includes(`href="${href}"`), href).toBeTruthy();
   }
   // `#anchors-titles` names the title, which is not part of the body: it opens the top of the page.
@@ -107,7 +108,7 @@ test('links to headings and to the title resolve in the rendered page', async ()
 });
 
 test('every heading of the manual has the id Glaux gives it, and every fragment link lands on one', real, async () => {
-  const out = tempDir();
+  const out = path.join(tempDir(), 'dev');
   const manifest = syncDocs(glauxDocs, out);
   let headings = 0;
   for (const [id, page] of Object.entries(manifest.languages.en)) {

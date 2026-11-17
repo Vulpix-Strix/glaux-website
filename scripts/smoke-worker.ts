@@ -1,74 +1,14 @@
 // Run after `pnpm build`: validate the built artifact in Wrangler, without deploying.
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { createServer } from 'node:net';
-import { setTimeout as delay } from 'node:timers/promises';
 import { pngSize } from '../src/lib/og/png.ts';
+import { startWorker } from './worker.ts';
 
 assert.ok(existsSync('dist/server/wrangler.json'), 'run pnpm build first');
-const portServer = createServer();
-await new Promise<void>((resolve) => portServer.listen(0, '127.0.0.1', resolve));
-const address = portServer.address();
-assert.ok(address && typeof address !== 'string');
-const port = address.port;
-await new Promise<void>((resolve, reject) =>
-  portServer.close((error) => (error ? reject(error) : resolve())),
-);
-const origin = `http://127.0.0.1:${port}`;
-const worker = spawn(
-  process.execPath,
-  [
-    'node_modules/wrangler/bin/wrangler.js',
-    'dev',
-    '--config',
-    'dist/server/wrangler.json',
-    '--local',
-    '--ip',
-    '127.0.0.1',
-    '--port',
-    String(port),
-  ],
-  {
-    env: { ...process.env, WRANGLER_SEND_METRICS: 'false' },
-    stdio: ['ignore', 'pipe', 'pipe'],
-  },
-);
-let output = '';
-worker.stdout.on('data', (data) => {
-  output += data;
-});
-worker.stderr.on('data', (data) => {
-  output += data;
-});
-
-async function request(path: string, status = 200, init?: RequestInit) {
-  const response = await fetch(`${origin}${path}`, {
-    ...init,
-    headers: { Accept: 'text/html', ...Object.fromEntries(new Headers(init?.headers)) },
-    redirect: 'manual',
-    signal: AbortSignal.timeout(15000),
-  });
-  assert.equal(
-    response.status,
-    status,
-    `${path} (${response.headers.get('location')}): ${(await response.clone().text()).slice(0, 500)}`,
-  );
-  return response;
-}
+const worker = await startWorker(process.cwd());
+const { origin, request } = worker;
 
 try {
-  const deadline = Date.now() + 45000;
-  while (true) {
-    assert.equal(worker.exitCode, null, output);
-    try {
-      await fetch(`${origin}/en`, { signal: AbortSignal.timeout(1000) });
-      break;
-    } catch {
-      if (Date.now() > deadline) throw new Error(`Worker did not start: ${output}`);
-      await delay(250);
-    }
-  }
   const redirect = await request('/', 307);
   assert.equal(new URL(redirect.headers.get('location')!, origin).pathname, '/en');
   // Landings can be prerendered; verify their generated HTML and the live Worker endpoints.
@@ -160,36 +100,63 @@ try {
     '/credits/editorial.json',
   ])
     await request(path);
-  const docsResponse = await request('/en/docs/guide');
+  const { readCatalog } = await import('../src/lib/glaux/versions.ts');
+  const catalog = readCatalog(resolve('content/glaux'));
+  const version = catalog.default;
+  const docsBase = `/en/docs/${version}`;
+  const stable = catalog.versions.find((v) => v.kind === 'release')?.id ?? version;
+  // URLs without a version, `stable` and version roots redirect once to a page that exists.
+  for (const [from, to] of [
+    ['/en/docs/guide', `${docsBase}/guide`],
+    ['/en/docs/guide/getting-started', `${docsBase}/guide/getting-started`],
+    ['/en/docs/stable/guide', `/en/docs/${stable}/guide`],
+    ['/en/docs', `${docsBase}/guide`],
+    [docsBase, `${docsBase}/guide`],
+    ['/en/docs/guide.md', `${docsBase}/guide.md`],
+  ]) {
+    const moved = await request(from, 307);
+    const location = new URL(moved.headers.get('location')!, origin).pathname;
+    assert.equal(location, to, from);
+    await request(location);
+  }
+  const docsResponse = await request(`${docsBase}/guide`);
   assert.match(docsResponse.headers.get('vary')!, /Accept/i);
-  const head = await request('/en/docs/guide', 200, { method: 'HEAD' });
+  const head = await request(`${docsBase}/guide`, 200, { method: 'HEAD' });
   assert.equal(await head.text(), '');
   const docs = await docsResponse.text();
-  assert.match(docs, /https:\/\/glauxconsole.dev\/en\/docs\/guide/);
+  assert.ok(docs.includes(`https://glauxconsole.dev${docsBase}/guide`), 'canonical names the version');
   assert.match(docs, /<title>.*Glaux<\/title>/);
+  assert.match(docs, /id="gx-version-select"/);
+  for (const [, link] of docs.matchAll(/href="\/en\/docs\/([^"/#]*)/g)) {
+    assert.equal(link, version, 'every manual link stays in the version');
+  }
   const asset = docs.match(/(?:src|href)="(\/assets\/[^"?]+\.(?:js|css))"/);
   assert.ok(asset, 'HTML links to bundled assets');
   await request(asset[1]);
-  const markdown = await request('/en/docs/guide.md');
+  const markdown = await request(`${docsBase}/guide.md`);
   assert.match(markdown.headers.get('content-type')!, /text\/markdown/);
   assert.match(await markdown.text(), /^# /);
-  const negotiated = await request('/en/docs/guide', 307, { headers: { Accept: 'text/markdown' } });
-  assert.equal(new URL(negotiated.headers.get('location')!, origin).pathname, '/en/docs/guide.md');
+  const negotiated = await request(`${docsBase}/guide`, 307, { headers: { Accept: 'text/markdown' } });
+  assert.equal(new URL(negotiated.headers.get('location')!, origin).pathname, `${docsBase}/guide.md`);
   assert.match(negotiated.headers.get('vary')!, /Accept/i);
-  const search = await (await request('/api/search?query=game&locale=en')).json();
-  assert.ok(
-    Array.isArray(search) && search.length > 0,
-    'search returns real documentation results',
-  );
+  for (const query of ['', `&tag=${version}`]) {
+    const search = await (await request(`/api/search?query=game&locale=en${query}`)).json();
+    assert.ok(Array.isArray(search) && search.length > 0, 'search returns real documentation results');
+    assert.ok(search.every((hit: { url: string }) => hit.url.startsWith(`${docsBase}/`)), 'search stays in the version');
+  }
+  await request('/api/search?query=game&locale=en&tag=v9.9.9', 400);
   for (const path of ['/llms.txt', '/llms-full.txt']) {
     assert.match(await (await request(path)).text(), /Glaux|Guide|guide/);
   }
-  const og = await request('/en/og/guide/image.webp');
+  const sitemap = await (await request('/sitemap.xml')).text();
+  assert.ok(sitemap.includes(`<loc>https://glauxconsole.dev${docsBase}/guide</loc>`));
+  assert.doesNotMatch(sitemap, /\/docs\/(stable\/|guide)/, 'the sitemap has no redirecting URLs');
+  const og = await request(`/en/og/${version}/guide/image.webp`);
   assert.match(og.headers.get('content-type')!, /image\/webp/);
   const bytes = new Uint8Array(await og.arrayBuffer());
   assert.equal(new TextDecoder().decode(bytes.slice(0, 4)), 'RIFF');
   assert.ok(bytes.length > 1000);
-  for (const path of ['/og/en/index.png', '/og/es/news.png', '/og/en/docs/guide.png']) {
+  for (const path of ['/og/en/index.png', '/og/es/news.png', `/og/en/docs/${version}/guide.png`]) {
     const card = await request(path);
     assert.match(card.headers.get('content-type')!, /image\/png/);
     const png = new Uint8Array(await card.arrayBuffer());
@@ -197,6 +164,8 @@ try {
   }
   for (const path of [
     '/en/docs/missing',
+    '/en/docs/v9.9.9/guide',
+    `${docsBase}/missing`,
     '/og/en/missing.png',
     '/en/docs/missing.md',
     '/en/og/missing/image.webp',
@@ -208,15 +177,11 @@ try {
     await request(path, 404);
   }
   console.log(
-    'Worker smoke passed: EN/ES landings, docs, assets, search, Markdown negotiation, LLM, WebP and PNG OG and 404s.',
+    'Worker smoke passed: EN/ES landings, versioned docs and redirects, assets, search, Markdown negotiation, LLM, sitemap, WebP and PNG OG and 404s.',
   );
 } catch (error) {
-  console.error(output.slice(-10000));
+  console.error(worker.output().slice(-10000));
   throw error;
 } finally {
-  if (worker.exitCode === null && worker.signalCode === null) {
-    const closed = new Promise<void>((resolve) => worker.once('close', () => resolve()));
-    worker.kill('SIGTERM');
-    await closed;
-  }
+  await worker.stop();
 }
