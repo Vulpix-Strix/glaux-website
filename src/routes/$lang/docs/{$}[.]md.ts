@@ -1,16 +1,21 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { docsLlms, source } from '@/lib/docs/source';
+import { catalog, docsLlms, docsPages, getSource } from '@/lib/docs/source';
+import { resolveDocsPath } from '@/lib/docs/versions';
 import { isPublishedLanguage } from '@/lib/i18n';
-import { decodeMarkdownUrl } from '@/lib/docs/urls';
+import { decodeMarkdownUrl, getPageMarkdownUrl } from '@/lib/docs/urls';
 
 export const Route = createFileRoute('/$lang/docs/{$}.md')({
   server: {
     handlers: {
       GET: async ({ params }) => {
         if (!isPublishedLanguage(params.lang)) return new Response(null, { status: 404 });
-        const slugs = decodeMarkdownUrl(params._splat?.split('/') ?? []);
-        const page = source.getPage(slugs, params.lang);
-        if (!page) return new Response(null, { status: 404 });
+        const target = resolveDocsPath(catalog, decodeMarkdownUrl(params._splat?.split('/') ?? []), docsPages(params.lang));
+        if (target.kind === 'not-found') return new Response(null, { status: 404 });
+        if (target.kind === 'redirect') {
+          const location = getPageMarkdownUrl({ slugs: target.segments, locale: params.lang }).url;
+          return new Response(null, { status: 307, headers: { Location: location } });
+        }
+        const page = getSource(target.version).getPage(target.slugs, params.lang)!;
 
         return new Response(await docsLlms.page(page), {
           headers: {

@@ -1,57 +1,24 @@
-import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { expect, test } from 'vitest';
-import type { Release } from '@/lib/glaux/versions';
 import { DEVELOPMENT, discoverVersions, listReleases, readCatalog, syncVersions } from '@/lib/glaux/versions';
-import { digest, tempDir, writeTree } from './helpers.ts';
+import { digest, tempDir } from './helpers.ts';
+import { gitRepository, github, release } from './glaux-fixture.ts';
 
 /** A Glaux repository with three documentation revisions: two tagged releases and `main`. */
 function glauxRepository() {
-  const repo = tempDir();
-  const git = (...args: string[]) =>
-    execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@example.com', '-c', 'commit.gpgsign=false', '-c', 'tag.gpgsign=false', ...args], {
-      cwd: repo,
-      encoding: 'utf8',
-    }).trim();
-  const commit = (message: string, files: Record<string, string>) => {
-    writeTree(repo, files);
-    git('add', '.');
-    git('commit', '--quiet', '-m', message);
-    return git('rev-parse', 'HEAD');
-  };
+  const { repo, git, commit } = gitRepository();
   const revision = (name: string) => ({
     'docs/en/guide/index.md': `# Guide\n\n${name} revision.\n\n![Logo](../../assets/logo.png)\n`,
     'docs/assets/logo.png': `${name} image`,
     'docs/api/graphics.ron': `(revision: "${name}")`,
   });
-  git('init', '--quiet', '--initial-branch=main');
-  git('config', 'uploadpack.allowAnySHA1InWant', 'true'); // what GitHub allows
   const first = commit('first', { ...revision('First'), 'docs/ids.lock': 'guide/index\n', 'rom/big-file.bin': 'not documentation' });
   git('tag', '-a', 'v0.1.0', '-m', 'v0.1.0');
   const second = commit('second', revision('Second'));
   git('tag', 'v0.2.0-beta.1');
   const third = commit('third', { ...revision('Development'), 'docs/en/guide/extra.md': '# Extra\n\nOnly on main.\n' });
   return { repo, git, commit, first, second, third };
-}
-
-const release = (tag: string, publishedAt: string | null, extra: Partial<Release> = {}): Release => ({
-  tag_name: tag,
-  draft: false,
-  prerelease: false,
-  published_at: publishedAt,
-  ...extra,
-});
-
-/** Answers the GitHub releases API with `releases`, one page of 100 at a time, and records the URLs asked for. */
-function github(releases: Release[], status = 200) {
-  const urls: string[] = [];
-  const fetchImpl = (async (url: string) => {
-    urls.push(url);
-    const page = Number(new URL(url).searchParams.get('page'));
-    return new Response(JSON.stringify(releases.slice((page - 1) * 100, page * 100)), { status });
-  }) as typeof fetch;
-  return { fetchImpl, urls };
 }
 
 // The tags come from the local repository and the releases from the simulated API.

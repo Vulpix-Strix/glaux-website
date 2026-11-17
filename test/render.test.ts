@@ -3,7 +3,7 @@ import path from 'node:path';
 import { syncDocs } from '@/lib/glaux/sync';
 import { fixtures, render, tempDir, writeTree } from './helpers.ts';
 
-const out = tempDir();
+const out = path.join(tempDir(), 'dev');
 syncDocs(fixtures, out);
 
 test('Fumadocs renders tables, code, lists and quotes from plain Markdown', async () => {
@@ -50,8 +50,8 @@ test('all five GFM alerts become callouts and no marker text is left', async () 
 
 test('links are rewritten in the rendered page', async () => {
   const html = await render(out, 'guide/index');
-  expect(html).toMatch(/href="\/en\/docs\/api\/thing"/);
-  expect(html).toMatch(/href="\/en\/docs\/api\/thing#parameters"/);
+  expect(html).toMatch(/href="\/en\/docs\/dev\/api\/thing"/);
+  expect(html).toMatch(/href="\/en\/docs\/dev\/api\/thing#parameters"/);
   expect(html).toMatch(/href="#nested-heading"/);
   expect(html).toMatch(/href="https:\/\/example\.com\/docs"/);
   expect(html).toMatch(/href="mailto:hi@example\.com"/);

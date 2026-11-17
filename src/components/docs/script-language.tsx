@@ -1,14 +1,23 @@
 import { useSyncExternalStore, type ComponentProps, type ReactNode } from 'react';
 import { track } from '@/lib/posthog';
+import { m } from '@/paraglide/messages';
 
 export type ScriptLanguage = 'luau' | 'rhai';
+
+const options: { id: ScriptLanguage; label: string }[] = [
+  { id: 'luau', label: 'Luau' },
+  // Rhai is being replaced by Python, so readers can no longer choose it. Its samples stay folded.
+  // { id: 'rhai', label: 'Rhai' },
+];
 
 const storageKey = 'glaux-docs:script-language';
 const listeners = new Set<() => void>();
 
 function read(): ScriptLanguage {
   try {
-    return localStorage.getItem(storageKey) === 'rhai' ? 'rhai' : 'luau';
+    const stored = localStorage.getItem(storageKey);
+    // A choice stored for a language that is no longer offered falls back to Luau.
+    return options.find((option) => option.id === stored)?.id ?? 'luau';
   } catch {
     return 'luau';
   }
@@ -37,14 +46,10 @@ export function useScriptLanguage() {
   return [useSyncExternalStore(subscribe, read, () => 'luau'), write] as const;
 }
 
-const options: { id: ScriptLanguage; label: string }[] = [
-  { id: 'luau', label: 'Luau' },
-  { id: 'rhai', label: 'Rhai' },
-];
-
-/** Segmented control for the sidebar. Code samples in the other language fold away. */
+/** Segmented control for the sidebar. Code samples in the other language fold away. Hidden while there is one language. */
 export function ScriptLanguageToggle() {
   const [language, setLanguage] = useScriptLanguage();
+  if (options.length < 2) return null;
   function selectLanguage(nextLanguage: ScriptLanguage) {
     if (nextLanguage === language) return;
     setLanguage(nextLanguage);
@@ -52,7 +57,7 @@ export function ScriptLanguageToggle() {
   }
   return (
     <div className="gx-docs-script">
-      <p className="gx-docs-label" id="gx-script-label">Script language</p>
+      <p className="gx-docs-label" id="gx-script-label">{m.docs_script_label()}</p>
       <div className="gx-docs-seg" role="group" aria-labelledby="gx-script-label">
         {options.map(({ id, label }) => (
           <button type="button" key={id} aria-pressed={language === id} onClick={() => selectLanguage(id)}>
@@ -60,7 +65,7 @@ export function ScriptLanguageToggle() {
           </button>
         ))}
       </div>
-      <p className="gx-docs-hint">Code samples follow your choice.</p>
+      <p className="gx-docs-hint">{m.docs_script_hint()}</p>
     </div>
   );
 }
@@ -75,7 +80,7 @@ export function ScriptLanguageFold({ language, children }: { language: ScriptLan
   const name = language === 'rhai' ? 'Rhai · experimental' : 'Luau';
   return (
     <details className="gx-docs-fold">
-      <summary>Show {name} sample</summary>
+      <summary>{m.docs_script_show_sample({ language: name })}</summary>
       {children}
     </details>
   );

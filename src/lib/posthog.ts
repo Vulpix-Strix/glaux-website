@@ -20,7 +20,9 @@ export interface AnalyticsEvents {
   };
   article_shared: { article_type: 'news' | 'blog'; slug: string; method: 'copy_link' | 'email' };
   language_changed: { from_language: Language; to_language: Language };
-  feature_interacted: { feature: 'script_language'; action: 'select_luau' | 'select_rhai' };
+  feature_interacted:
+    | { feature: 'script_language'; action: 'select_luau' | 'select_rhai' }
+    | { feature: 'docs_version'; action: 'select_release' | 'select_prerelease' | 'select_development' };
 }
 
 interface PostHogConfig {

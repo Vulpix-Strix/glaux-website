@@ -266,6 +266,30 @@
   flex: 1;
 }
 
+.gx-docs-version {
+  margin-bottom: 16px;
+}
+
+.gx-docs-version .gx-docs-label {
+  display: block;
+}
+
+.gx-docs-version select {
+  width: 100%;
+  min-height: 36px;
+  padding: 0 8px;
+  border: 1px solid var(--gx-border-strong);
+  border-radius: 4px;
+  background: var(--gx-sunken);
+  color: var(--gx-text);
+  font: 600 13px/20px var(--gx-sans);
+}
+
+.gx-docs-version .gx-docs-hint[data-kind='development'],
+.gx-docs-version .gx-docs-hint[data-kind='prerelease'] {
+  color: var(--gx-warning-text);
+}
+
 .gx-docs [data-sidebar-placeholder] a[data-active] {
   border-radius: 0 4px 4px 0;
 }

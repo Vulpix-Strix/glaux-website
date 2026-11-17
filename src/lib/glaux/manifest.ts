@@ -47,6 +47,7 @@ export function readManifest(file: string): Manifest {
 export interface PageLocation {
   /** Path of the file below the content directory. */
   relative: string;
+  version: string;
   lang: string;
   id: string;
   /** The manifest of the version the page belongs to. */
@@ -63,6 +64,7 @@ export function locatePage(contentDir: string, file: string): PageLocation | und
   const [version, lang, ...rest] = relative.split(path.sep);
   return {
     relative,
+    version,
     lang,
     id: rest.join('/').replace(/\.mdx?$/, ''),
     manifestPath: path.join(contentDir, version, 'manifest.json'),

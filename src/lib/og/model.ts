@@ -9,7 +9,7 @@ export type OgHue = 'cyan' | 'lime' | 'gold' | 'orange' | 'pink' | 'violet';
 /** Everything a card shows, already localized. Collected by `entries.ts`, drawn by `card.ts`. */
 export interface OgEntry {
   lang: Locale;
-  /** Path of the page below `/{lang}`: '' for the landing, '/news', '/blog/slug', '/docs/api/btn'. */
+  /** Path of the page below `/{lang}`: '' for the landing, '/news', '/blog/slug', '/docs/dev/api/btn'. */
   page: string;
   kind: OgKind;
   /** Terminal breadcrumb, such as `~/noticias`. */

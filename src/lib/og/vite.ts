@@ -1,6 +1,5 @@
 import path from 'node:path';
 import type { Plugin } from 'vite';
-import { defaultVersionDir } from '../glaux/versions.ts';
 import { ogImagePath } from './model.ts';
 
 // `entries.ts` reads the compiled Paraglide messages, which the Paraglide plugin writes after
@@ -17,7 +16,7 @@ export function ogImages(): Plugin {
   let development = false;
   const sources = () => ({
     editorial: path.join(root, 'content/editorial'),
-    docs: defaultVersionDir(path.join(root, 'content/glaux')),
+    docs: path.join(root, 'content/glaux'),
     publicDir: path.join(root, 'public'),
     drafts: development,
   });
