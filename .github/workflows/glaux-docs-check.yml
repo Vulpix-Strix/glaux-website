@@ -6,6 +6,9 @@ name: Glaux docs check
 on:
   schedule:
     - cron: '0 6 * * *'
+  push:
+    branches: [main]
+    paths: [src/lib/glaux/**, scripts/sync-glaux-docs.ts, .github/workflows/glaux-docs-check.yml]
   pull_request:
     paths: [src/lib/glaux/**, scripts/sync-glaux-docs.ts, .github/workflows/glaux-docs-check.yml]
   workflow_dispatch:
