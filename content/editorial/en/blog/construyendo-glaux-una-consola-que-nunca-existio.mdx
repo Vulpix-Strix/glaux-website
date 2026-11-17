@@ -1,29 +1,252 @@
 ---
 id: construyendo-glaux-una-consola-que-nunca-existio
-title: "Construyendo Glaux: una consola que nunca existió"
-description: "Desde sus primeros píxeles hasta convertirse en un entorno para crear y depurar videojuegos."
+title: "Building Glaux: A Console That Never Existed"
+description: "How Glaux began, from its first pixels to running its first cartridge."
 status: draft
 categories: [devlog, development]
 author: Cuervolu
 number: 1
+cover:
+    src: asset:construyendo-glaux-una-consola-que-nunca-existio/cover-en.png
+    alt: "Cover of the first Glaux devlog, showing the code editor and a game running alongside the article's title."
 featured: true
 series:
     id: glaux-devlog
-    title: Desarrollo de Glaux
+    title: Glaux Development
     part: 1
 ---
 
-Hace mucho tiempo, estaba navegando por Itch.io y me encontré con una aplicación bastante interesante.
-Esta se denominaba [PICO-8](https://lexaloffle.itch.io/pico-8), se definía a sí misma como *"una consola de fantasía para crear, compartir y jugar juegos pequeños y otros programas de computadora."*
+A long time ago, while browsing Itch.io, I came across a pretty interesting application. It was called [PICO-8](https://lexaloffle.itch.io/pico-8), and it described itself as *"a fantasy console for making, sharing and playing tiny games and other computer programs"*.
 
-No era particularmente potente, tenía una gran cantidad de limitaciones para los estándares actuales, pero por alguna razón,
-eso hacía que crear algo dentro de ellas bastante entretenido. Incluso tenía más de mil juegos, algunos incluso imitando videojuegos como Doom u Hollow Knight.
+It wasn't particularly powerful. In fact, it had a ton of limitations by today's standards, but for some reason, those limitations made creating things with it really fun. Its community had even managed to make games reminiscent of Doom or Hollow Knight.
 
-Más adelante me encontré con [TIC-80](https://nesbox.itch.io/tic80), una consola que parecía a simple vista algo más potente que PICO-8, e incluso soportaba doce lenguajes de scripting, como Lua, JavaScript, Python e incluso Wren.
+Later on, I discovered [TIC-80](https://nesbox.itch.io/tic80), which seemed a bit more powerful at first glance and supported several programming languages, including Lua, JavaScript, Python, and Wren.
 
-<ArticleFigure
-    src="asset:construyendo-glaux-una-consola-que-nunca-existio/shell.png"
-    alt="Describe what this image shows"
-    width={320}
-    height={240}
+That's how I ended up exploring a world that, despite seeming pretty niche, has a huge and very welcoming community. I found the [Fantasy Console Wiki](https://fantasyconsoles.org/wiki/Main_Page), and through it and some more searching, I discovered projects like [Uxn](https://100r.co/site/uxn.html), [Pixel Vision 8](https://pixelvision8.github.io/Website/), and [LowRes NX](https://lowresnx.inutilis.com/).
+
+For anyone unfamiliar with them, fantasy consoles are imaginary systems inspired by older game consoles: small screens, limited palettes, and simple tools for making games. Some behave like virtual machines, while others are closer to game engines, but they all have their own take on what a console should be.
+
+After spending quite a while exploring them, an idea started forming in my head: what if I tried building one myself?
+
+It didn't happen right away. I let the idea sit for several months before finally getting to work.
+
+## The Birth of Glaux
+
+I officially started working on my console on September 24, 2026, although I found design notes dating all the way back to April 27 of that same year.
+
+I named it **Glaux**, a name that comes from Ancient Greek and means owl.
+
+I didn't want to recreate a historical console or just make a retro graphics library. I wanted Glaux to feel like its own platform, with imaginary hardware, its own limitations, and all the tools needed to make games without leaving it.
+
+And that was exactly one of the things I liked most about fantasy consoles: their limitations. It's not about having the highest resolution or the most colors. It's about making something interesting with the resources you have.
+
+I didn't want to faithfully imitate the SNES, GBA, PICO-8, or TIC-80 either. I preferred borrowing ideas from different generations and seeing which ones made sense together.
+
+That said, I'm terrible at documentation, and I didn't want to write some massive specification before I had anything working. So I decided to start with a small core, test it by making games, and adjust the limitations as problems came up.
+
+Some decisions were there from the beginning. Others changed several times during development.
+
+### The Screen, Pixels, and Colors
+
+The first important decision was the resolution.
+
+PICO-8 uses 128x128 pixels, while TIC-80 uses 240x136. I liked both resolutions, but I wanted a little more room, especially since Glaux would have its own code editor and other built-in tools.
+
+I considered resolutions similar to the Game Boy Advance (240x160) and SNES (256x224), until I eventually settled on **320x240**.
+
+It felt like a good balance. It was still a small screen, kept the 4:3 aspect ratio, and worked nicely with the 8x8-pixel tiles I wanted to use. That gave me a grid of 40x30 tiles.
+
+And while that might sound like plenty of space compared to PICO-8, it stops feeling that way when you try to fit a shell, a sprite editor, a code editor, and everything else into it.
+
+<ArticleFigure src="asset:construyendo-glaux-una-consola-que-nunca-existio/SCR-20261030-ikgv.jpeg" alt="The Glaux editor on a 320x240 screen" caption="Glaux's code editor on a 320x240 screen" />
+
+Then there was the matter of colors. I didn't want a palette that was too small, but I also didn't want every pixel to be able to use any RGB color.
+
+I ended up choosing a **master palette of 256 colors**, with restrictions on how many could be used at the same time. For the first 32, I took inspiration from [Zughy 32](https://lospec.com/palette-list/zughy-32), a palette I've always liked for its variety.
+
+The idea was to give people enough freedom to create visually distinct games without losing the limitations that make these consoles fun.
+
+### A Font for Programming
+
+One thing I hadn't given much thought to at first was the font.
+
+A pixel-art font can look great in a menu, but writing code is a different story. With so few pixels, telling certain characters apart can get pretty annoying.
+
+I initially used [Tamzen](https://github.com/sunaku/tamzen-font), but I ran into problems with support for certain characters. Then I found [Pixel Code](https://qwerasd205.github.io/PixelCode), a font designed specifically for programming.
+
+I wanted to use 6x8-pixel cells, with glyphs up to 5x7 pixels. That would let me display around 53 columns and 30 rows of text on the screen.
+
+![Visual comparison of the Tamzen and Pixel Code bitmap fonts, with samples of their characters.](asset:construyendo-glaux-una-consola-que-nunca-existio/comparacion-de-tipografias-en-pixeles.png)
+
+Changing the font wasn't as simple as replacing a file. I had to modify several parts of the console to accommodate the new dimensions.
+
+It might seem like a minor detail, but if I was going to spend time programming inside Glaux, I at least wanted to be able to read what I was typing.
+
+### Timing and 60 Hz
+
+I also had to decide how games would be updated.
+
+I chose a fixed **60 Hz** logic update rate. Put simply, Glaux tries to update game logic 60 times per second, at fixed intervals of about 16.67 milliseconds.
+
+I kept those updates separate from drawing the screen. That way, if the computer falls behind, the console can catch up on some pending updates without having to render every intermediate frame.
+
+That doesn't mean every game will magically run at 60 FPS, but it gave me a fairly predictable foundation for programming movement and animations.
+
+### Four Sound Channels
+
+For audio, I wanted to try something other than just playing traditional sound files.
+
+I went with a **four-channel PSG synthesizer**. A PSG generates tones using simple waveforms, adjusting things like their frequency and volume. It's an idea closely associated with the sound of old consoles.
+
+Limiting it to four channels would also force you to think more carefully about how to split them between sound effects and music. My plan was to pair it with a music editor and an API for generating sounds from code.
+
+I'm not ruling out support for small samples in the future, but I wanted to start with that foundation.
+
+By this point, I had a reasonably clear idea of how Glaux should work.
+
+The problem was that I still had to build it.
+
+## From Ideas to the First Pixels
+
+I decided to use Rust together with [raylib](https://www.raylibtech.com/), a library that handles graphics, audio, and user input without having to implement everything from scratch.
+
+My first goal was pretty simple: draw the Zughy 32 palette using my own framebuffer.
+
+Instead of drawing directly to the raylib window, I created a 320x240 framebuffer where each pixel stored a palette index. I then converted those indices into RGBA colors to display them on the screen.
+
+And that's how the first image from Glaux appeared.
+
+![Glaux's first graphics test, showing the 32 Zughy color bars, an alternating pixel pattern, and a magenta debugging rectangle.](asset:construyendo-glaux-una-consola-que-nunca-existio/glaux-concept.png)
+
+It looks like a pretty strange image, but everything had a purpose.
+
+The bars at the top displayed Zughy's 32 colors. The pattern in the bottom-left corner helped me check that the image scaled without losing its sharpness. And that huge magenta rectangle on the right wasn't a mistake either: since I hadn't defined all 256 colors yet, I used magenta to make any invalid palette index easy to spot.
+
+I also added *nearest-neighbor* scaling to keep each pixel's edges sharp when enlarging the window, without distorting the 4:3 aspect ratio.
+
+There were no games yet, but I finally had a window displaying Glaux's pixels through its own framebuffer.
+
+### The First Letters
+
+After colors, I needed to draw text.
+
+I implemented basic functions for drawing pixels, clearing the screen, and rendering characters. At first, I used Tamzen, which I'd included in the System ROM.
+
+Each character was a tiny bitmap. Glaux went through it and drew its pixels directly onto the framebuffer.
+
+And there it was: Glaux's first *HELLO, WORLD!*
+
+<ArticleFigure src="asset:construyendo-glaux-una-consola-que-nunca-existio/hello-world-glaux.png" alt="Glaux screen showing GLAUX, SYSTEM ROM, HELLO WORLD, and a table of ASCII characters rendered using Tamzen" caption="The first text-rendering test in Glaux using Tamzen. There wasn't an interactive terminal yet, but it could already draw characters directly onto the framebuffer." />
+
+Along with the message, I drew all the printable ASCII characters to check that they appeared correctly and that spaces and line breaks worked as expected.
+
+Everything was still hardcoded. There was no interactive terminal yet, but at least I could finally display messages on Glaux's screen.
+
+It might sound like a small thing, but considering I wanted to build a shell and a code editor, I was pretty excited :D
+
+### A Console That Starts to Boot
+
+With text working, I wanted Glaux to start feeling like a real console.
+
+I came up with the idea of adding a boot sequence inspired by old computers. When you opened Glaux, it would display system information before eventually reaching a terminal.
+
+For that, I used a small state machine. Glaux started in `Boot`, displayed the messages progressively, and then switched to `Shell`.
+
+<AnimatedClip
+title="Glaux's First Boot Sequence"
+sources={[
+    {
+        src: "asset:construyendo-glaux-una-consola-que-nunca-existio/first-boot.mp4",
+        type: "video/mp4"
+    }
+]}
+poster="asset:construyendo-glaux-una-consola-que-nunca-existio/first-boot.png"
 />
+
+This was the very first version of the boot sequence. It was pretty simple, but it already showed system information and ended on a screen with its own prompt. IT'S ALIVE!
+
+There was just one tiny problem: you couldn't type anything.
+
+Even though the screen said `TYPE HELP FOR HELP`, Glaux didn't actually process keyboard input yet. The prompt was just static text.
+
+So I got to work on keyboard input. I needed to be able to type characters, move the cursor, delete text, and detect keys like Enter.
+
+That's when I ran into a curious problem. Under Wayland, raylib wasn't handling automatic key repeat properly. That's what lets a letter keep appearing when you hold its key down, or the cursor keep moving when you hold an arrow key.
+
+Since I was using Linux with KDE and Wayland, it wasn't something I could just ignore.
+
+I ended up implementing key repeat inside Glaux itself: a key was processed immediately, and if you held it down, it started repeating after a short delay. I also had to make sure Enter didn't execute the same command multiple times and that key presses wouldn't pile up if the console fell behind.
+
+Eventually, I could type, move the cursor, select text, and delete characters.
+
+There was still a catch, though. Pressing Enter just made the text disappear. I still needed to turn that input line into a proper terminal.
+
+I added a small parser and commands like `help`, `clear`, and `info`. Command history, arrow-key navigation, and Tab completion came next.
+
+<ArticleFigure src="asset:construyendo-glaux-una-consola-que-nunca-existio/glaux-shell.jpeg" alt="The first version of Glaux's shell" caption="The first essential commands in Glaux's shell" />
+
+Around that time, I also added a power-on animation inspired by old monitors and a CRT shader with scanlines and a slight screen curvature. I also integrated the 60 Hz logic update system I'd designed earlier.
+
+Glaux was still a long way from running video games, but at least it was starting to behave like a tiny computer.
+
+## The First Cartridge
+
+With a working terminal, I still had to figure out the most important part: how would it run games?
+
+From the beginning, I wanted games to work through cartridges, like in PICO-8 or TIC-80. Each cartridge would have its own files, resources, and code.
+
+But first, I had to choose a programming language.
+
+### Why Luau Instead of Lua?
+
+The most obvious option was Lua. It's small, easy to embed in other applications, and widely used in games.
+
+In the end, though, I chose [Luau](https://luau.org/), a language derived from Lua and originally developed for Roblox.
+
+I didn't want to create a language from scratch, but I also didn't want to drop in an interpreter and call it a day. One of Glaux's goals was to have a built-in code editor that was actually comfortable to use.
+
+Luau had two things I was particularly interested in: a gradual type system and tools for analyzing code. You could write code in a way that felt very similar to Lua, but also add type annotations to catch certain errors before running the program.
+
+That seemed like a good foundation for the editor I wanted to build. It's not that Lua was a bad choice; Luau just fit that vision better.
+
+I used [mlua](https://github.com/mlua-rs/mlua) to integrate it with Rust. And that was the beginning of Glaux's first runtime.
+
+### When Glaux Could Finally Run Code
+
+In the earliest versions, a cartridge was simply a folder containing a `cart.json` file with information such as its name, version, and entry point.
+
+First, I implemented the checks needed to recognize a cartridge and prevent it from accessing paths outside its own folder. Then I added the `load` command to the terminal.
+
+That let Glaux load a cartridge, but not actually run it.
+
+That's where `run` came in.
+
+With that command, Glaux read the entry-point file and executed it using a Luau virtual machine. At first, it was pretty limited: the program ran only once and could print messages using `print`, but there was no game loop or graphics API yet.
+
+Even so, it was a big step forward. **Glaux could finally execute code that wasn't part of the console itself.**
+
+I also had to think about what that code should be allowed to do. I didn't want a cartridge reading arbitrary files from someone's computer, so I restricted access to its own resources and removed the default `require` functionality that could access system paths.
+
+On top of that, I used Luau's interrupt mechanism to set an execution budget. That way, I could stop a script stuck in an infinite loop instead of letting it freeze the entire console.
+
+It might sound like a lot of work just to execute a simple `print("Hello, world!")`, but I preferred solving those problems before moving on to full games.
+
+### And What About Rhai?
+
+At one point, I also wanted to experiment with a second language: [Rhai](https://rhai.rs/).
+
+Rhai is designed to be embedded in Rust applications and has a syntax with some similarities to JavaScript and Rust. I wanted to see whether Glaux could support more than one language, like TIC-80, without having to build two separate consoles.
+
+That's why I added it as a separate module, `glaux-rhai`. The idea was for the languages to share the console's capabilities, even if each one had its own runtime.
+
+Rhai was still experimental and didn't have the same level of support as Luau. But it gave me a chance to start exploring how to separate Glaux's tools and hardware from the language used to program cartridges.
+
+## What's Next?
+
+When I started this project, all I wanted was to find out whether I could draw a few pixels in a window. I ended up with a framebuffer, text rendering, a boot sequence, a shell, and an initial system for loading and running cartridges.
+
+There was still a lot left to do. Being able to run a script wasn't the same as having a console where you could make video games. I still needed drawing functions, controls, resources, and, of course, the tools to work with all of them.
+
+But for the first time, Glaux wasn't just a bunch of design notes anymore. There was something working, something I could open and start experimenting with.
+
+In the next devlog, I want to pick up from there and talk about the journey from those first scripts to actual games.
