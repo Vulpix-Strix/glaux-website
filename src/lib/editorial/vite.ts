@@ -90,7 +90,12 @@ export function editorialPlugin(contentRoot = path.resolve('content/editorial'))
         if (!file.startsWith(root)) return;
         try {
           refresh();
-          server.moduleGraph.invalidateAll();
+          // Only the virtual modules depend on the content. Invalidating the whole graph also evicts
+          // React from the SSR runner while pre-bundled dependencies keep their copy, which leaves two
+          // React instances and breaks hooks ("Invalid hook call").
+          for (const environment of Object.values(server.environments))
+            for (const [id, module] of environment.moduleGraph.idToModuleMap)
+              if (id.startsWith('\0virtual:editorial')) environment.moduleGraph.invalidateModule(module);
           server.ws.send({ type: 'full-reload' });
         } catch (error) {
           server.config.logger.error(String(error));
